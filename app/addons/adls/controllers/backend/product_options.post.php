@@ -12,10 +12,22 @@
  * @version    $Id$
  */
 
-namespace HeloStore\ADSL;
+use Tygh\Registry;
+use Tygh\Tygh;
 
+if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-class ProductManager
-{
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    return;
+}
 
-} 
+if (in_array($mode, array('update', 'add', 'manage'))) {
+	$view = &Tygh::$app['view'];
+
+	$types = array(
+		'domain' => 'Single domain',
+		'domains' => 'Multiple domains'
+	);
+
+	$view->assign('adls_option_types', $types);
+}

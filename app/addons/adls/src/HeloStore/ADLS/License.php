@@ -12,31 +12,11 @@
  * @version    $Id$
  */
 
-use HeloStore\ADLS\LicenseManager;
-
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($mode == 'verify') {
-        return array (CONTROLLER_STATUS_REDIRECT, '');
-    }
-}
-
-if ($mode == 'test') {
-	$manager = LicenseManager::instance();
-
-	$productId = 2;
-	$orderId = 15;
-	$userId = 2;
-
-	$order_info = fn_get_order_info($orderId);
-	fn_adls_process_order($order_info);
+namespace HeloStore\ADLS;
 
 
-
-
-	exit;
-}
-if ($mode == 'manage') {
-
+class License
+{
+	const STATUS_ACTIVE = 'A';
+	const STATUS_DISABLED = 'D';
 }

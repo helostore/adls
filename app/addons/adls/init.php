@@ -16,4 +16,12 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 require_once 'vendor/autoload.php';
 
+define('ADLS_DIR', dirname(__FILE__));
 define('ADLS_AUTHOR_NAME', 'HELOstore');
+define('ADLS_PRODUCT_TYPE_ADDON', 'A'); // P and C reserved
+define('ADLS_PRODUCT_TYPE_THEME', 'T');
+
+fn_register_hooks(
+	'change_order_status'
+	, 'get_product_options'
+);

@@ -46,5 +46,14 @@ if ($mode == 'update') {
 		}
 	}
 
+	// product type
+	$types = array(
+		'P' => 'Standard',
+		'C' => 'Configurable',
+		ADLS_PRODUCT_TYPE_ADDON => 'Add-on',
+		ADLS_PRODUCT_TYPE_THEME => 'Theme'
+	);
+
 	$view->assign('adls_addons', $addOns);
+	$view->assign('adls_product_types', $types);
 }
