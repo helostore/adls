@@ -8,7 +8,7 @@
     <has_icon>Y</has_icon>
     <default_language>en</default_language>
     <queries>
-        <item>
+        <item for="install">
             CREATE TABLE `?:adls_licenses` (
                 `license_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `order_id`  mediumint(8) NOT NULL ,
@@ -20,7 +20,7 @@
                 PRIMARY KEY (`license_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
-        <item>
+        <item for="install">
             CREATE TABLE `?:adls_license_domains` (
                 `domain_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `license_id`  mediumint(8) UNSIGNED NOT NULL ,
@@ -30,5 +30,19 @@
                 PRIMARY KEY (`domain_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
+
+        <item for="install">
+            ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64) NOT NULL;
+        </item>
+        <item for="uninstall">
+            ALTER TABLE `?:products` DROP `adls_addon_id`;
+        </item>
     </queries>
+    <authors>
+        <author>
+            <name>HELOstore</name>
+            <email>contact@helostore.com</email>
+            <url>https://helostore.com</url>
+        </author>
+    </authors>
 </addon>

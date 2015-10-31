@@ -12,8 +12,10 @@
  * @version    $Id$
  */
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
+namespace HeloStore\ADSL;
 
-require_once 'vendor/autoload.php';
 
-define('ADLS_AUTHOR_NAME', 'HELOstore');
+class ProductManager
+{
+
+} 
