@@ -39,8 +39,7 @@ class LicenseManager extends Singleton
 			'created_at' => $now,
 			'updated_at' => $now,
 			'license_key' => $key,
-			'status' => License::STATUS_ACTIVE,
-			'usage_status' => License::USAGE_STATUS_INACTIVE
+			'status' => License::STATUS_INACTIVE,
 		);
 
 		$result = db_query('INSERT INTO ?:adls_licenses ?e', $license);
@@ -54,7 +53,7 @@ class LicenseManager extends Singleton
 	}
 
 	public function getLicenseByKey($key) {
-		return db_get_row('SELECT * FROM ?:adls_licenses WHERE license_key = ?i', $key);
+		return db_get_row('SELECT * FROM ?:adls_licenses WHERE license_key = ?s', $key);
 	}
 	public function generateUniqueKey() {
 		static $tries = 0;
@@ -79,7 +78,8 @@ class LicenseManager extends Singleton
 				$entry = array(
 					'license_id' => $licenseId,
 					'domain' => $domain,
-					'created_at' =>  date("Y-m-d H:i:s", TIME)
+					'created_at' =>  date("Y-m-d H:i:s", TIME),
+					'status' => License::STATUS_INACTIVE
 				);
 			}
 			$entry['updated_at'] =  date("Y-m-d H:i:s", TIME);
@@ -134,14 +134,44 @@ class LicenseManager extends Singleton
 		return $items;
 	}
 
-	public function activateLicense($licenseId)
+	public function isActivateLicense($licenseId, $domain = '')
+	{
+		$status = $this->getLicenseStatus($licenseId, $domain);
+
+		return ($status == License::STATUS_ACTIVE);
+	}
+	public function getLicenseStatus($licenseId, $domain = '')
+	{
+		if (!empty($domain)) {
+			$result = db_get_field('SELECT status FROM  ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
+		} else {
+			$result = db_query('SELECT status FROM ?:adls_licenses WHERE license_id = ?i', $licenseId);
+		}
+
+		return $result;
+	}
+
+	public function changeLicenseStatus($licenseId, $status, $domain = '')
 	{
 		$update = array(
-			'status' => License::USAGE_STATUS_ACTIVATED
+			'status' => $status
 		);
+		if (!empty($domain)) {
+			$result = db_query('UPDATE ?:adls_license_domains SET ?u WHERE license_id = ?i AND domain = ?s', $update, $licenseId, $domain);
+			if (!$result) {
+				return false;
+			}
+		}
 		$result = db_query('UPDATE ?:adls_licenses SET ?u WHERE license_id = ?i', $update, $licenseId);
 
-
-		return true;
+		return $result;
+	}
+	public function deactivateLicense($licenseId, $domain = '')
+	{
+		return $this->changeLicenseStatus($licenseId, License::STATUS_INACTIVE, $domain);
+	}
+	public function activateLicense($licenseId, $domain = '')
+	{
+		return $this->changeLicenseStatus($licenseId, License::STATUS_ACTIVE, $domain);
 	}
 }

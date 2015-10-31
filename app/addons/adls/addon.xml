@@ -18,7 +18,6 @@
                 `updated_at`  datetime NOT NULL ,
                 `license_key`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                `usage_status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 PRIMARY KEY (`license_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
@@ -29,13 +28,14 @@
                 `domain`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `created_at`  datetime NOT NULL ,
                 `updated_at`  datetime NOT NULL ,
-                PRIMARY KEY (`domain_id`)
+                `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            PRIMARY KEY (`domain_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64) NOT NULL;</item>
-        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
+        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
         <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64) NOT NULL;</item>
-        <item for="uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
+        <item for="___uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
 
     </queries>
     <authors>

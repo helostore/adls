@@ -40,7 +40,6 @@ function fn_adls_process_order($order_info)
 	$orderId = $order_info['order_id'];
 	$userId = $order_info['user_id'];
 	$errors = array();
-
 	foreach ($order_info['products'] as $product) {
 		$productId = $product['product_id'];
 		if (!fn_is_adls_product($product)) {

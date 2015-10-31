@@ -19,6 +19,5 @@ class License
 {
 	const STATUS_ACTIVE = 'A';
 	const STATUS_DISABLED = 'D';
-	const USAGE_STATUS_ACTIVATED = 'A';
-	const USAGE_STATUS_INACTIVE = 'I';
+	const STATUS_INACTIVE = 'I';
 }

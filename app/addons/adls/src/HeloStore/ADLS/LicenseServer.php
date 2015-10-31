@@ -39,36 +39,64 @@ class LicenseServer
 		$context = !empty($request['context']) ? $request['context'] : '';
 		if ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
 			$response = $this->authenticate($request);
-		}
-
-		if ($context == LicenseClient::CONTEXT_ACTIVATE) {
-			if ($this->authorize($request)) {
+		} else if ($this->authorize($request)) {
+			if ($context == LicenseClient::CONTEXT_ACTIVATE) {
 				$response = $this->activate($request);
 			}
+			if ($context == LicenseClient::CONTEXT_DEACTIVATE) {
+				$response = $this->deactivate($request);
+			}
 		}
+
+
+
 
 		return $response;
 	}
 
 	public function activate($request)
 	{
-
 		$vars = $this->requireRequestVariables($request, array('product.license', 'server.hostname' ,'email'));
 		$response = array();
 		$manager = LicenseManager::instance();
+
 		$license = $manager->getLicenseByKey($vars['product.license']);
 
 		if (empty($license)) {
 			throw new \Exception('Invalid license or domain', LicenseClient::ERROR_INVALID_TOKEN);
 		}
 
-		if (!$manager->activateLicense($license)) {
+		if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
+			$response['code'] = 200;
+			$response['message'] = 'License is already activated for specified domain';
+		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
 			throw new \Exception('Unable to activate license for specified domain', LicenseClient::ERROR_INVALID_TOKEN);
+		} else {
+			$response['code'] = 0;
+			$response['message'] = 'Your license is now active!';
 		}
 
-		$response['code'] = 0;
-		$response['message'] = 'OK';
+		return $response;
+	}
 
+
+	public function deactivate($request)
+	{
+		$vars = $this->requireRequestVariables($request, array('product.license', 'server.hostname' ,'email'));
+		$manager = LicenseManager::instance();
+		$license = $manager->getLicenseByKey($vars['product.license']);
+
+		$response = array();
+		$response['code'] = 0;
+		$response['message'] = '';
+		if (empty($license)) {
+			return $response;
+		}
+
+		if (!$manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
+			return $response;
+		}
+		$manager->deactivateLicense($license['license_id'], $vars['server.hostname']);
 
 		return $response;
 	}
@@ -153,7 +181,7 @@ class LicenseServer
 
 	public function bakeToken($userId, $email, $challengeHash, $lastTokenDate)
 	{
-		$expirationTime = 60;
+		$expirationTime = 10;
 		$expirationDate = $lastTokenDate + $expirationTime;
 
 		// token time expired, update new expiration time (implicitly a new token will be baked)

@@ -31,13 +31,15 @@ class LicenseClient
 	const CONTEXT_UNINSTALL = 'uninstall';
 	const CONTEXT_AUTHENTICATION = 'authentication';
 	const CONTEXT_ACTIVATE = 'activate';
+	const CONTEXT_DEACTIVATE = 'deactivate';
 	const API_ENDPOINT = 'local.helostore.com/index.php?dispatch=adls_api';
 
 	const ERROR_INVALID_TOKEN = 400;
+	const ERROR_MISSING_TOKEN = 401;
 
 
+	public $caller;
 	protected $context;
-	protected $caller;
 	protected $errors = array();
 	protected $messages = array();
 	protected $tries = 0;
@@ -47,29 +49,31 @@ class LicenseClient
 
 	public function __construct($context = '', $localRequest = array())
 	{
+//		if (defined('ADLS_SKIP_NOTIFICATION')) {
+//			return;
+//		}
+
 		$trace = debug_backtrace(false);
 		$this->caller = array_shift($trace);
 		$this->context = $context;
-		$this->data = $this->getData();
-		if (!empty($context)) {
-			$this->request($context, $this->data);
-		}
+		$this->setData();
+
 		if (!empty($localRequest)) {
 			$this->handleLocalRequest($localRequest);
+		} else if (!empty($context)) {
+			if ($context == LicenseClient::CONTEXT_ACTIVATE) {
+				$this->maybeActivateLicense($this->data['product']['name']);
+			} else {
+				$this->request($context, $this->data);
+			}
 		}
 	}
 
 	public function request($context, $data)
 	{
-		$token = fn_get_storage_data('helostore_token');
-
 		if ($context != LicenseClient::CONTEXT_AUTHENTICATION) {
-			if (empty($token) || strlen($token) < 10) {
-				if ($this->refreshToken()) {
-					$data['token'] = fn_get_storage_data('helostore_token');
-				}
-			} else {
-				$data['token'] = $token;
+			if ($this->refreshToken()) {
+				$data['token'] = fn_get_storage_data('helostore_token');
 			}
 		}
 
@@ -90,7 +94,12 @@ class LicenseClient
 
 		return $response;
 	}
-	public function getData($addonName = null)
+	public function getData()
+	{
+		return $this->data;
+	}
+
+	public function setData($addonName = null)
 	{
 		$data = array();
 		$data['server'] = array(
@@ -105,28 +114,12 @@ class LicenseClient
 		);
 
 		if (empty($addonName)) {
-			$caller = $this->caller;
-			if (!empty($caller) && !empty($caller['file'])) {
-				// ughhh, workaround to handle symlinks!
-				$callerPath = str_replace(array('\\', '/'), '/', $caller['file']);
-				$relativePath = substr($callerPath, strrpos($callerPath, '/app/') + 1);
-				$dirs = explode('/', $relativePath);
-				array_shift($dirs);
-				array_shift($dirs);
-				$addonName = array_shift($dirs);
-			}
+			$addonName = self::inferAddonName($this->caller);
 		}
 
 		if (!empty($addonName)) {
-			$settings = Registry::get('addons.' . $addonName);
-			$settings = is_array($settings) ? $settings : array();
-			$this->settings = $settings;
-			$scheme = SchemesManager::getScheme($addonName);
-			if (!empty($scheme)) {
-				if (method_exists($scheme, 'getVersion')) {
-					$settings['version'] = $scheme->getVersion();
-				}
-			}
+			$settings = $this->setSettings($addonName);
+
 			$data['product'] = array(
 				'name' => $addonName,
 				'license' => isset($settings['license']) ? $settings['license'] : '',
@@ -135,8 +128,22 @@ class LicenseClient
 			);
 			$data['email'] = $settings['email'];
 		}
+		$this->data = $data;
+	}
 
-		return $data;
+	public function setSettings($addonName)
+	{
+		$settings = Registry::get('addons.' . $addonName);
+		$settings = is_array($settings) ? $settings : array();
+		$scheme = SchemesManager::getScheme($addonName);
+		if (!empty($scheme)) {
+			if (method_exists($scheme, 'getVersion')) {
+				$settings['version'] = $scheme->getVersion();
+			}
+		}
+		$this->settings = $settings;
+
+		return $settings;
 	}
 
 	public function getErrors()
@@ -145,7 +152,7 @@ class LicenseClient
 	}
 	private function refreshToken()
 	{
-		aa('Refreshing');
+
 		if ($this->tries >= $this->maxTries) {
 			return false;
 		}
@@ -155,6 +162,7 @@ class LicenseClient
 		if (!empty($this->settings)) {
 			$data['password'] = $this->settings['password'];
 		}
+
 		$response = $this->request(LicenseClient::CONTEXT_AUTHENTICATION, $data);
 		if (!empty($response['token'])) {
 			fn_set_storage_data('helostore_token', $response['token']);
@@ -171,7 +179,6 @@ class LicenseClient
 		return false;
 	}
 
-
 	public function handleLocalRequest($request)
 	{
 		$requestedAddon = !empty($request['addon']) ? $request['addon'] : '';
@@ -185,38 +192,109 @@ class LicenseClient
 			return;
 		}
 
-		$previousSettings = Registry::get('addons.' . $addonName);
+		$this->maybeActivateLicense($addonName, true);
+	}
+
+	public function maybeActivateLicense($addonName, $conditioned = false)
+	{
+		$attempt = false;
 		$settings = Settings::instance()->getValues($addonName, Settings::ADDON_SECTION, false);
-		if (1 or $previousSettings['license'] != $settings['license']) {
-			$this->activate($addonName, $settings);
+		if ($conditioned) {
+			$previousSettings = Registry::get('addons.' . $addonName);
+			if ($previousSettings['license'] != $settings['license']) {
+				$attempt = true;
+			}
+		} else {
+			$attempt = true;
+		}
+		if ($attempt) {
+			return $this->activateLicense($addonName, $settings);
 		}
 
-
-//
-//
-//		$is_snapshot_correct = fn_check_addon_snapshot($_REQUEST['id']);
-//
-//		if (!$is_snapshot_correct) {
-//			$status = false;
-//
-//		} else {
-//			$status = fn_update_addon_status($_REQUEST['id'], $_REQUEST['status']);
-//		}
-//
-//		if ($status !== true) {
-//			Tygh::$app['ajax']->assign('return_status', $status);
-//		}
-//		Registry::clearCachedKeyValues();
+		return false;
 	}
-
-	public function activate($addonName, $settings)
+	public function activateLicense($addonName, $settings)
 	{
-		$data = $this->getData($addonName);
+		$this->setData($addonName);
+		$data = $this->getData();
 		$data['product']['license'] = $settings['license'];
 		$response = $this->request(LicenseClient::CONTEXT_ACTIVATE, $data);
-		aa($response,1);
-		$status = 'D';
+		$code = isset($response['code']) ? intval($response['code']) : -1;
+		$message = !empty($response['message']) ? $response['message'] : '';
+
+		if (empty($message)) {
+			$message = json_encode($response);
+			fn_set_notification('E', __('unknown_error'), $message);
+		} else {
+			if ($code == 0 || $code == 200) {
+				fn_set_notification('S', __('well_done'), $message);
+			} else {
+				fn_set_notification('E', __('error'), $message . ' (' . $code . ')');
+			}
+		}
+//		define('ADLS_SKIP_NOTIFICATION', true);
+
+		return ($code == 0 || $code == 200);
+
 	}
+	public function deactivateLicense($addonName)
+	{
+		$this->setData($addonName);
+		$data = $this->getData();
+		$data['product']['license'] = $this->settings['license'];
+		$response = $this->request(LicenseClient::CONTEXT_DEACTIVATE, $data);
+		$code = isset($response['code']) ? intval($response['code']) : -1;
+		$message = !empty($response['message']) ? $response['message'] : '';
+
+		if ($code == 0 || $code == 200) {
+			if ($message) {
+				fn_set_notification('S', __('well_done'), $message);
+			}
+		} else {
+			fn_set_notification('E', __('error'), $message . ' (' . $code . ')');
+		}
+//		define('ADLS_SKIP_NOTIFICATION', true);
+
+		return ($code == 0 || $code == 200);
+
+	}
+
+	public static function inferAddonName($caller)
+	{
+		$addonName = '';
+		if (!empty($caller) && !empty($caller['file'])) {
+			// ughhh, workaround to handle symlinks!
+			$callerPath = str_replace(array('\\', '/'), '/', $caller['file']);
+			$relativePath = substr($callerPath, strrpos($callerPath, '/app/') + 1);
+			$dirs = explode('/', $relativePath);
+			array_shift($dirs);
+			array_shift($dirs);
+			$addonName = array_shift($dirs);
+		}
+
+		return $addonName;
+	}
+	public static function activate()
+	{
+		$trace = debug_backtrace(false);
+		$caller = array_shift($trace);
+		$addonName = self::inferAddonName($caller);
+
+		$client = new LicenseClient();
+		$client->setSettings($addonName);
+		return $client->maybeActivateLicense($addonName);
+	}
+	public static function deactivate()
+	{
+		$trace = debug_backtrace(false);
+		$caller = array_shift($trace);
+		$addonName = self::inferAddonName($caller);
+
+		$client = new LicenseClient();
+		$client->setSettings($addonName);
+		return $client->deactivateLicense($addonName);
+	}
+
 }
 
 endif;
