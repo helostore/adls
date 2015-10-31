@@ -18,6 +18,7 @@
                 `updated_at`  datetime NOT NULL ,
                 `license_key`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `usage_status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 PRIMARY KEY (`license_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>

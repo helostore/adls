@@ -40,6 +40,7 @@ class LicenseManager extends Singleton
 			'updated_at' => $now,
 			'license_key' => $key,
 			'status' => License::STATUS_ACTIVE,
+			'usage_status' => License::USAGE_STATUS_INACTIVE
 		);
 
 		$result = db_query('INSERT INTO ?:adls_licenses ?e', $license);
@@ -54,7 +55,6 @@ class LicenseManager extends Singleton
 
 	public function getLicenseByKey($key) {
 		return db_get_row('SELECT * FROM ?:adls_licenses WHERE license_key = ?i', $key);
-
 	}
 	public function generateUniqueKey() {
 		static $tries = 0;
@@ -98,4 +98,50 @@ class LicenseManager extends Singleton
 		return db_get_row('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
 	}
 
+	public function getLicenses($params)
+	{
+		$conditions = array();
+		$joins = array();
+
+		if (!empty($params['domain'])) {
+			$joins[] = db_quote('LEFT JOIN ?:adls_license_domains AS ald ON ald.license_id = al.license_id');
+			$conditions[] = db_quote('ald.domain = ?s', $params['domain']);
+		}
+
+		if (!empty($params['license'])) {
+			$joins[] = db_quote('LEFT JOIN ?:users AS u ON u.license_id = al.license_id');
+			$conditions[] = db_quote('ald.domain = ?s', $params['domain']);
+		}
+
+		if (!empty($params['product'])) {
+			$joins[] = db_quote('LEFT JOIN ?:products AS p ON p.product_id = al.product_id');
+			$conditions[] = db_quote('p.adls_addon_id = ?s', $params['product']);
+		}
+
+
+		$joins = !empty($joins) ?  implode("\n", $joins) : '';
+		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+
+		$query = db_quote('
+			SELECT
+				al.*
+			FROM ?:adls_licenses AS al
+			' . $joins . '
+			' . $conditions . '
+		');
+		$items = db_get_array($query);
+
+		return $items;
+	}
+
+	public function activateLicense($licenseId)
+	{
+		$update = array(
+			'status' => License::USAGE_STATUS_ACTIVATED
+		);
+		$result = db_query('UPDATE ?:adls_licenses SET ?u WHERE license_id = ?i', $update, $licenseId);
+
+
+		return true;
+	}
 }

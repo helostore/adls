@@ -12,13 +12,25 @@
  * @version    $Id$
  */
 
-namespace HeloStore\ADLS;
+use HeloStore\ADLS\LicenseServer;
 
+if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-class License
-{
-	const STATUS_ACTIVE = 'A';
-	const STATUS_DISABLED = 'D';
-	const USAGE_STATUS_ACTIVATED = 'A';
-	const USAGE_STATUS_INACTIVE = 'I';
+$response = array();
+
+try {
+	$app = new LicenseServer();
+	$response = $app->handleRequest($_REQUEST);
+
+} catch (\Exception $e) {
+	$response['code'] = $e->getCode();
+	$response['message'] = $e->getMessage();
+	$response['request'] = $_REQUEST;
+	$response['trace'] = $e->getTraceAsString();
 }
+
+$response = json_encode($response);
+
+echo $response;
+
+exit;

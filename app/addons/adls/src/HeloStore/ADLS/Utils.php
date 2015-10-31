@@ -22,8 +22,10 @@ class Utils
 		self::shuffle($chars);
 		$array = array_slice($chars, 0, $length);
 		$string = implode('', $array);
-		$string = chunk_split($string, $groupLength, '-');
-		$string = trim($string, '-');
+		if (!empty($groupLength)) {
+			$string = chunk_split($string, $groupLength, '-');
+			$string = trim($string, '-');
+		}
 
 		return $string;
 	}
