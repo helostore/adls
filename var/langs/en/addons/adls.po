@@ -1,0 +1,13 @@
+msgid ""
+msgstr "Project-Id-Version: tygh"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US"
+
+msgctxt "Addons::name::adls"
+msgid "Application Distribution License System | HELOstore.com"
+msgstr "Application Distribution License System | HELOstore.com"
+
+msgctxt "Addons::description::adls"
+msgid "Manages your digital licenses"
+msgstr "Manages your digital licenses"
