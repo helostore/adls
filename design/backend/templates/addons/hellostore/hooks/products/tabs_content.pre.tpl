@@ -5,10 +5,28 @@
 		<div class="control-group">
 			<label class="control-label" for="product_weight">{__("adls.addons")}:</label>
 			<div class="controls">
-				<select>
+				<select name="product_data[adls_addon_id]">
 					<option></option>
 					{foreach from=$adls_addons item="addon" key="id"}
-						<option value="{$id}">{$addon.name} {$addon.version}</option>
+						{$selected = ''}
+						{if !empty($product_data) && $product_data.adls_addon_id == $id}
+							{$selected = 'selected="selected"'}
+						{/if}
+						<option value="{$id}" {$selected}>{$addon.name} {$addon.version}</option>
+					{/foreach}
+				</select>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="product_weight">{__("adls.product_type")}:</label>
+			<div class="controls">
+				<select name="product_data[product_type]">
+					{foreach from=$adls_product_types item="label" key="key"}
+						{$selected = ''}
+						{if !empty($product_data) && $product_data.product_type == $key}
+							{$selected = 'selected="selected"'}
+						{/if}
+						<option value="{$key}" {$selected}>{$label}</option>
 					{/foreach}
 				</select>
 			</div>
