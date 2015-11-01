@@ -19,3 +19,7 @@ msgstr "Copy to clipboard"
 msgctxt "Languages::adls.license"
 msgid "adls.license"
 msgstr "License key"
+
+msgctxt "Languages::adls"
+msgid "ADLS"
+msgstr "ADLS"
