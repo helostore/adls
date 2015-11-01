@@ -224,7 +224,7 @@ class LicenseClient
 
 		if (empty($message)) {
 			$message = json_encode($response);
-			fn_set_notification('E', __('unknown_error'), $message);
+			fn_set_notification('E', __('unknown_error'), json_encode($response));
 		} else {
 			if ($code == 0 || $code == 200) {
 				fn_set_notification('S', __('well_done'), $message);
