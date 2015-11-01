@@ -24,4 +24,5 @@ define('ADLS_PRODUCT_TYPE_THEME', 'T');
 fn_register_hooks(
 	'change_order_status'
 	, 'get_product_options'
+	, 'get_order_info'
 );

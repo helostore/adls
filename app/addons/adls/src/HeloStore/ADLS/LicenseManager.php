@@ -117,6 +117,12 @@ class LicenseManager extends Singleton
 			$joins[] = db_quote('LEFT JOIN ?:products AS p ON p.product_id = al.product_id');
 			$conditions[] = db_quote('p.adls_addon_id = ?s', $params['product']);
 		}
+		if (!empty($params['product_id'])) {
+			$conditions[] = db_quote('al.product_id = ?i', $params['product_id']);
+		}
+		if (!empty($params['order_id'])) {
+			$conditions[] = db_quote('al.order_id = ?i', $params['order_id']);
+		}
 
 
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
@@ -129,9 +135,24 @@ class LicenseManager extends Singleton
 			' . $joins . '
 			' . $conditions . '
 		');
-		$items = db_get_array($query);
+		if (!empty($params['single'])) {
+			$items = db_get_row($query);
+		} else {
+			$items = db_get_array($query);
+		}
 
 		return $items;
+	}
+	public function getOrderLicense($orderId, $productId)
+	{
+		$params = array(
+			'order_id' => $orderId,
+			'product_id' => $productId,
+			'single' => true
+		);
+		$license = $this->getLicenses($params);
+
+		return $license;
 	}
 
 	public function isActivateLicense($licenseId, $domain = '')

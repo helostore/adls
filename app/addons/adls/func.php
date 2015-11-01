@@ -32,6 +32,16 @@ function fn_adls_change_order_status($status_to, $status_from, $order_info, $for
 		}
 	}
 }
+
+function fn_adls_get_order_info(&$order, $additional_data)
+{
+	foreach ($order['products'] as $i => &$product) {
+		if (fn_is_adls_product($product)) {
+			$product['license'] = LicenseManager::instance()->getOrderLicense($order['order_id'], $product['product_id']);
+		}
+	}
+	unset($product);
+}
 /* /Hooks */
 
 function fn_adls_process_order($order_info)
