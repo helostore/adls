@@ -78,11 +78,11 @@ class LicenseClient
 		}
 
 		$this->messages[] = 'Requesting: '.$context;
-		$protocol = (defined('DEVELOPMENT') ? 'http' : 'https');
-		$url = $protocol . '://' . (defined('WS_DEBUG') ? 'locale' : '') . self::API_ENDPOINT . '.' . $context;
+		$protocol = (defined('DEVELOPMENT') ? 'https' : 'https');
+		$url = $protocol . '://' . (defined('WS_DEBUG') ? '' : '') . self::API_ENDPOINT . '.' . $context;
 		$data['context'] = $context;
 
-		$response = Http::get($url, $data);
+		$response = $this->httpRequest($url, $data);
 
 		$_tmp = json_decode($response, true);
 		if (is_array($_tmp)) {
@@ -293,6 +293,44 @@ class LicenseClient
 		$client = new LicenseClient();
 		$client->setSettings($addonName);
 		return $client->deactivateLicense($addonName);
+	}
+
+
+	public function httpRequest($url, $data, $extra = array())
+	{
+		$ch = Http::get($url, $data, array('return_handler' => true));
+		curl_setopt($ch, CURLOPT_SSL_CIPHER_LIST, 'ecdhe_ecdsa_aes_128_gcm_sha_256');
+		$content = curl_exec($ch);
+		$errno = curl_errno($ch);
+		$error = curl_error($ch);
+
+		curl_close($ch);
+
+		if (!empty($content)) {
+			list($headers, $content) = self::_parseContent($content);
+//			$method = 'get';
+//			list($headers, $content) = self::_processHeadersRedirect($method, $url, $extra, $content);
+		}
+
+		if (!empty($error)) {
+			$this->errors[] = $error . ' (' . $errno . ')';
+		}
+
+		return $content;
+	}
+	/**
+	 * Parse response contents to split headers
+	 * @param  string $content response contents
+	 * @return array
+	 */
+	protected static function _parseContent($content)
+	{
+		$_headers = '';
+		while (strpos(ltrim($content), 'HTTP/1') === 0) {
+			list($_headers, $content) = preg_split("/(\r?\n){2}/", $content, 2);
+		}
+
+		return array($_headers, $content);
 	}
 
 }
