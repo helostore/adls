@@ -3,7 +3,7 @@
 	<div id="acc_adls" class="collapsed in">
 
 		<div class="control-group">
-			<label class="control-label" for="product_weight">{__("adls.addons")}:</label>
+			<label class="control-label" for="product_weight">{__("adls.addon")}:</label>
 			<div class="controls">
 				<select name="product_data[adls_addon_id]">
 					<option></option>

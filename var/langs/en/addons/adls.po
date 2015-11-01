@@ -21,5 +21,17 @@ msgid "adls.license"
 msgstr "License key"
 
 msgctxt "Languages::adls"
-msgid "ADLS"
+msgid "adls"
 msgstr "ADLS"
+
+msgctxt "Languages::adls.product_option_type"
+msgid "product_option_type"
+msgstr "ADLS option type"
+
+msgctxt "Languages::adls.product_type"
+msgid "product_type"
+msgstr "Product type"
+
+msgctxt "Languages::adls.addon"
+msgid "addon"
+msgstr "Add-on"
