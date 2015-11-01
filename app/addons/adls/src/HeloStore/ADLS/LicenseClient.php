@@ -32,7 +32,7 @@ class LicenseClient
 	const CONTEXT_AUTHENTICATION = 'authentication';
 	const CONTEXT_ACTIVATE = 'activate';
 	const CONTEXT_DEACTIVATE = 'deactivate';
-	const API_ENDPOINT = 'local.helostore.com/index.php?dispatch=adls_api';
+	const API_ENDPOINT = 'helostore.com/index.php?dispatch=adls_api';
 
 	const ERROR_INVALID_TOKEN = 400;
 	const ERROR_MISSING_TOKEN = 401;
@@ -79,7 +79,7 @@ class LicenseClient
 
 		$this->messages[] = 'Requesting: '.$context;
 		$protocol = (defined('DEVELOPMENT') ? 'http' : 'https');
-		$url = $protocol . '://' . self::API_ENDPOINT . '.' . $context;
+		$url = $protocol . '://' . (defined('WS_DEBUG') ? 'locale' : '') . self::API_ENDPOINT . '.' . $context;
 		$data['context'] = $context;
 
 		$response = Http::get($url, $data);
