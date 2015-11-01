@@ -15,3 +15,7 @@ msgstr "Manages your digital licenses"
 msgctxt "Languages::adls.copy_to_clipboard"
 msgid "adls.copy_to_clipboard"
 msgstr "Copy to clipboard"
+
+msgctxt "Languages::adls.license"
+msgid "adls.license"
+msgstr "License key"
