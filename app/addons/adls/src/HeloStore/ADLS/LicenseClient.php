@@ -22,6 +22,8 @@ use Tygh\Registry;
 use Tygh\Settings;
 
 
+
+
 if (!class_exists('\\HeloStore\\ADLS\\LicenseClient', true)) :
 
 	class LicenseClient
