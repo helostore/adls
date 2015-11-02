@@ -16,16 +16,24 @@ use HeloStore\ADLS\LicenseServer;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
+
+$app = new LicenseServer();
+
 $response = array();
 
 try {
-	$app = new LicenseServer();
+
 	$response = $app->handleRequest($_REQUEST);
 
 } catch (\Exception $e) {
 	$response['code'] = $e->getCode();
 	$response['message'] = $e->getMessage();
 	$response['request'] = $_REQUEST;
+	$response['trace'] = $e->getTraceAsString();
+}
+if (defined('WS_DEBUG_ALWAYS')) {
+	$response['request'] = $_REQUEST;
+	$e = new \Exception();
 	$response['trace'] = $e->getTraceAsString();
 }
 

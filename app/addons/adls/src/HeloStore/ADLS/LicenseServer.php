@@ -20,13 +20,9 @@ use Tygh\Http;
 
 class LicenseServer
 {
-
 	public function __construct()
 	{
-
-
 	}
-
 
 	public function handleRequest($request)
 	{
@@ -47,9 +43,6 @@ class LicenseServer
 				$response = $this->deactivate($request);
 			}
 		}
-
-
-
 
 		return $response;
 	}
@@ -103,7 +96,11 @@ class LicenseServer
 
 	public function authorize($request)
 	{
-		$vars = $this->requireRequestVariables($request, array('token', 'server.hostname' ,'email'));
+		$vars = $this->requireRequestVariables($request, array(
+			'email',
+			'token',
+			'server.hostname'
+		));
 
 		$userInfo = db_get_row('SELECT user_id, email, password, last_login FROM ?:users WHERE email = ?s', $vars['email'], 'C');
 		if (empty($userInfo)) {
