@@ -61,7 +61,7 @@ class LicenseServer
 
 		if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
 			$response['code'] = 200;
-			$response['message'] = 'License is already activated for specified domain';
+			$response['message'] = 'License is already activated for specified domain.';
 		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
 			throw new \Exception('Unable to activate license for specified domain', LicenseClient::ERROR_INVALID_TOKEN);
 		} else {
