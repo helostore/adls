@@ -35,6 +35,14 @@ class LicenseServer
 		$context = !empty($request['context']) ? $request['context'] : '';
 		if ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
 			$response = $this->authenticate($request);
+		} else if ($context == LicenseClient::CONTEXT_INSTALL) {
+//				$response = $this->authenticate($request);
+			// @TODO log install
+			$response = array(
+				'code' => 0,
+				'message' => '',
+			);
+
 		} else if ($this->authorize($request)) {
 			if ($context == LicenseClient::CONTEXT_ACTIVATE) {
 				$response = $this->activate($request);
@@ -66,7 +74,7 @@ class LicenseServer
 			throw new \Exception('Unable to activate license for specified domain', LicenseClient::ERROR_INVALID_TOKEN);
 		} else {
 			$response['code'] = 0;
-			$response['message'] = 'Your license is now active!';
+			$response['message'] = 'Your license is now <b>active</b>!';
 		}
 
 		return $response;
