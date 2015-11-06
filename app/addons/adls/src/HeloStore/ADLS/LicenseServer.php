@@ -28,7 +28,11 @@ class LicenseServer
 		);
 
 		$context = !empty($request['context']) ? $request['context'] : '';
-		if ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
+		if ($context == LicenseClient::CONTEXT_UPDATE_CHECK) {
+			$response = $this->checkUpdates($request);
+		} else if ($context == LicenseClient::CONTEXT_UPDATE_REQUEST) {
+			$response = $this->updateRequest($request);
+		} else if ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
 			$response = $this->authenticate($request);
 		} else if ($this->authorize($request)) {
 			if ($context == LicenseClient::CONTEXT_ACTIVATE) {
@@ -177,7 +181,6 @@ class LicenseServer
 		}
 
 		$token = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'], $userInfo['last_login']);
-
 		$response = array(
 			'code' => LicenseClient::CODE_SUCCESS,
 			'token' => $token,
@@ -201,6 +204,42 @@ class LicenseServer
 		$token = hash('sha512', $email . $challengeHash . $lastTokenDate);
 
 		return $token;
+	}
+
+	public function checkUpdates($request)
+	{
+		$response = array(
+			'code' => LicenseClient::CODE_SUCCESS,
+		);
+		if (empty($request) || empty($request['products'])) {
+			return $response;
+		}
+		$customerProducts = $request['products'];
+		$productManager = ProductManager::instance();
+		$storeProducts = $productManager->getStoreProducts();
+		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts);
+
+		return $response;
+	}
+
+	public function updateRequest($request)
+	{
+		$response = array(
+			'code' => LicenseClient::CODE_SUCCESS,
+		);
+		if (empty($request) || empty($request['products'])) {
+			return $response;
+		}
+		$customerProducts = $request['products'];
+		$productManager = ProductManager::instance();
+
+//		aa($request);
+		$productManager->validateUpdateRequest($customerProducts);
+
+		$storeProducts = $productManager->getStoreProducts();
+		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts);
+
+		return $response;
 	}
 
 }

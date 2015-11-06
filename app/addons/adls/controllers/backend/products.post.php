@@ -13,6 +13,7 @@
  */
 
 use HeloStore\ADLS\Addons\SchemesManager;
+use HeloStore\ADLS\ProductManager;
 use Tygh\Registry;
 use Tygh\Tygh;
 
@@ -30,21 +31,8 @@ if ($mode == 'update') {
         'js' => true
     ));
 
-	$params = $_REQUEST;
-	list($allItems, $search) = fn_get_addons($params);
-	$addOns = array();
-
-	foreach ($allItems as $name => $item) {
-		$scheme = SchemesManager::getSchemeExt($name);
-		if (empty($scheme)) {
-			continue;
-		}
-
-		if (method_exists($scheme, 'hasAuthor') && $scheme->hasAuthor(ADLS_AUTHOR_NAME)) {
-			$item['version'] = $scheme->getVersion();
-			$addOns[$name] = $item;
-		}
-	}
+	$manager = ProductManager::instance();
+	$products = $manager->getStoreProducts();
 
 	// product type
 	$types = array(
@@ -54,6 +42,6 @@ if ($mode == 'update') {
 		ADLS_PRODUCT_TYPE_THEME => 'Theme'
 	);
 
-	$view->assign('adls_addons', $addOns);
+	$view->assign('adls_addons', $products);
 	$view->assign('adls_product_types', $types);
 }
