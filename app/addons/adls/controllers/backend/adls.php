@@ -13,6 +13,7 @@
  */
 
 use HeloStore\ADLS\LicenseManager;
+use HeloStore\ADLS\LicenseServer;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -23,14 +24,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'test') {
-	$manager = LicenseManager::instance();
 
-	$productId = 2;
-	$orderId = 15;
-	$userId = 2;
+	$server = new LicenseServer();
 
-	$order_info = fn_get_order_info($orderId);
-	fn_adls_process_order($order_info);
+//	$server->checkUpdates(array (
+	$server->updateRequest(array (
+		'dispatch' => 'adls_api.update_check',
+		'server' =>
+			array (
+				'hostname' => 'local.helostore.com',
+				'ip' => '127.0.0.24',
+				'port' => '80',
+			),
+		'platform' =>
+			array (
+				'name' => 'CS-Cart',
+				'version' => '4.3.4',
+				'edition' => 'ULTIMATE',
+			),
+		'language' => 'en',
+		'products' =>
+			array (
+				'autoimage_lite' =>
+					array (
+						'email' => 'sergiu@ophmisu.com',
+						'password' => 'curacao',
+						'license' => 'LEK7-N42B-M9HW-TY5P',
+						'info' => '',
+						'version' => '0.1.1',
+						'name' => 'AutoImage Lite',
+						'code' => 'autoimage_lite',
+					),
+				'developer' =>
+					array (
+						'version' => '0.1',
+						'name' => 'Developer Tools',
+						'code' => 'developer',
+					),
+				'enhance' =>
+					array (
+						'version' => '0.1',
+						'name' => '',
+						'code' => 'enhance',
+					),
+				'sidekick' =>
+					array (
+						'version' => '0.1',
+						'name' => 'Sidekick',
+						'code' => 'sidekick',
+					),
+			),
+		'context' => 'update_check',
+	));
+//	$manager = LicenseManager::instance();
+//
+//	$productId = 2;
+//	$orderId = 15;
+//	$userId = 2;
+//
+//	$order_info = fn_get_order_info($orderId);
+//	fn_adls_process_order($order_info);
 
 
 
