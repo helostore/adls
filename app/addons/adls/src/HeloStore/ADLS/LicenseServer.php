@@ -12,11 +12,7 @@
  * @version    $Id$
  */
 
-
 namespace HeloStore\ADLS;
-
-
-use Tygh\Http;
 
 class LicenseServer
 {
@@ -27,29 +23,26 @@ class LicenseServer
 	public function handleRequest($request)
 	{
 		$response = array(
-			'code' => -1,
+			'code' => LicenseClient::CODE_ERROR_ALIEN,
 			'message' => '99 problems',
-			'request' => $request
 		);
 
 		$context = !empty($request['context']) ? $request['context'] : '';
 		if ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
 			$response = $this->authenticate($request);
-		} else if ($context == LicenseClient::CONTEXT_INSTALL) {
-//				$response = $this->authenticate($request);
-			// @TODO log install
-			$response = array(
-				'code' => 0,
-				'message' => '',
-			);
-
 		} else if ($this->authorize($request)) {
 			if ($context == LicenseClient::CONTEXT_ACTIVATE) {
 				$response = $this->activate($request);
 			}
-			if ($context == LicenseClient::CONTEXT_DEACTIVATE) {
+			if ($context == LicenseClient::CONTEXT_DEACTIVATE || $context == LicenseClient::CONTEXT_UNINSTALL) {
 				$response = $this->deactivate($request);
 			}
+		} else {
+			$response = array(
+				'code' => LicenseClient::CODE_SUCCESS,
+				'message' => '',
+			);
+			// log installs/uninstalls/everything
 		}
 
 		return $response;
@@ -57,23 +50,23 @@ class LicenseServer
 
 	public function activate($request)
 	{
-		$vars = $this->requireRequestVariables($request, array('product.license', 'server.hostname' ,'email'));
+		$vars = $this->requireRequestVariables($request, array('product.license', 'server.hostname','email'));
 		$response = array();
 		$manager = LicenseManager::instance();
 
 		$license = $manager->getLicenseByKey($vars['product.license']);
 
 		if (empty($license)) {
-			throw new \Exception('Invalid license or domain', LicenseClient::ERROR_INVALID_TOKEN);
+			throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
 		}
 
 		if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
-			$response['code'] = 200;
+			$response['code'] = LicenseClient::CODE_SUCCESS;
 			$response['message'] = 'License is already activated for specified domain.';
 		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
-			throw new \Exception('Unable to activate license for specified domain', LicenseClient::ERROR_INVALID_TOKEN);
+			throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_TOKEN);
 		} else {
-			$response['code'] = 0;
+			$response['code'] = LicenseClient::CODE_SUCCESS;
 			$response['message'] = 'Your license is now <b>active</b>!';
 		}
 
@@ -88,7 +81,7 @@ class LicenseServer
 		$license = $manager->getLicenseByKey($vars['product.license']);
 
 		$response = array();
-		$response['code'] = 0;
+		$response['code'] = LicenseClient::CODE_SUCCESS;
 		$response['message'] = '';
 		if (empty($license)) {
 			return $response;
@@ -112,11 +105,11 @@ class LicenseServer
 
 		$userInfo = db_get_row('SELECT user_id, email, password, last_login FROM ?:users WHERE email = ?s', $vars['email'], 'C');
 		if (empty($userInfo)) {
-			throw new \Exception('I cannot find you in my records. Please use your customer email at HELOstore.', 430);
+			throw new \Exception('I cannot find you in my records. Please use your customer email at HELOstore.', LicenseClient::CODE_ERROR_INVALID_CUSTOMER_EMAIL);
 		}
 		$challengeToken = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'], $userInfo['last_login']);
 		if ($challengeToken != $vars['token']) {
-			throw new \Exception('Invalid or expired token', LicenseClient::ERROR_INVALID_TOKEN);
+			throw new \Exception('Invalid or expired token', LicenseClient::CODE_ERROR_INVALID_TOKEN);
 		}
 
 		return true;
@@ -153,7 +146,17 @@ class LicenseServer
 			if ($pass) {
 				$vars[$vk] = $b === null ? $request[$a] : $request[$a][$b];
 			} else {
-				throw new \Exception('Your ' . $key . ' is totally missing, sorry mate.', 405);
+				static $codes = array(
+					'email' => LicenseClient::CODE_ERROR_MISSING_EMAIL,
+					'password' => LicenseClient::CODE_ERROR_MISSING_PASSWORD,
+					'product.license' => LicenseClient::CODE_ERROR_MISSING_LICENSE,
+					'server.hostname' => LicenseClient::CODE_ERROR_MISSING_DOMAIN,
+					'token' => LicenseClient::CODE_ERROR_MISSING_TOKEN
+				);
+				$code = isset($codes[$key]) ? $codes[$key] : LicenseClient::CODE_ERROR_ALIEN;
+				$codeName = LicenseClient::getCodeName($code);
+
+				throw new \Exception(__($codeName), $code);
 			}
 		}
 
@@ -165,18 +168,18 @@ class LicenseServer
 
 		$userInfo = db_get_row('SELECT user_id, email, password, salt, last_login FROM ?:users WHERE email = ?s LIMIT 0,1', $vars['email']);
 		if (empty($userInfo)) {
-			throw new \Exception('Your email/password combination is incorrect, sorry mate.', 410);
+			throw new \Exception('Your email/password combination is incorrect, sorry mate.', LicenseClient::CODE_ERROR_INVALID_CREDENTIALS_COMBINATION);
 		}
 
 		$challengeHash = fn_generate_salted_password($vars['password'], $userInfo['salt']);
 		if ($challengeHash != $userInfo['password']) {
-			throw new \Exception('Your email/password combination is incorrect, sorry matey.', 410);
+			throw new \Exception('Your email/password combination is incorrect, sorry matey.', LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
 		}
 
 		$token = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'], $userInfo['last_login']);
 
 		$response = array(
-			'code' => 0,
+			'code' => LicenseClient::CODE_SUCCESS,
 			'token' => $token,
 		);
 
