@@ -30,16 +30,17 @@ class LicenseServer
 		$context = !empty($request['context']) ? $request['context'] : '';
 		if ($context == LicenseClient::CONTEXT_UPDATE_CHECK) {
 			$response = $this->checkUpdates($request);
-		} else if ($context == LicenseClient::CONTEXT_UPDATE_REQUEST) {
-			$response = $this->updateRequest($request);
 		} else if ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
 			$response = $this->authenticate($request);
 		} else if ($this->authorize($request)) {
 			if ($context == LicenseClient::CONTEXT_ACTIVATE) {
 				$response = $this->activate($request);
-			}
-			if ($context == LicenseClient::CONTEXT_DEACTIVATE || $context == LicenseClient::CONTEXT_UNINSTALL) {
+			} else if ($context == LicenseClient::CONTEXT_DEACTIVATE || $context == LicenseClient::CONTEXT_UNINSTALL) {
 				$response = $this->deactivate($request);
+			} else if ($context == LicenseClient::CONTEXT_UPDATE_REQUEST) {
+				$response = $this->updateRequest($request);
+			} else if ($context == LicenseClient::CONTEXT_UPDATE_DOWNLOAD) {
+				$response = $this->downloadRequest($request);
 			}
 		} else {
 			$response = array(
@@ -121,6 +122,18 @@ class LicenseServer
 
 	public function requireRequestVariables($request, $keys)
 	{
+		// if main credentials are missing, seek them within products settings
+		if (!empty($request['products']) && (empty($request['email']) || empty($request['password']))) {
+			foreach ($request['products'] as $product) {
+				if (!empty($product['email']) && !empty($product['password'])) {
+					$request['email'] = $product['email'];
+					$request['password'] = $product['password'];
+					break;
+				}
+			}
+		}
+		ws_log_file($request, 'var/log/debug.log');
+
 		$vars = array();
 		foreach ($keys as $key) {
 			$a = null;
@@ -233,13 +246,24 @@ class LicenseServer
 		$customerProducts = $request['products'];
 		$productManager = ProductManager::instance();
 
-//		aa($request);
 		$productManager->validateUpdateRequest($customerProducts);
 
 		$storeProducts = $productManager->getStoreProducts();
-		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts);
+		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, true);
 
 		return $response;
+	}
+
+	public function downloadRequest($request)
+	{
+		$response = array(
+			'code' => LicenseClient::CODE_ERROR_ALIEN,
+		);
+		if (empty($request) || empty($request['product'])) {
+			return $response;
+		}
+		$customerProduct = $request['product'];
+		$path = DIR_ROOT . '/var/releases/';
 	}
 
 }
