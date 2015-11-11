@@ -39,7 +39,7 @@ class ProductManager extends Singleton
 		return $products;
 	}
 
-	public function checkUpdates($customerProducts, $storeProducts)
+	public function checkUpdates($customerProducts, $storeProducts, $attachUpdateInfo = false)
 	{
 		$updates = array();
 		foreach ($customerProducts as $productCode => $customerProduct) {
@@ -53,13 +53,17 @@ class ProductManager extends Singleton
 			if ($productCode == 'autoimage_lite') {
 				$storeVersion = 1;
 			}
+			// @TODO: check update compatibility with platform (CS-Cart)!!!!
 			$comparison = version_compare($storeVersion, $customerVersion);
 
 			if ($comparison === 1) {
 				// our store version is newer
 				$updates[$productCode] = array(
 					'version' => $storeVersion,
+					'code' => $productCode,
 				);
+				if ($attachUpdateInfo) {
+				}
 			} elseif ($comparison === -1) {
 				// customer version is newer !? product alteration?!
 			} elseif ($comparison === 0) {
@@ -72,8 +76,15 @@ class ProductManager extends Singleton
 		return $updates;
 	}
 
-	public function validateUpdateRequest($customerProducts)
+	public function validateUpdateRequest(&$customerProducts)
 	{
+		foreach ($customerProducts as $i => $customerProduct) {
+			$isUpdateAllowed = true;
+			if ($isUpdateAllowed) {
 
+			} else {
+				unset($customerProducts[$i]);
+			}
+		}
 	}
-} 
+}

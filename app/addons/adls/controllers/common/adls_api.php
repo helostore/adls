@@ -30,10 +30,10 @@ try {
 } catch (\Exception $e) {
 	$response['code'] = $e->getCode();
 	$response['message'] = $e->getMessage();
-//	if (defined('WS_DEBUG')) {
-//		$response['request'] = $_REQUEST;
-//		$response['trace'] = $e->getTraceAsString();
-//	}
+	if (defined('WS_DEBUG')) {
+		$response['request'] = $_REQUEST;
+		$response['trace'] = $e->getTraceAsString();
+	}
 }
 
 if (function_exists('ws_log_file')) {
