@@ -40,6 +40,30 @@
         <item for="___uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
 
     </queries>
+    <settings edition_type="ROOT">
+        <sections>
+            <section id="general">
+                <items>
+                    <item id="email">
+                        <type>input</type>
+                    </item>
+                    <item id="password">
+                        <type>password</type>
+                    </item>
+                    <item id="info">
+                        <type>info</type>
+                        <handler>fn_sidekick_info,adls</handler>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+    <compatibility>
+        <dependencies>sidekick</dependencies>
+        <core_version>
+            <min>4.0.0</min>
+        </core_version>
+    </compatibility>
     <authors>
         <author>
             <name>HELOstore</name>
