@@ -19,7 +19,38 @@ use HeloStore\ADLS\Addons\SchemesManager;
 
 class ProductManager extends Singleton
 {
+	public function isPaidSubscription($subscriptionId)
+	{
+		return $subscriptionId == 2;
+	}
+	public function isFreeSubscription($subscriptionId)
+	{
+		return $subscriptionId == 1;
+	}
+	public function getSubscriptionPlans()
+	{
+		static $plans = array(
+			1 => 'Free',
+			2 => 'Paid',
+		);
 
+		return $plans;
+	}
+	public function getStoreProduct($productCode)
+	{
+		$products = $this->getStoreProducts();
+		$product = (isset($products[$productCode]) ? $products[$productCode] : null);
+
+		if (empty($product)) {
+			return null;
+		}
+		$data = db_get_row('SELECT product_id, adls_addon_id, adls_subscription_id FROM ?:products WHERE adls_addon_id = ?s', $productCode);
+		if (is_array($data)) {
+			$product = array_merge($product, $data);
+		}
+
+		return $product;
+	}
 	public function getStoreProducts($params = array())
 	{
 		list($allItems, ) = fn_get_addons($params);

@@ -42,6 +42,9 @@ if ($mode == 'update') {
 		ADLS_PRODUCT_TYPE_THEME => 'Theme'
 	);
 
+	$subscriptions = $manager->getSubscriptionPlans();
+
 	$view->assign('adls_addons', $products);
 	$view->assign('adls_product_types', $types);
+	$view->assign('adls_subscriptions', $subscriptions);
 }

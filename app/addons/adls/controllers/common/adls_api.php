@@ -43,6 +43,7 @@ if (function_exists('ws_log_file')) {
 		'response' => $response,
 	);
 	if (!empty($exception)) {
+		$log['exceptionMessage'] = $exception->getMessage();
 		$log['exceptionTrace'] = $exception->getTraceAsString();
 	}
 	ws_log_file($log, 'var/log/adls.log');
