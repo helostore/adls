@@ -18,7 +18,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 $app = new LicenseServer();
 $response = array();
-
+$exception = null;
 try {
 	$response = $app->handleRequest($_REQUEST);
 
@@ -30,17 +30,22 @@ try {
 } catch (\Exception $e) {
 	$response['code'] = $e->getCode();
 	$response['message'] = $e->getMessage();
-	if (defined('WS_DEBUG')) {
-		$response['request'] = $_REQUEST;
-		$response['trace'] = $e->getTraceAsString();
-	}
+	$exception = $e;
+//	if (defined('WS_DEBUG')) {
+//		$response['request'] = $_REQUEST;
+//		$response['trace'] = $e->getTraceAsString();
+//	}
 }
 
 if (function_exists('ws_log_file')) {
-	ws_log_file(array(
+	$log = array(
 		'request' => $_REQUEST,
 		'response' => $response,
-	), 'var/log/adls.log');
+	);
+	if (!empty($exception)) {
+		$log['exceptionTrace'] = $exception->getTraceAsString();
+	}
+	ws_log_file($log, 'var/log/adls.log');
 }
 
 $response = json_encode($response);

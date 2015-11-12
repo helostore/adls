@@ -50,9 +50,7 @@ class ProductManager extends Singleton
 
 			$storeVersion = !empty($storeProduct['version']) ? $storeProduct['version'] : '';
 			$customerVersion = !empty($customerProduct['version']) ? $customerProduct['version'] : '';
-			if ($productCode == 'autoimage_lite') {
-				$storeVersion = 1;
-			}
+//			if ($productCode == 'autoimage_lite') { $storeVersion = 1; }
 			// @TODO: check update compatibility with platform (CS-Cart)!!!!
 			$comparison = version_compare($storeVersion, $customerVersion);
 
