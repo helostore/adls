@@ -55,24 +55,41 @@ class LicenseServer
 
 	public function activate($request)
 	{
-		$vars = $this->requireRequestVariables($request, array('product.license', 'server.hostname','email'));
-		$response = array();
-		$manager = LicenseManager::instance();
+		$vars = $this->requireRequestVariables($request, array('server.hostname','email'));
 
-		$license = $manager->getLicenseByKey($vars['product.license']);
+		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.code')));
 
-		if (empty($license)) {
-			throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+		$productManager = ProductManager::instance();
+		$storeProduct = $productManager->getStoreProduct($vars['product.code']);
+		if (empty($storeProduct['adls_subscription_id'])) {
+			throw new \Exception('Unable to determine the subscription type of specified product', LicenseClient::CODE_ERROR_PRODUCT_SUBSCRIPTION_TYPE_NOT_FOUND);
 		}
+		$freeSubscription = $productManager->isFreeSubscription($storeProduct['adls_subscription_id']);
+		$paidSubscription = $productManager->isPaidSubscription($storeProduct['adls_subscription_id']);
 
-		if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
+		$manager = LicenseManager::instance();
+		$response = array();
+
+		if ($paidSubscription) {
+			$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
+			$license = $manager->getLicenseByKey($vars['product.license']);
+			if (empty($license)) {
+				throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+			}
+			if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
+				$response['code'] = LicenseClient::CODE_SUCCESS;
+				$response['message'] = 'License is already activated for specified domain.';
+			} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
+				throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+			} else {
+				$response['code'] = LicenseClient::CODE_SUCCESS;
+				$response['message'] = 'Your license is now <b>active</b>!';
+			}
+
+		} else if ($freeSubscription) {
 			$response['code'] = LicenseClient::CODE_SUCCESS;
-			$response['message'] = 'License is already activated for specified domain.';
-		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
-			throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_TOKEN);
-		} else {
-			$response['code'] = LicenseClient::CODE_SUCCESS;
-			$response['message'] = 'Your license is now <b>active</b>!';
+			$response['message'] = 'Your free license is now <b>active</b>!';
+
 		}
 
 		return $response;
@@ -132,7 +149,7 @@ class LicenseServer
 				}
 			}
 		}
-		ws_log_file($request, 'var/log/debug.log');
+//		ws_log_file($request, 'var/log/debug.log');
 
 		$vars = array();
 		foreach ($keys as $key) {
@@ -170,10 +187,10 @@ class LicenseServer
 					'server.hostname' => LicenseClient::CODE_ERROR_MISSING_DOMAIN,
 					'token' => LicenseClient::CODE_ERROR_MISSING_TOKEN
 				);
-				$code = isset($codes[$key]) ? $codes[$key] : LicenseClient::CODE_ERROR_ALIEN;
+				$code = isset($codes[$vk]) ? $codes[$vk] : LicenseClient::CODE_ERROR_ALIEN;
 				$codeName = LicenseClient::getCodeName($code);
 
-				throw new \Exception(__($codeName), $code);
+				throw new \Exception(__($codeName) . ' (Code not found: ' . $vk . ')', $code);
 			}
 		}
 

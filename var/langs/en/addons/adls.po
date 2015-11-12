@@ -35,3 +35,7 @@ msgstr "Product type"
 msgctxt "Languages::adls.addon"
 msgid "addon"
 msgstr "Add-on"
+
+msgctxt "Languages::adls.subscription_type"
+msgid "subscription_type"
+msgstr "Subscription type"
