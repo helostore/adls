@@ -13,12 +13,18 @@
  */
 
 use HeloStore\ADLS\LicenseServer;
+use HeloStore\ADLS\Logger;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 $app = new LicenseServer();
 $response = array();
 $exception = null;
+try {
+	Logger::instance()->add($_REQUEST, $_SERVER, Logger::TYPE_LOG, Logger::OBJECT_TYPE_REQUEST, $_SERVER['REQUEST_METHOD']);
+} catch (\Exception $e) {
+
+}
 try {
 	$response = $app->handleRequest($_REQUEST);
 
