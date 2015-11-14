@@ -134,7 +134,6 @@ class LicenseManager extends Singleton
 			$conditions[] = db_quote('al.order_id = ?i', $params['order_id']);
 		}
 
-
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
 		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
 
