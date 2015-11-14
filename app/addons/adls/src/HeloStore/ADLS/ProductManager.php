@@ -21,10 +21,16 @@ class ProductManager extends Singleton
 {
 	public function isPaidSubscription($subscriptionId)
 	{
+		if (is_array($subscriptionId)) {
+			$subscriptionId = $subscriptionId['adls_subscription_id'];
+		}
 		return $subscriptionId == 2;
 	}
 	public function isFreeSubscription($subscriptionId)
 	{
+		if (is_array($subscriptionId)) {
+			$subscriptionId = $subscriptionId['adls_subscription_id'];
+		}
 		return $subscriptionId == 1;
 	}
 	public function getSubscriptionPlans()
@@ -35,6 +41,46 @@ class ProductManager extends Singleton
 		);
 
 		return $plans;
+	}
+
+	public function getProductById($productId)
+	{
+		return $this->getProducts(array(
+			'product_id' => $productId,
+			'single' => true
+		));
+	}
+	public function getProducts($params = array())
+	{
+		$conditions = array();
+		$joins = array();
+
+		if (!empty($params['addon_id'])) {
+			$conditions[] = db_quote('p.addon_id = ?s', $params['addon_id']);
+		}
+		if (!empty($params['product_id'])) {
+			$conditions[] = db_quote('p.product_id = ?i', $params['product_id']);
+		}
+
+		$joins = !empty($joins) ?  implode("\n", $joins) : '';
+		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+
+		$query = db_quote('
+			SELECT
+				p.product_id,
+				p.adls_addon_id,
+				p.adls_subscription_id
+			FROM ?:products AS p
+			' . $joins . '
+			' . $conditions . '
+		');
+		if (!empty($params['single'])) {
+			$items = db_get_row($query);
+		} else {
+			$items = db_get_array($query);
+		}
+
+		return $items;
 	}
 	public function getStoreProduct($productCode)
 	{

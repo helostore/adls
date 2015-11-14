@@ -16,10 +16,14 @@ namespace HeloStore\ADLS;
 
 class LicenseManager extends Singleton
 {
-	public function createLicense($productId, $orderId, $userId)
+	public function existsLicense($productId, $itemId, $orderId, $userId)
 	{
-		$exists = db_get_field('SELECT license_id FROM ?:adls_licenses WHERE product_id = ?i AND order_id = ?i and user_id = ?i', $productId, $orderId, $userId);
-		if ($exists) {
+		return db_get_field('SELECT license_id FROM ?:adls_licenses WHERE product_id = ?i AND order_item_id = ?i AND order_id = ?i and user_id = ?i', $productId, $itemId, $orderId, $userId);
+	}
+	public function createLicense($productId, $itemId, $orderId, $userId)
+	{
+		$licenseId = $this->existsLicense($productId, $itemId, $orderId, $userId);
+		if (!empty($licenseId)) {
 			$this->addError('license_already_attached_to_order');
 			return false;
 		}
@@ -34,6 +38,7 @@ class LicenseManager extends Singleton
 
 		$license = array(
 			'product_id' => $productId,
+			'order_item_id' => $itemId,
 			'order_id' => $orderId,
 			'user_id' => $userId,
 			'created_at' => $now,
@@ -49,6 +54,8 @@ class LicenseManager extends Singleton
 
 	public function deleteLicense($licenseId)
 	{
+		db_query('DELETE FROM ?:adls_license_domains WHERE license_id = ?i', $licenseId);
+
 		return db_query('DELETE FROM ?:adls_licenses WHERE license_id = ?i', $licenseId);
 	}
 
@@ -120,6 +127,9 @@ class LicenseManager extends Singleton
 		if (!empty($params['product_id'])) {
 			$conditions[] = db_quote('al.product_id = ?i', $params['product_id']);
 		}
+		if (!empty($params['order_item_id'])) {
+			$conditions[] = db_quote('al.order_item_id = ?i', $params['order_item_id']);
+		}
 		if (!empty($params['order_id'])) {
 			$conditions[] = db_quote('al.order_id = ?i', $params['order_id']);
 		}
@@ -143,11 +153,21 @@ class LicenseManager extends Singleton
 
 		return $items;
 	}
-	public function getOrderLicense($orderId, $productId)
+
+	public function getOrderLicenses($orderId)
 	{
 		$params = array(
 			'order_id' => $orderId,
-			'product_id' => $productId,
+		);
+		$license = $this->getLicenses($params);
+
+		return $license;
+	}
+	public function getOrderLicense($orderId, $itemId)
+	{
+		$params = array(
+			'order_id' => $orderId,
+			'order_item_id' => $itemId,
 			'single' => true
 		);
 		$license = $this->getLicenses($params);
@@ -187,12 +207,16 @@ class LicenseManager extends Singleton
 
 		return $result;
 	}
-	public function deactivateLicense($licenseId, $domain = '')
+	public function disableLicense($licenseId, $domain = '')
 	{
-		return $this->changeLicenseStatus($licenseId, License::STATUS_INACTIVE, $domain);
+		return $this->changeLicenseStatus($licenseId, License::STATUS_DISABLED, $domain);
 	}
 	public function activateLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_ACTIVE, $domain);
+	}
+	public function inactivateLicense($licenseId, $domain = '')
+	{
+		return $this->changeLicenseStatus($licenseId, License::STATUS_INACTIVE, $domain);
 	}
 }

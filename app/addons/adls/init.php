@@ -25,4 +25,5 @@ fn_register_hooks(
 	'change_order_status'
 	, 'get_product_options'
 	, 'get_order_info'
+	, 'delete_order'
 );

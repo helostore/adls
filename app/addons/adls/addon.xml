@@ -13,6 +13,7 @@
                 `license_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `order_id`  mediumint(8) NOT NULL ,
                 `product_id`  mediumint(8) UNSIGNED NOT NULL ,
+                `order_item_id`  int(11) UNSIGNED NULL,
                 `user_id`  mediumint(8) UNSIGNED NOT NULL ,
                 `created_at`  datetime NOT NULL ,
                 `updated_at`  datetime NOT NULL ,
@@ -61,7 +62,7 @@
     <compatibility>
         <dependencies>sidekick</dependencies>
         <core_version>
-            <min>4.0.0</min>
+            <min>4.2.1</min>
         </core_version>
     </compatibility>
     <authors>

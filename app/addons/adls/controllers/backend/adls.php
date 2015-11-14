@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'test') {
-	$request = array (
+
+/*	$request = array (
 		'dispatch' => 'adls_api.update_check',
 		'server' =>
 			array (
@@ -57,7 +58,7 @@ if ($mode == 'test') {
 
 	$server = new LicenseServer();
 	$server->handleRequest($request);
-	exit;
+	exit;*/
 
 //	$server->checkUpdates(array (
 /*	$server->updateRequest(array (
