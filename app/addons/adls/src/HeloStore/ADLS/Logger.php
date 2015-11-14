@@ -104,6 +104,7 @@ class Logger extends Singleton
 			FROM ?:adls_logs AS al
 			' . $joins . '
 			' . $conditions . '
+			ORDER BY log_id DESC
 		');
 		if (!empty($params['single'])) {
 			$items = db_get_row($query);

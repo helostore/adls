@@ -15,7 +15,7 @@
 namespace HeloStore\ADLS;
 
 
-use HeloStore\ADLS\Addons\SchemesManager;
+use Tygh\Addons\SchemesManager;
 
 class ProductManager extends Singleton
 {
@@ -50,6 +50,7 @@ class ProductManager extends Singleton
 			'single' => true
 		));
 	}
+
 	public function getProducts($params = array())
 	{
 		$conditions = array();
@@ -100,15 +101,12 @@ class ProductManager extends Singleton
 	public function getStoreProducts($params = array())
 	{
 		list($allItems, ) = fn_get_addons($params);
+
 		$products = array();
 
 		foreach ($allItems as $name => $item) {
-			$scheme = SchemesManager::getSchemeExt($name);
-			if (empty($scheme)) {
-				continue;
-			}
-
-			if (method_exists($scheme, 'hasAuthor') && $scheme->hasAuthor(ADLS_AUTHOR_NAME)) {
+			$scheme = SchemesManager::getScheme($name);
+			if ($this->isOwnProduct($scheme)) {
 				$item['version'] = $scheme->getVersion();
 				$products[$name] = $item;
 			}
@@ -160,5 +158,32 @@ class ProductManager extends Singleton
 				unset($customerProducts[$i]);
 			}
 		}
+	}
+	public function isOwnProduct($productCodeOrScheme)
+	{
+		$scheme = is_string($productCodeOrScheme) ? SchemesManager::getScheme($productCodeOrScheme) : $productCodeOrScheme;
+		if (empty($scheme)) {
+			return false;
+		}
+		try {
+			// xml prop is protected. We care not. We go for it. (XmlScheme3 should have implemented getAuthors()!)
+			$a = (Array)$scheme;
+			$key = "\0*\0_xml";;
+			if (empty($a) || empty($a[$key]) || ! $a[$key] instanceof \SimpleXMLElement) {
+				return false;
+			}
+
+			$author = (Array)$a[$key]->authors->author;
+			if (empty($author) || empty($author['name']) || $author['name'] != ADLS_AUTHOR_NAME) {
+				return false;
+			}
+
+			return true;
+
+		} catch (\Exception $e) {
+			// Doing nothing, having a coffee, chilling.
+		}
+
+		return false;
 	}
 }

@@ -21,11 +21,6 @@ $app = new LicenseServer();
 $response = array();
 $exception = null;
 try {
-	Logger::instance()->log($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_REQUEST, $_SERVER['REQUEST_METHOD']);
-} catch (\Exception $e) {
-
-}
-try {
 	$response = $app->handleRequest($_REQUEST);
 
 	Logger::instance()->log($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);

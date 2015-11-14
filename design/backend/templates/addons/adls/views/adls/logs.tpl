@@ -27,7 +27,7 @@
 				{assign var="_type" value="log_type_`$log.type`"}
 				{assign var="_action" value="log_action_`$log.action`"}
 				<tr>
-					<td>{$log.id}</td>
+					<td>{$log.log_id}</td>
 					<td>{$log.type}</td>
 					<td>{$log.object_type}</td>
 					<td>{$log.object_action}</td>
