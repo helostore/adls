@@ -12,6 +12,7 @@
  * @version    $Id$
  */
 
+use HeloStore\ADLS\LicenseClient;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseServer;
 
@@ -24,11 +25,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'test') {
+	$request = array (
+		'dispatch' => 'adls_api.update_check',
+		'server' =>
+			array (
+				'hostname' => 'local.helostore.com',
+				'ip' => '127.0.0.24',
+				'port' => '80',
+			),
+		'platform' =>
+			array (
+				'name' => 'CS-Cart',
+				'version' => '4.3.4',
+				'edition' => 'ULTIMATE',
+			),
+		'language' => 'en',
+		'product' => array (
+			'email' => '***REMOVED***',
+			'password' => '***REMOVED***',
+			'license' => '***REMOVED***',
+			'info' => '',
+			'version' => '0.1.1',
+			'name' => 'AutoImage Lite',
+			'code' => 'autoimage_lite',
+		),
+		'email' => '***REMOVED***',
+		'password' => '***REMOVED***',
+		'token' => '***REMOVED***',
+		'context' => LicenseClient::CONTEXT_UPDATE_DOWNLOAD,
+	);
 
 	$server = new LicenseServer();
+	$server->handleRequest($request);
+	exit;
 
 //	$server->checkUpdates(array (
-	$server->updateRequest(array (
+/*	$server->updateRequest(array (
 		'dispatch' => 'adls_api.update_check',
 		'server' =>
 			array (
@@ -75,7 +107,7 @@ if ($mode == 'test') {
 					),
 			),
 		'context' => 'update_check',
-	));
+	));*/
 //	$manager = LicenseManager::instance();
 //
 //	$productId = 2;
