@@ -1,10 +1,15 @@
 .adls-highlight {
   position: relative;
+  display: inline-block;
   input {
-    border: 1px dashed #c3c3c3;
-    height: auto;
     padding: 10px 15px;
     vertical-align: top;
+    border: 1px dashed #c3c3c3;
+    height: auto;
+  }
+  input[type="text"]:hover,
+  input[type="text"]:focus {
+    border-color: #ea3556;
   }
   .ty-btn {
     position: relative;
@@ -17,17 +22,16 @@
     top: 0;
   }
 }
-
 .adls-license-status {
   display: block;
   margin-left: 103px;
 }
 .adls-license-status.status-i {
-  color: #71a705;
+  color: #71A705;
 }
 .adls-license-status.status-a {
-  color: #007fff;
+  color: #007FFF;
 }
 .adls-license-status.status-d {
-  color: #5a5a5a;
+  color: #5A5A5A;
 }
