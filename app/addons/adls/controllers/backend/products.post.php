@@ -12,7 +12,6 @@
  * @version    $Id$
  */
 
-use HeloStore\ADLS\Addons\SchemesManager;
 use HeloStore\ADLS\ProductManager;
 use Tygh\Registry;
 use Tygh\Tygh;
