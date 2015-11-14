@@ -38,8 +38,8 @@ function fn_adls_get_order_info(&$order, $additional_data)
 	foreach ($order['products'] as $i => &$product) {
 		if (fn_is_adls_product($product)) {
 			$storeProduct = $productManager->getProductById($product['product_id']);
+			$product['license'] = LicenseManager::instance()->getOrderLicense($order['order_id'], $product['item_id']);
 			if ($productManager->isPaidSubscription($storeProduct)) {
-				$product['license'] = LicenseManager::instance()->getOrderLicense($order['order_id'], $product['item_id']);
 			}
 		}
 	}
