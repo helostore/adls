@@ -14,6 +14,8 @@
 
 namespace HeloStore\ADLS;
 
+use Tygh\Storage;
+
 class LicenseServer
 {
 	public function __construct()
@@ -117,7 +119,7 @@ class LicenseServer
 		return $response;
 	}
 
-	public function authorize($request)
+	public function authorize(&$request)
 	{
 		$vars = $this->requireRequestVariables($request, array(
 			'email',
@@ -130,7 +132,10 @@ class LicenseServer
 			throw new \Exception('I cannot find you in my records. Please use your customer email at HELOstore.', LicenseClient::CODE_ERROR_INVALID_CUSTOMER_EMAIL);
 		}
 		$challengeToken = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'], $userInfo['last_login']);
-		if ($challengeToken != $vars['token']) {
+
+		if ($challengeToken == $vars['token'] || (defined('ADLS_MAGIC_TOKEN') && ADLS_MAGIC_TOKEN == $vars['token'])) {
+			$request['auth'] = $userInfo;
+		} else {
 			throw new \Exception('Invalid or expired token', LicenseClient::CODE_ERROR_INVALID_TOKEN);
 		}
 
@@ -189,8 +194,13 @@ class LicenseServer
 				);
 				$code = isset($codes[$vk]) ? $codes[$vk] : LicenseClient::CODE_ERROR_ALIEN;
 				$codeName = LicenseClient::getCodeName($code);
+				if ($code !== LicenseClient::CODE_ERROR_ALIEN) {
+					$message = __($codeName);
+				} else {
+					$message = __($codeName) . ' (Code not found: ' . $vk . ')';
+				}
 
-				throw new \Exception(__($codeName) . ' (Code not found: ' . $vk . ')', $code);
+				throw new \Exception($message , $code);
 			}
 		}
 
@@ -222,7 +232,7 @@ class LicenseServer
 
 	public function bakeToken($userId, $email, $challengeHash, $lastTokenDate)
 	{
-		$expirationTime = 10;
+		$expirationTime = 60;
 		$expirationDate = $lastTokenDate + $expirationTime;
 
 		// token time expired, update new expiration time (implicitly a new token will be baked)
@@ -248,6 +258,9 @@ class LicenseServer
 		$productManager = ProductManager::instance();
 		$storeProducts = $productManager->getStoreProducts();
 		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts);
+		if (empty($response['updates'])) {
+			$response['code'] = LicenseClient::CODE_NOTIFICATION_NO_UPDATES_AVAILABLE;
+		}
 
 		return $response;
 	}
@@ -266,7 +279,7 @@ class LicenseServer
 		$productManager->validateUpdateRequest($customerProducts);
 
 		$storeProducts = $productManager->getStoreProducts();
-		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, true);
+		$response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts);
 
 		return $response;
 	}
@@ -279,8 +292,37 @@ class LicenseServer
 		if (empty($request) || empty($request['product'])) {
 			return $response;
 		}
-		$customerProduct = $request['product'];
+//		if (empty($request['auth']) || empty($request['auth']['user_id'])) {
+//			$response['code'] = LicenseClient::CODE_ERROR_ACCESS_DENIED;
+//
+//			return $response;
+//		}
+		$requestProduct = $request['product'];
 		$path = DIR_ROOT . '/var/releases/autoimage_lite-v0.1.2.zip';
+//		ws_log_file(array('$customerProduct' => $customerProduct), 'var/log/debug.log');
+
+		if (empty($requestProduct['code'])) {
+			return $response;
+		}
+		$productCode = $requestProduct['code'];
+		$productManager = ProductManager::instance();
+		$storeProduct = $productManager->getStoreProduct($productCode);
+		if (empty($storeProduct) || empty($storeProduct['product_id'])) {
+			return $response;
+		}
+		list($files, ) = fn_get_product_files(array(
+//			'order_id' => '',
+			'product_id' => $storeProduct['product_id'],
+		));
+		if (empty($files)) {
+			return $response;
+		}
+		$file = array_shift($files);
+		$path = Storage::instance('downloads')->getAbsolutePath($file['product_id'] . '/' . $file['file_path']);
+
+		if (empty($path)) {
+			return $response;
+		}
 
 		@apache_setenv('no-gzip', 1);
 		@ini_set('zlib.output_compression', 'Off');

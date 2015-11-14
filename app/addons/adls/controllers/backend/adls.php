@@ -12,6 +12,7 @@
  * @version    $Id$
  */
 
+use HeloStore\ADLS\LicenseClient;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseServer;
 
@@ -24,11 +25,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'test') {
+	$request = array (
+		'dispatch' => 'adls_api.update_check',
+		'server' =>
+			array (
+				'hostname' => 'local.helostore.com',
+				'ip' => '127.0.0.24',
+				'port' => '80',
+			),
+		'platform' =>
+			array (
+				'name' => 'CS-Cart',
+				'version' => '4.3.4',
+				'edition' => 'ULTIMATE',
+			),
+		'language' => 'en',
+		'product' => array (
+			'email' => 'sergiu@ophmisu.com',
+			'password' => 'curacao',
+			'license' => 'LEK7-N42B-M9HW-TY5P',
+			'info' => '',
+			'version' => '0.1.1',
+			'name' => 'AutoImage Lite',
+			'code' => 'autoimage_lite',
+		),
+		'email' => 'sergiu@ophmisu.com',
+		'password' => 'curacao',
+		'token' => 'MAGICefeb3ead48c7d3529f91b86adc8e3a1ef31b2f1f75c69f8856463cca50af450f82f03a2829546af407cbab3adf56877106b5ebd69ffb6f2dcf48d332a69',
+		'context' => LicenseClient::CONTEXT_UPDATE_DOWNLOAD,
+	);
 
 	$server = new LicenseServer();
+	$server->handleRequest($request);
+	exit;
 
 //	$server->checkUpdates(array (
-	$server->updateRequest(array (
+/*	$server->updateRequest(array (
 		'dispatch' => 'adls_api.update_check',
 		'server' =>
 			array (
@@ -75,7 +107,7 @@ if ($mode == 'test') {
 					),
 			),
 		'context' => 'update_check',
-	));
+	));*/
 //	$manager = LicenseManager::instance();
 //
 //	$productId = 2;
