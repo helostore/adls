@@ -126,3 +126,12 @@ if ($mode == 'test') {
 if ($mode == 'manage') {
 
 }
+
+if ($mode == 'logs') {
+	$logger = \HeloStore\ADLS\Logger::instance();
+	$logs = $logger->get($_REQUEST);
+
+	\Tygh\Registry::get('view')->assign('logs', $logs);
+
+
+}

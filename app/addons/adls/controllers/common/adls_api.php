@@ -21,12 +21,14 @@ $app = new LicenseServer();
 $response = array();
 $exception = null;
 try {
-	Logger::instance()->add($_REQUEST, $_SERVER, Logger::TYPE_LOG, Logger::OBJECT_TYPE_REQUEST, $_SERVER['REQUEST_METHOD']);
+	Logger::instance()->log($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_REQUEST, $_SERVER['REQUEST_METHOD']);
 } catch (\Exception $e) {
 
 }
 try {
 	$response = $app->handleRequest($_REQUEST);
+
+	Logger::instance()->log($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);
 
 //	if (defined('WS_DEBUG')) {
 //		$response['request'] = $_REQUEST;
@@ -37,6 +39,7 @@ try {
 	$response['code'] = $e->getCode();
 	$response['message'] = $e->getMessage();
 	$exception = $e;
+	Logger::instance()->error($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $e->getMessage() . ' ' . $e->getCode(), nl2br($e->getTraceAsString()));
 //	if (defined('WS_DEBUG')) {
 //		$response['request'] = $_REQUEST;
 //		$response['trace'] = $e->getTraceAsString();
