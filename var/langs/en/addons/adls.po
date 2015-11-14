@@ -39,3 +39,19 @@ msgstr "Add-on"
 msgctxt "Languages::adls.subscription_type"
 msgid "subscription_type"
 msgstr "Subscription type"
+
+msgctxt "Languages::adls.license_status_inactive"
+msgid "license_status_inactive"
+msgstr "Inactive, ready to be used"
+
+msgctxt "Languages::adls.license_status_active"
+msgid "license_status_active"
+msgstr "Active"
+
+msgctxt "Languages::adls.license_status_disabled"
+msgid "license_status_disabled"
+msgstr "Disabled"
+
+msgctxt "Languages::adls.license_status_unknown"
+msgid "license_status_unknown"
+msgstr "Unknown"

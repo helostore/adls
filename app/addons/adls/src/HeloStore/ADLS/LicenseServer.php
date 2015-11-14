@@ -114,7 +114,7 @@ class LicenseServer
 		if (!$manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
 			return $response;
 		}
-		$manager->deactivateLicense($license['license_id'], $vars['server.hostname']);
+		$manager->inactivateLicense($license['license_id'], $vars['server.hostname']);
 
 		return $response;
 	}
