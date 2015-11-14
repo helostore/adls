@@ -33,6 +33,20 @@
             PRIMARY KEY (`domain_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
+        <item for="install">
+            CREATE TABLE `?:adls_logs` (
+                `log_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `type`  char(1) NOT NULL ,
+                `object_type`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `object_action`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `timestamp`  int(11) UNSIGNED NOT NULL ,
+                `user_id`  mediumint(8) UNSIGNED NULL ,
+                `ip`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+                `content`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+                `backtrace`  varchar(255) NULL ,
+                PRIMARY KEY (`log_id`)
+            ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
+        </item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2) NOT NULL;</item>
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64) NOT NULL;</item>
