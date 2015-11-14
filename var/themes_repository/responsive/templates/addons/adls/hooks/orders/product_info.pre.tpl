@@ -4,11 +4,12 @@
 			<label class="ty-product-options__title">{__('adls.license')}</label>
 			<span class="adls-highlight clearfix">
 				{$htmlId = "license_`$product.license.license_id`"}
-				<input value="{$product.license.license_key}" readonly="readonly" class="ty-input-text" id="{$htmlId}" size="36" />
+				<input value="{$product.license.license_key}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
 				<button class="ty-btn ty-btn__secondary adls-clipboard" data-clipboard-target="#{$htmlId}" title="{__('adls.copy_to_clipboard')}">
 					<i class="fa fa-clipboard"></i>
 				</button>
 			</span>
+			<div class="adls-license-status status-{$product.license.status|strtolower}">{$product.license.status|fn_adls_get_license_status_label}</div>
 		</div>
 	{/if}
 {/if}
