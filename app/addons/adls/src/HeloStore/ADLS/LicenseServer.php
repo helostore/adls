@@ -72,26 +72,19 @@ class LicenseServer
 		$manager = LicenseManager::instance();
 		$response = array();
 
-		if ($paidSubscription) {
-			$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
-			$license = $manager->getLicenseByKey($vars['product.license']);
-			if (empty($license)) {
-				throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
-			}
-			if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
-				$response['code'] = LicenseClient::CODE_SUCCESS;
-				$response['message'] = 'License is already activated for specified domain.';
-			} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
-				throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
-			} else {
-				$response['code'] = LicenseClient::CODE_SUCCESS;
-				$response['message'] = 'Your license is now <b>active</b>!';
-			}
-
-		} else if ($freeSubscription) {
+		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
+		$license = $manager->getLicenseByKey($vars['product.license']);
+		if (empty($license)) {
+			throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+		}
+		if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
 			$response['code'] = LicenseClient::CODE_SUCCESS;
-			$response['message'] = 'Your free license is now <b>active</b>!';
-
+			$response['message'] = 'License is already activated for specified domain.';
+		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
+			throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+		} else {
+			$response['code'] = LicenseClient::CODE_SUCCESS;
+			$response['message'] = 'Your license is now <b>active</b>!';
 		}
 
 		return $response;
