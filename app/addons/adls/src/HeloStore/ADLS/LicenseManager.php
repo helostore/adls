@@ -197,10 +197,13 @@ class LicenseManager extends Singleton
 			'status' => $status
 		);
 		if (!empty($domain)) {
-			$result = db_query('UPDATE ?:adls_license_domains SET ?u WHERE license_id = ?i AND domain = ?s', $update, $licenseId, $domain);
-			if (!$result) {
-				return false;
-			}
+			$domainId = db_get_field('SELECT domain_id FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
+			if (!empty($domainId)) {
+				$result = db_query('UPDATE ?:adls_license_domains SET ?u WHERE license_id = ?i AND domain = ?s', $update, $licenseId, $domain);
+				if (!$result) {
+					return false;
+				}
+			} // else wildcard license (for any domain)
 		}
 		$result = db_query('UPDATE ?:adls_licenses SET ?u WHERE license_id = ?i', $update, $licenseId);
 
