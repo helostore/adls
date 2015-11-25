@@ -64,6 +64,6 @@ msgctxt "Languages::adls.order_licenses_inactivated"
 msgid "order_licenses_inactivated"
 msgstr "Your license(s) have been inactivated."
 
-msgctxt "Languages::adls.order_licenses_created"
+msgctxt "Languages::adls.order_licenses_disabled"
 msgid "order_licenses_created"
 msgstr "Your license(s) have been disabled."
