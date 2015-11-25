@@ -68,16 +68,17 @@ function fn_adls_process_order($order_info, $orderStatus)
 		$options = fn_adls_get_product_options($product);
 		$domain = (!empty($options['domain']) ? $options['domain'] : '');
 		$licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
+		$notificationState = (AREA == 'A' ? 'I' : 'K');
 
 		if ($isPaidStatus) {
 			if (!empty($licenseId)) {
 				if ($manager->inactivateLicense($licenseId, $domain)) {
-					fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'));
+					fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
 				}
 			} else {
 				$licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 				if ($licenseId) {
-					fn_set_notification('N', __('notice'), __('adls.order_licenses_created'));
+					fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
 					if (!empty($options['domain'])) {
 						$domains = array($options['domain']);
 						$manager->updateLicenseDomains($licenseId, $domains);
@@ -89,7 +90,7 @@ function fn_adls_process_order($order_info, $orderStatus)
 			}
 		} else {
 			if ($manager->disableLicense($licenseId, $domain)) {
-				fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'));
+				fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
 			}
 		}
 
@@ -97,7 +98,7 @@ function fn_adls_process_order($order_info, $orderStatus)
 
 	if (!empty($errors)) {
 		foreach ($errors as $error) {
-			fn_set_notification('E', __('error'), __($error));
+			fn_set_notification('E', __('error'), __($error), 'K');
 		}
 
 	}
