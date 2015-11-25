@@ -55,3 +55,15 @@ msgstr "Disabled"
 msgctxt "Languages::adls.license_status_unknown"
 msgid "license_status_unknown"
 msgstr "Unknown"
+
+msgctxt "Languages::adls.order_licenses_created"
+msgid "order_licenses_created"
+msgstr "Your license(s) have been created!"
+
+msgctxt "Languages::adls.order_licenses_inactivated"
+msgid "order_licenses_inactivated"
+msgstr "Your license(s) have been inactivated."
+
+msgctxt "Languages::adls.order_licenses_created"
+msgid "order_licenses_created"
+msgstr "Your license(s) have been disabled."
