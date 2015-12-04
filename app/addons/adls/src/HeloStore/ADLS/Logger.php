@@ -57,7 +57,9 @@ class Logger extends Singleton
 		}
 		if (!empty($server['REMOTE_ADDR'])) {
 			$entry['ip'] = $server['REMOTE_ADDR'];
+			$entry['country'] = fn_get_country_by_ip($entry['ip']);
 		}
+
 
 		if (!empty($content)) {
 			$entry['content'] = is_string($content) ? $content : json_encode($content);
