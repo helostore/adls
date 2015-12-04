@@ -24,6 +24,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if ($mode == 'update_logs_country') {
+	$entries = db_get_array('SELECT log_id, ip FROM ?:adls_logs');
+    $i = 0;
+
+    $countries = array();
+	foreach ($entries as $entry) {
+		if (!empty($entry['ip'])) {
+			$country = fn_get_country_by_ip($entry['ip']);
+            if (!empty($country)) {
+                if (!in_array($country, $countries)) {
+                    $countries[] = $country;
+                }
+				db_query('UPDATE ?:adls_logs SET country = ?s', $country);
+                $i++;
+			}
+		}
+	}
+    fn_print_die('Updated ' . $i . ' items' . (!empty($countries) ? '; countries: ' . implode(', ', $countries) : '') );
+}
 if ($mode == 'test') {
 
 /*	$request = array (

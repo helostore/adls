@@ -18,6 +18,7 @@
 				<th>{__("date")}</th>
 				<th>{__("user")}</th>
 				<th>{__("ip")}</th>
+				<th>{__("country")}</th>
 				<th>{__("content")}</th>
 				<th>{__("backtrace")}</th>
 			</tr>
@@ -38,10 +39,11 @@
 						{/if}
 					</td>
 					<td>{$log.ip}</td>
+					<td>{$log.country}</td>
 					<td class="wrap">{$log.content}</td>
 					<td class="wrap">
 						{if !empty($log.backtrace)}
-						<p><a onclick="Tygh.$('#backtrace_{$log.log_id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}&rsaquo;&rsaquo;</span></a></p>
+						<p><a onclick="Tygh.$('#backtrace_{$log.log_id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
 						<div id="backtrace_{$log.log_id}" class="notice-box hidden">
 							{$log.backtrace|nl2br}
 							{*

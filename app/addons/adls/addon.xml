@@ -42,6 +42,7 @@
                 `timestamp`  int(11) UNSIGNED NOT NULL ,
                 `user_id`  mediumint(8) UNSIGNED NULL ,
                 `ip`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+                `country`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 `content`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 `backtrace`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 PRIMARY KEY (`log_id`)
