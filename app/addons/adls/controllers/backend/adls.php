@@ -15,6 +15,7 @@
 use HeloStore\ADLS\LicenseClient;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseServer;
+use HeloStore\ADLS\Logger;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -25,13 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'update_logs_country') {
-	$entries = db_get_array('SELECT log_id, ip FROM ?:adls_logs');
+	$entries = db_get_array('SELECT log_id, ip, country FROM ?:adls_logs');
     $i = 0;
 
+    $logger = Logger::instance();
     $countries = array();
 	foreach ($entries as $entry) {
-		if (!empty($entry['ip'])) {
-			$country = fn_get_country_by_ip($entry['ip']);
+		if (!empty($entry['ip']) && empty($entry['country'])) {
+			$country = $logger->getCountryCodeByIp($entry['ip']);
             if (!empty($country)) {
                 if (!in_array($country, $countries)) {
                     $countries[] = $country;

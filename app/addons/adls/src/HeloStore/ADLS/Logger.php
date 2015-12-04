@@ -15,6 +15,9 @@
 namespace HeloStore\ADLS;
 
 
+use Net_GeoIP;
+use Tygh\Registry;
+
 class Logger extends Singleton
 {
 	const TYPE_ERROR = 'E';
@@ -55,11 +58,8 @@ class Logger extends Singleton
 
 			}
 		}
-		if (!empty($server['REMOTE_ADDR'])) {
-			$entry['ip'] = $server['REMOTE_ADDR'];
-			$entry['country'] = fn_get_country_by_ip($entry['ip']);
-		}
-
+		$entry['ip'] = fn_get_ip();
+		$entry['country'] = $this->getCountryCodeByIp($entry['ip']);
 
 		if (!empty($content)) {
 			$entry['content'] = is_string($content) ? $content : json_encode($content);
@@ -115,5 +115,18 @@ class Logger extends Singleton
 		}
 
 		return $items;
+	}
+
+	public function getCountryCodeByIp($ip)
+	{
+		if (function_exists('geoip_country_code_by_name')) {
+			$code = @geoip_country_code_by_name($ip);
+			$code = !empty($code) ? $code : '';
+		} else {
+			$geoip = Net_GeoIP::getInstance(Registry::get('config.dir.lib') . 'pear/data/geoip.dat');
+			$code = $geoip->lookupCountryCode($ip);
+		}
+
+		return $code;
 	}
 } 
