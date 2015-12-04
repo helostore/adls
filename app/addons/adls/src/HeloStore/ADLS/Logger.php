@@ -94,27 +94,49 @@ class Logger extends Singleton
 		if (!empty($params['ip'])) {
 			$conditions[] = db_quote('al.ip = ?s', $params['ip']);
 		}
-		if (!empty($params['user_id'])) {
-			$conditions[] = db_quote('al.user_id = ?s', $params['user_id']);
+		if (!empty($params['exclude_ips'])) {
+            $conditions[] = db_quote('al.ip NOT IN (?a)', $params['exclude_ips']);
+        }
+        if (!empty($params['user_id'])) {
+            $conditions[] = db_quote('al.user_id = ?s', $params['user_id']);
 		}
+
+		$joins[] = db_quote('LEFT JOIN ?:country_descriptions AS cd ON cd.code = al.country AND cd.lang_code = ?s', CART_LANGUAGE);
+
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
 		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
 
 		$query = db_quote('
 			SELECT
-				al.*
+				al.*,
+				cd.country AS country_name
 			FROM ?:adls_logs AS al
 			' . $joins . '
 			' . $conditions . '
 			ORDER BY log_id DESC
 		');
+
+        $result = array();
 		if (!empty($params['single'])) {
 			$items = db_get_row($query);
-		} else {
-			$items = db_get_array($query);
+        } else {
+            $items = db_get_array($query);
+            $result['total'] = count($items);
 		}
 
-		return $items;
+        foreach ($items as $i => $item) {
+            $items[$i]['request'] = @json_decode($items[$i]['request'], true);
+            if (!empty($items[$i]['request'])) {
+                if (!empty($items[$i]['request']['email'])) {
+                    $items[$i]['email'] = $items[$i]['request']['email'];
+                }
+                if (!empty($items[$i]['request']['product']['code'])) {
+                    $items[$i]['product_code'] = $items[$i]['request']['product']['code'];
+                }
+            }
+        }
+
+		return array($items, $result);
 	}
 
 	public function getCountryCodeByIp($ip)
@@ -129,4 +151,16 @@ class Logger extends Singleton
 
 		return $code;
 	}
+
+    public function getLogTypeLabel($code)
+    {
+        $labels = array(
+            Logger::TYPE_ERROR => 'Error',
+            Logger::TYPE_LOG => 'Log',
+            Logger::TYPE_SUCCESS => 'Success',
+            Logger::TYPE_WARNING => 'Warning',
+        );
+
+        return (isset($labels[$code]) ? $labels[$code] : 'Unknown');
+    }
 } 

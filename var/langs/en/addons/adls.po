@@ -67,3 +67,7 @@ msgstr "Your license(s) have been inactivated and will require re-activation."
 msgctxt "Languages::adls.order_licenses_disabled"
 msgid "order_licenses_disabled"
 msgstr "Your license(s) have been disabled."
+
+msgctxt "Languages::adls.hostname"
+msgid "adls.hostname"
+msgstr "Hostname"
