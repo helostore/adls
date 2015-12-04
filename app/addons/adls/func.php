@@ -14,6 +14,7 @@
 
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
+use HeloStore\ADLS\Logger;
 use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
@@ -145,4 +146,9 @@ function fn_adls_get_license_status_label($status)
 	}
 
 	return __($label);
+}
+
+function fn_adls_get_log_type($code)
+{
+	return Logger::instance()->getLogTypeLabel($code);
 }

@@ -25,23 +25,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-if ($mode == 'update_logs_country') {
-	$entries = db_get_array('SELECT log_id, ip, country FROM ?:adls_logs');
+if ($mode == 'update_logs_info') {
+	$entries = db_get_array('SELECT log_id, ip, country, hostname FROM ?:adls_logs');
     $i = 0;
 
     $logger = Logger::instance();
     $countries = array();
 	foreach ($entries as $entry) {
-		if (!empty($entry['ip']) && empty($entry['country'])) {
-			$country = $logger->getCountryCodeByIp($entry['ip']);
-            if (!empty($country)) {
-                if (!in_array($country, $countries)) {
-                    $countries[] = $country;
+        $update = array();
+		if (!empty($entry['ip'])) {
+            if (empty($entry['country'])) {
+                $country = $logger->getCountryCodeByIp($entry['ip']);
+                if (!empty($country)) {
+                    $update['country'] = $country;
+                    if (!in_array($country, $countries)) {
+                        $countries[] = $country;
+                    }
                 }
-				db_query('UPDATE ?:adls_logs SET country = ?s', $country);
-                $i++;
-			}
+            }
+            if (empty($entry['hostname'])) {
+                $hostname = gethostbyaddr($entry['ip']);
+                if ($hostname != $entry['ip']) {
+                    $update['hostname'] = $hostname;
+                }
+            }
 		}
+
+        if (!empty($update)) {
+            db_query('UPDATE ?:adls_logs SET ?u WHERE log_id = ?i', $update, $entry['log_id']);
+            $i++;
+        }
 	}
     fn_print_die('Updated ' . $i . ' items' . (!empty($countries) ? '; countries: ' . implode(', ', $countries) : '') );
 }
@@ -150,8 +163,16 @@ if ($mode == 'manage') {
 
 if ($mode == 'logs') {
 	$logger = \HeloStore\ADLS\Logger::instance();
-	$logs = $logger->get($_REQUEST);
+    $params = $_REQUEST;
 
+    if (!empty($params['self_exclude'])) {
+        $params['exclude_ips'] = array(
+            '188.166.76.129'
+        );
+    }
+	list($logs, $result) = $logger->get($params);
+
+	\Tygh\Registry::get('view')->assign('result', $result);
 	\Tygh\Registry::get('view')->assign('logs', $logs);
 
 
