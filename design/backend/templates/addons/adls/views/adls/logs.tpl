@@ -23,7 +23,6 @@
 				<th>{__("ip")}</th>
 				<th>{__("adls.hostname")}</th>
 				<th>{__("content")}</th>
-				<th>{__("backtrace")}</th>
 				<th>{__("action")}</th>
 			</tr>
 			</thead>
@@ -52,28 +51,29 @@
 					<td>{$log.ip}</td>
 					<td>{$log.hostname}</td>
 					<td class="wrap">{$log.content}</td>
-					<td class="wrap">
-						{if !empty($log.backtrace)}
-						<p><a onclick="Tygh.$('#backtrace_{$log.log_id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
-						<div id="backtrace_{$log.log_id}" class="notice-box hidden">
-							{$log.backtrace|nl2br}
-							{*
-							{foreach from=$log.backtrace item="v"}
-								{$v.file}{if $v.function}&nbsp;({$v.function }){/if}:&nbsp;{$v.line}<br />
-							{/foreach}
-							*}
-						</div>
-						{/if}
-					</td>
 					<td>
 						{include
 						file="common/popupbox.tpl"
 						id="log_view_`$log.log_id`"
 						act="link"
+						text="Log #`$log.log_id`"
 						link_text=__("view")
 						href=fn_url("adls.logs?log_id=`$log.log_id`")
 						no_icon_link=true
 						opener_ajax_class="cm-ajax"}
+
+						{if !empty($log.backtrace)}
+							<p><a onclick="Tygh.$('#backtrace_{$log.log_id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
+							<div id="backtrace_{$log.log_id}" class="notice-box hidden">
+								{$log.backtrace|nl2br}
+								{*
+								{foreach from=$log.backtrace item="v"}
+									{$v.file}{if $v.function}&nbsp;({$v.function }){/if}:&nbsp;{$v.line}<br />
+								{/foreach}
+								*}
+							</div>
+						{/if}
+
 					</td>
 				</tr>
 			{/foreach}
