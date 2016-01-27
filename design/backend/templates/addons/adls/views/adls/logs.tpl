@@ -30,7 +30,13 @@
 			{foreach from=$logs item="log"}
 				{assign var="_type" value="log_type_`$log.type`"}
 				{assign var="_action" value="log_action_`$log.action`"}
-				<tr>
+				{$class = ""}
+				{if fn_adls_log_type_is_error($log.type)}{$class = "alert alert-danger"}{/if}
+				{if fn_adls_log_type_is_success($log.type)}{$class = "alert alert-success"}{/if}
+				{if fn_adls_log_type_is_warning($log.type)}{$class = "alert alert-warning"}{/if}
+				{if fn_adls_log_type_is_log($log.type)}{$class = ""}{/if}
+
+				<tr class="{$class}">
 					<td>#{$log.log_id}</td>
                     <td><span class="nowrap">{$log.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</span></td>
                     <td>{$log.type|fn_adls_get_log_type}</td>

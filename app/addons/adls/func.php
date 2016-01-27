@@ -148,6 +148,22 @@ function fn_adls_get_license_status_label($status)
 	return __($label);
 }
 
+function fn_adls_log_type_is_error($code)
+{
+	return Logger::instance()->isError($code);
+}
+function fn_adls_log_type_is_warning($code)
+{
+	return Logger::instance()->isWarning($code);
+}
+function fn_adls_log_type_is_log($code)
+{
+	return Logger::instance()->isLog($code);
+}
+function fn_adls_log_type_is_success($code)
+{
+	return Logger::instance()->isSuccess($code);
+}
 function fn_adls_get_log_type($code)
 {
 	return Logger::instance()->getLogTypeLabel($code);
