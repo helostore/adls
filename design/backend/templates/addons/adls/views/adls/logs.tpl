@@ -24,6 +24,7 @@
 				<th>{__("adls.hostname")}</th>
 				<th>{__("content")}</th>
 				<th>{__("backtrace")}</th>
+				<th>{__("action")}</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -31,7 +32,7 @@
 				{assign var="_type" value="log_type_`$log.type`"}
 				{assign var="_action" value="log_action_`$log.action`"}
 				<tr>
-					<td>{$log.log_id}</td>
+					<td>#{$log.log_id}</td>
                     <td><span class="nowrap">{$log.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</span></td>
                     <td>{$log.type|fn_adls_get_log_type}</td>
                     <td>{$log.object_type}</td>
@@ -64,7 +65,16 @@
 						</div>
 						{/if}
 					</td>
-
+					<td>
+						{include
+						file="common/popupbox.tpl"
+						id="log_view_`$log.log_id`"
+						act="link"
+						link_text=__("view")
+						href=fn_url("adls.logs?log_id=`$log.log_id`")
+						no_icon_link=true
+						opener_ajax_class="cm-ajax"}
+					</td>
 				</tr>
 			{/foreach}
 			</tbody>
