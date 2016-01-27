@@ -178,4 +178,24 @@ class Logger extends Singleton
 
         return (isset($labels[$code]) ? $labels[$code] : 'Unknown');
     }
-} 
+
+    public function isError($code)
+    {
+        return ($code == Logger::TYPE_ERROR);
+    }
+
+    public function isWarning($code)
+    {
+        return ($code == Logger::TYPE_WARNING);
+    }
+
+    public function isLog($code)
+    {
+        return ($code == Logger::TYPE_LOG);
+    }
+
+    public function isSuccess($code)
+    {
+        return ($code == Logger::TYPE_SUCCESS);
+    }
+}
