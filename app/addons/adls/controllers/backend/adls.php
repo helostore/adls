@@ -25,14 +25,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if ($mode == 'logs') {
+	$logger = \HeloStore\ADLS\Logger::instance();
+	$params = $_REQUEST;
+
+	if (!empty($params['self_exclude'])) {
+		$params['exclude_ips'] = array(
+			'***REMOVED***'
+		);
+	}
+	list($logs, $result) = $logger->get($params);
+
+	if (!empty($params['log_id'])) {
+
+		echo '<pre>' . var_export($logs, 1) . '</pre>';
+		exit;
+	}
+
+	\Tygh\Registry::get('view')->assign('result', $result);
+	\Tygh\Registry::get('view')->assign('logs', $logs);
+
+
+}
+
 if ($mode == 'update_logs_info') {
-	$entries = db_get_array('SELECT log_id, ip, country, hostname FROM ?:adls_logs');
+
+	$entries = db_get_array('SELECT log_id, ip, country, hostname, server FROM ?:adls_logs');
     $i = 0;
 
     $logger = Logger::instance();
     $countries = array();
 	foreach ($entries as $entry) {
         $update = array();
+		$entry['server'] = @json_decode($entry['server'], true);
+		if (empty($entry['ip']) && !empty($entry['server']['REMOTE_ADDR'])) {
+			$update['ip'] = $entry['ip'] = $entry['server']['REMOTE_ADDR'];
+
+		}
 		if (!empty($entry['ip'])) {
             if (empty($entry['country'])) {
                 $country = $logger->getCountryCodeByIp($entry['ip']);
@@ -156,24 +185,4 @@ if ($mode == 'test') {
 
 
 	exit;
-}
-if ($mode == 'manage') {
-
-}
-
-if ($mode == 'logs') {
-	$logger = \HeloStore\ADLS\Logger::instance();
-    $params = $_REQUEST;
-
-    if (!empty($params['self_exclude'])) {
-        $params['exclude_ips'] = array(
-            '***REMOVED***'
-        );
-    }
-	list($logs, $result) = $logger->get($params);
-
-	\Tygh\Registry::get('view')->assign('result', $result);
-	\Tygh\Registry::get('view')->assign('logs', $logs);
-
-
 }

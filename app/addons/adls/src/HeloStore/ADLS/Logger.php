@@ -58,7 +58,11 @@ class Logger extends Singleton
 
 			}
 		}
-		$entry['ip'] = fn_get_ip();
+        if (!empty($server['REMOTE_ADDR'])) {
+            $entry['ip'] = $server['REMOTE_ADDR'];
+        } else {
+            $entry['ip'] = fn_get_ip();
+        }
 		$entry['country'] = $this->getCountryCodeByIp($entry['ip']);
 
 		if (!empty($content)) {
@@ -85,6 +89,9 @@ class Logger extends Singleton
 		$conditions = array();
 		$joins = array();
 
+		if (!empty($params['log_id'])) {
+			$conditions[] = db_quote('al.log_id = ?i', $params['log_id']);
+		}
 		if (!empty($params['type'])) {
 			$conditions[] = db_quote('al.type = ?s', $params['type']);
 		}
@@ -126,9 +133,17 @@ class Logger extends Singleton
 
         foreach ($items as $i => $item) {
             $items[$i]['request'] = @json_decode($items[$i]['request'], true);
+            $items[$i]['server'] = @json_decode($items[$i]['server'], true);
             if (!empty($items[$i]['request'])) {
                 if (!empty($items[$i]['request']['email'])) {
                     $items[$i]['email'] = $items[$i]['request']['email'];
+                }
+				if (!empty($items[$i]['request']['products'])) {
+					$items[$i]['product_code'] = array();
+                    foreach ($items[$i]['request']['products'] as $product) {
+                        $items[$i]['product_code'][] = $product['code'];
+                    }
+                    $items[$i]['product_code'] = implode(', ', $items[$i]['product_code']);
                 }
                 if (!empty($items[$i]['request']['product']['code'])) {
                     $items[$i]['product_code'] = $items[$i]['request']['product']['code'];
