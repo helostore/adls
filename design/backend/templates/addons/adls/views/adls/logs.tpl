@@ -44,7 +44,7 @@
                     <td>{$log.object_action}</td>
 					<td>
 						{if $log.user_id}
-							<a href="{"profiles.update?user_id=`$log.user_id`"|fn_url}">{$log.lastname}{if $log.firstname || $log.lastname}&nbsp;{/if}{$log.firstname}</a>
+							<a title="User ID #{$log.user_id}" href="{"profiles.update?user_id=`$log.user_id`"|fn_url}">{$log.lastname}{if $log.firstname || $log.lastname}&nbsp;{/if}{$log.firstname}</a>
 						{/if}
                         {if !empty($log.email)}
                             {$log.email}
