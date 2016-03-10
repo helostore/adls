@@ -317,7 +317,9 @@ class LicenseServer
 			return $response;
 		}
 
-		@apache_setenv('no-gzip', 1);
+		if (function_exists('apache_setenv')) {
+			@apache_setenv('no-gzip', 1);
+		}
 		@ini_set('zlib.output_compression', 'Off');
 		if (!is_file($path)) {
 			$response['code'] = LicenseClient::CODE_ERROR_UPDATE_INVALID_REMOTE_PATH;
