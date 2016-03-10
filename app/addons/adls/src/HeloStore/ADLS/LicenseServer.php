@@ -74,10 +74,10 @@ class LicenseServer
 
 		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
 		$license = $manager->getLicenseByKey($vars['product.license']);
+
 		if (empty($license)) {
 			throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
-		}
-		if ($manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
+		} else if ($manager->isActiveLicense($license['license_id'], $vars['server.hostname'])) {
 			$response['code'] = LicenseClient::CODE_SUCCESS;
 			$response['message'] = 'License is already activated for specified domain.';
 		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
@@ -104,7 +104,7 @@ class LicenseServer
 			return $response;
 		}
 
-		if (!$manager->isActivateLicense($license['license_id'], $vars['server.hostname'])) {
+		if (!$manager->isActiveLicense($license['license_id'], $vars['server.hostname'])) {
 			return $response;
 		}
 		$manager->inactivateLicense($license['license_id'], $vars['server.hostname']);

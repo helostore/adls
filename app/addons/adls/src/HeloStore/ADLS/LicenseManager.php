@@ -174,7 +174,7 @@ class LicenseManager extends Singleton
 		return $license;
 	}
 
-	public function isActivateLicense($licenseId, $domain = '')
+	public function isActiveLicense($licenseId, $domain = '')
 	{
 		$status = $this->getLicenseStatus($licenseId, $domain);
 
