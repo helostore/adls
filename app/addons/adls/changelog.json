@@ -1,7 +1,8 @@
 {
-    "hash": "82a408c",
+    "hash": "9648adc",
     "commits": [
-        "Bumped version to 0.1.49",
+        "[2016-03-21] Bumped version to 0.1.50",
+        "[2016-03-21] Bumped version to 0.1.49",
         "[2016-03-21] Bumped version to 0.1.48",
         "[2016-03-21] Bumped version to 0.1.47",
         "[2016-03-21] Bumped version to 0.1.46",
@@ -20,7 +21,6 @@
         "[2016-01-28] Fix missing ip\/hostname issue in logs",
         "[2015-12-04] Bumped version to 0.1.36",
         "[2015-12-04] Added hostname field",
-        "[2015-12-04] Bumped version to 0.1.35",
-        "[2015-12-04] Added country field"
+        "[2015-12-04] Bumped version to 0.1.35"
     ]
 }
