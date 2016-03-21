@@ -1,6 +1,7 @@
 {
-    "hash": "4b3babc",
+    "hash": "042fad8",
     "commits": [
+        "[2016-03-21] Bumped version to 0.1.44",
         "[2016-03-21] Bumped version to 0.1.43",
         "[2016-03-21] Bumped version to 0.1.42",
         "[2016-03-10] Bumped version to 0.1.41",
@@ -19,7 +20,6 @@
         "[2015-12-04] Bumped version to 0.1.34",
         "[2015-12-04] Added country field",
         "[2015-11-26] Minor fix",
-        "[2015-11-26] Fixed translations",
         "[2015-11-26] Fixed translations"
     ]
 }
