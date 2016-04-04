@@ -71,3 +71,13 @@ msgstr "Your license(s) have been disabled."
 msgctxt "Languages::adls.hostname"
 msgid "adls.hostname"
 msgstr "Hostname"
+
+msgctxt "Languages::adls.releases"
+msgid "adls.releases"
+msgstr "Releases"
+
+msgctxt "Languages::adls.version"
+msgid "adls.version"
+msgstr "Version"
+
+
