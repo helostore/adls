@@ -1,3 +1,8 @@
+<style>
+	.table tbody tr:hover > td, .table tbody tr:hover > th {
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+</style>
 {capture name="mainbox"}
 
 	{capture name="sidebar"}
@@ -6,13 +11,21 @@
 	{include file="common/pagination.tpl"}
 
 	{if $products}
-		<table class="table">
+		<table class="table adls-table">
 			<thead>
 			<tr>
-				<th>{__("product")}</th>
-                <th>{__("adls.version")}</th>
-				<th></th>
-				<th>{__("action")}</th>
+				<th rowspan="2" width="20%">{__("product")}</th>
+
+				<th colspan="2">{__('adls.releases')}</th>
+				<th colspan="2">{__('adls.development')}</th>
+
+				<th rowspan="2">{__("action")}</th>
+			</tr>
+			<tr>
+				<th>{__("adls.version")}</th>
+				<th>{__("adls.release_date")}</th>
+				<th>{__("adls.version")}</th>
+				<th>{__("adls.development_date")}</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -31,8 +44,19 @@
 					<td>
 						{$product.version}
 					</td>
+
 					<td>
-						{$product.release|aa}
+						{if !empty($product.lastRelease)}
+							{$product.lastRelease.releaseDate}
+						{/if}
+					</td>
+					<td>
+						{$product.version}
+					</td>
+					<td>
+						{if !empty($product.lastRelease)}
+							{$product.lastRelease.releaseDate}
+						{/if}
 					</td>
 
 					<td>

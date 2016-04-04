@@ -104,21 +104,23 @@ class ProductManager extends Singleton
 	public function getStoreProductsData()
 	{
 		$products = $this->getStoreProducts();
-		$data = db_get_hash_array('SELECT product_id, adls_addon_id, adls_subscription_id FROM ?:products WHERE adls_addon_id IN (?a)', 'adls_addon_id', array_keys($products));
+		$productsData = db_get_hash_array('SELECT product_id, adls_addon_id, adls_subscription_id FROM ?:products WHERE adls_addon_id IN (?a)', 'adls_addon_id', array_keys($products));
 		$addonsPath = Registry::get('config.dir.addons');
 		$releaseLogFilename = 'release.json';
 		foreach ($products as $k => $v) {
-			if (isset($data[$k])) {
-				$products[$k] = array_merge($v, $data[$k]);
+			if (isset($productsData[$k])) {
+				$products[$k] = array_merge($v, $productsData[$k]);
 			}
 			$releaseLogPath = $addonsPath . $k . DIRECTORY_SEPARATOR . $releaseLogFilename;
-			$products[$k]['release'] = array();
+			$products[$k]['releases'] = array();
+			$products[$k]['lastRelease'] = array();
 			if (file_exists($releaseLogPath)) {
 				$data = file_get_contents($releaseLogPath);
 				if (!empty($data)) {
 					$json = json_decode($data, true);
 					if (!empty($json) && is_array($json)) {
-						$products[$k]['release'] = $json;
+						$products[$k]['releases'] = $json;
+						$products[$k]['lastRelease'] = reset($json);
 					}
 				}
 			}
@@ -213,5 +215,55 @@ class ProductManager extends Singleton
 		}
 
 		return false;
+	}
+
+	/**
+	 * Updates release data attached to a CS-Cart product. Used by Developers Tools add-on.
+	 *
+	 * @param $productCode
+	 * @param $params
+	 * @return bool|int
+	 */
+	public function updateRelease($productCode, $params)
+	{
+		if (!defined('ADLS_AUTHOR_NAME')) {
+			return null;
+		}
+		aa($params,1);
+
+		$productId = db_get_field('SELECT product_id FROM ?:products WHERE adls_addon_id = ?s', $productCode);
+		if (empty($productId)) {
+			return false;
+		}
+		list ($files, ) = fn_get_product_files(array('product_id' => $productId));
+		$filename = $params['filename'];
+		if (!empty($files)) {
+			$file = array_shift($files);
+			$fileId = $file['file_id'];
+		} else {
+			$file = array(
+				'product_id' => $productId,
+				'file_name' => $filename,
+				'position' => 0,
+				'folder_id' => null,
+				'activation_type' => 'P',
+				'max_downloads' => 0,
+				'license' => '',
+				'agreement' => 'Y',
+				'readme' => '',
+			);
+			$fileId = 0;
+		}
+		$file['file_name'] = $filename;
+
+		$_REQUEST['file_base_file'] = array(
+			$fileId => $params['archiveUrl']
+		);
+		$_REQUEST['type_base_file'] = array(
+			$fileId => 'url'
+		);
+		$fileId = fn_update_product_file($file, $fileId);
+
+		return $fileId;
 	}
 }

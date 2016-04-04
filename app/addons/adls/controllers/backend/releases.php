@@ -25,6 +25,4 @@ if ($mode == 'manage') {
 	$manager = ProductManager::instance();
 	$products = $manager->getStoreProductsData();
 	\Tygh\Registry::get('view')->assign('products', $products);
-
-
 }
