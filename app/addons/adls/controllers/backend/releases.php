@@ -12,8 +12,6 @@
  * @version    $Id$
  */
 
-
-use HeloStore\ADLS\Logger;
 use HeloStore\ADLS\ProductManager;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
