@@ -105,7 +105,7 @@
     <li>{btn type="list" text=__("backup_restore") href="datakeeper.manage"}</li>
     <li>{btn type="list" text=__("clean_logs") href="logs.clean" class="cm-confirm cm-post"}</li>
 {/hook}
-{/capture}dx
+{/capture}
     {dropdown content=$smarty.capture.tools_list}
 {/capture}
 
