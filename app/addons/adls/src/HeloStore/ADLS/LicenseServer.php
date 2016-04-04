@@ -291,7 +291,6 @@ class LicenseServer
 //			return $response;
 //		}
 		$requestProduct = $request['product'];
-		$path = DIR_ROOT . '/var/releases/autoimage_lite-v0.1.2.zip';
 //		ws_log_file(array('$customerProduct' => $customerProduct), 'var/log/debug.log');
 
 		if (empty($requestProduct['code'])) {
