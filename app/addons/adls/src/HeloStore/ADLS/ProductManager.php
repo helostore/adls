@@ -229,7 +229,6 @@ class ProductManager extends Singleton
 		if (!defined('ADLS_AUTHOR_NAME')) {
 			return null;
 		}
-		aa($params,1);
 
 		$productId = db_get_field('SELECT product_id FROM ?:products WHERE adls_addon_id = ?s', $productCode);
 		if (empty($productId)) {
@@ -263,6 +262,13 @@ class ProductManager extends Singleton
 			$fileId => 'url'
 		);
 		$fileId = fn_update_product_file($file, $fileId);
+		if (!empty($fileId)) {
+			$productData = array(
+				'adls_release_version' => $params['version']
+				, 'adls_release_date' => TIME
+			);
+			db_query('UPDATE ?:products SET ?e WHERE product_id = ?i', $productData, $productId);
+		}
 
 		return $fileId;
 	}
