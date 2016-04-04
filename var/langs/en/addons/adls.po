@@ -76,6 +76,14 @@ msgctxt "Languages::adls.releases"
 msgid "adls.releases"
 msgstr "Releases"
 
+msgctxt "Languages::adls.date"
+msgid "adls.date"
+msgstr "Date"
+
+msgctxt "Languages::adls.development"
+msgid "adls.development"
+msgstr "Development"
+
 msgctxt "Languages::adls.version"
 msgid "adls.version"
 msgstr "Version"

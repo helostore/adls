@@ -49,11 +49,17 @@
                 PRIMARY KEY (`log_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
-        <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2) NOT NULL;</item>
+
+        <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2);</item>
+        <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64);</item>
+        <item for="install">ALTER TABLE `?:products` ADD `adls_release_date` INT(11);</item>
+        <item for="install">ALTER TABLE `?:products` ADD `adls_release_version` VARCHAR(16);</item>
+        <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
+
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
-        <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64) NOT NULL;</item>
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
-        <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64) NOT NULL;</item>
+        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_date`;</item>
+        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_version`;</item>
         <item for="___uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
 
     </queries>
