@@ -1,5 +1,34 @@
 [
     {
+        "version": "0.1.54",
+        "releaseDate": "2016-04-04 11:00:38",
+        "releaseTimestamp": "1459810838",
+        "hash": "1cc823879ade765fe46005e442a51ff92b06da0e",
+        "commits": [
+            "[2016-04-04] Bumped version to 0.1.54",
+            "[2016-04-05] Release test #2",
+            "[2016-04-05] Bumped version to 0.1.53",
+            "[2016-04-05] Minor fixes, 2",
+            "[2016-04-05] Bumped version to 0.1.52",
+            "[2016-04-05] Minor fixes",
+            "[2016-04-05] Removed changelog.json",
+            "[2016-04-05] Updated translation strings",
+            "[2016-04-05] Typo",
+            "[2016-04-05] Added Releases section",
+            "[2016-04-05] Gather product data on add-ons",
+            "[2016-04-05] Removed temp code",
+            "[2016-04-05] Added Releases section",
+            "[2016-04-04] Bumped version to 0.1.51",
+            "[2016-03-21] Bumped version to 0.1.50",
+            "[2016-03-21] Bumped version to 0.1.49",
+            "[2016-03-21] Bumped version to 0.1.48",
+            "[2016-03-21] Bumped version to 0.1.47",
+            "[2016-03-21] Bumped version to 0.1.46",
+            "[2016-03-21] Bumped version to 0.1.45",
+            "[2016-03-21] Bumped version to 0.1.44"
+        ]
+    },
+    {
         "version": "0.1.53",
         "releaseDate": "2016-04-04 10:55:25",
         "releaseTimestamp": "1459810525",
