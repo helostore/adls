@@ -16,6 +16,7 @@ namespace HeloStore\ADLS;
 
 
 use Tygh\Addons\SchemesManager;
+use Tygh\Registry;
 
 class ProductManager extends Singleton
 {
@@ -97,6 +98,33 @@ class ProductManager extends Singleton
 		}
 
 		return $product;
+	}
+
+
+	public function getStoreProductsData()
+	{
+		$products = $this->getStoreProducts();
+		$data = db_get_hash_array('SELECT product_id, adls_addon_id, adls_subscription_id FROM ?:products WHERE adls_addon_id IN (?a)', 'adls_addon_id', array_keys($products));
+		$addonsPath = Registry::get('config.dir.addons');
+		$releaseLogFilename = 'release.json';
+		foreach ($products as $k => $v) {
+			if (isset($data[$k])) {
+				$products[$k] = array_merge($v, $data[$k]);
+			}
+			$releaseLogPath = $addonsPath . $k . DIRECTORY_SEPARATOR . $releaseLogFilename;
+			$products[$k]['release'] = array();
+			if (file_exists($releaseLogPath)) {
+				$data = file_get_contents($releaseLogPath);
+				if (!empty($data)) {
+					$json = json_decode($data, true);
+					if (!empty($json) && is_array($json)) {
+						$products[$k]['release'] = $json;
+					}
+				}
+			}
+		}
+
+		return $products;
 	}
 	public function getStoreProducts($params = array())
 	{
