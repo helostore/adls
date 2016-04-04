@@ -226,7 +226,6 @@ class ProductManager extends Singleton
 	 */
 	public function updateRelease($productCode, $params)
 	{
-		fn_print_r('xxxxxxxx');
 		$productId = db_get_field('SELECT product_id FROM ?:products WHERE adls_addon_id = ?s', $productCode);
 		if (empty($productId)) {
 			return false;
