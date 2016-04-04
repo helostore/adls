@@ -1,5 +1,17 @@
 [
     {
+        "version": "0.1.55",
+        "releaseDate": "2016-04-04 11:11:07",
+        "releaseTimestamp": "1459811467",
+        "hash": "9799a572f00c4e981eb367ff478310d68ded058e",
+        "commits": [
+            "[2016-04-04] Bumped version to 0.1.55",
+            "[2016-04-05] Release test #3",
+            "[2016-04-05] Bumped version to 0.1.54",
+            "[2016-04-05] Release test #2"
+        ]
+    },
+    {
         "version": "0.1.53",
         "releaseDate": "2016-04-04 10:55:25",
         "releaseTimestamp": "1459810525",
