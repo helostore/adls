@@ -17,7 +17,7 @@
 				<th rowspan="2" width="20%">{__("product")}</th>
 
 				<th colspan="2">{__('adls.releases')}</th>
-				<th colspan="2">{__('adls.development')}</th>
+				<th colspan="3">{__('adls.development')}</th>
 
 				<th rowspan="2">{__("action")}</th>
 			</tr>
@@ -26,6 +26,7 @@
 				<th>{__("adls.date")}</th>
 				<th>{__("adls.version")}</th>
 				<th>{__("adls.date")}</th>
+				<th>{__("adls.commits")}</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -66,6 +67,26 @@
 							&dash;
 						{/if}
 					</td>
+					<td>
+						{if !empty($product.lastRelease.commits)}
+							{capture name="commits"}
+								{"<br>"|implode:$product.lastRelease.commits nofilter}
+							{/capture}
+							{include
+							file="common/popupbox.tpl"
+							id="product_commits_`$productCode`"
+							text=__("adls.commits")
+							act="link"
+							link_text=__("adls.view_commits", ["[count]" => $product.lastRelease.commits|count])
+							content=$smarty.capture.commits
+							no_icon_link=true
+							}
+
+						{else}
+							&dash;
+						{/if}
+					</td>
+
 
 					<td>
 						{include

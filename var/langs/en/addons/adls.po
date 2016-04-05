@@ -92,3 +92,10 @@ msgctxt "Languages::adls.release_now"
 msgid "adls.release_now"
 msgstr "Release!"
 
+msgctxt "Languages::adls.commits"
+msgid "adls.commits"
+msgstr "Commits"
+
+msgctxt "Languages::adls.view_commits"
+msgid "adls.view_commits"
+msgstr "View ([count])"
