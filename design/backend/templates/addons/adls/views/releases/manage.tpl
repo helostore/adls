@@ -23,13 +23,13 @@
 			</tr>
 			<tr>
 				<th>{__("adls.version")}</th>
-				<th>{__("adls.release_date")}</th>
+				<th>{__("adls.date")}</th>
 				<th>{__("adls.version")}</th>
-				<th>{__("adls.development_date")}</th>
+				<th>{__("adls.date")}</th>
 			</tr>
 			</thead>
 			<tbody>
-			{foreach from=$products item="product"}
+			{foreach from=$products item="product" key="productCode"}
 				{$class = ""}
 
 				<tr class="{$class}">
@@ -69,14 +69,11 @@
 
 					<td>
 						{include
-						file="common/popupbox.tpl"
-						id="log_view_`$log.log_id`"
-						act="link"
-						text="Log #`$log.log_id`"
-						link_text=__("view")
-						href=fn_url("adls.logs?log_id=`$log.log_id`")
-						no_icon_link=true
-						opener_ajax_class="cm-ajax"}
+						file="buttons/button.tpl"
+						but_role="action"
+						but_text=__("adls.release_now")
+						but_href=fn_url("addons.pack?addon=`$productCode`")
+						but_meta="cm-ajax"}
 					</td>
 				</tr>
 			{/foreach}
