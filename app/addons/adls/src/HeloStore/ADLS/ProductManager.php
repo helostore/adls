@@ -104,7 +104,14 @@ class ProductManager extends Singleton
 	public function getStoreProductsData()
 	{
 		$products = $this->getStoreProducts();
-		$productsData = db_get_hash_array('SELECT product_id, adls_addon_id, adls_subscription_id FROM ?:products WHERE adls_addon_id IN (?a)', 'adls_addon_id', array_keys($products));
+		$productsData = db_get_hash_array('
+			SELECT
+				product_id
+				, adls_addon_id
+				, adls_subscription_id
+				, adls_release_date
+				, adls_release_version
+			FROM ?:products WHERE adls_addon_id IN (?a)', 'adls_addon_id', array_keys($products));
 		$addonsPath = Registry::get('config.dir.addons');
 		$releaseLogFilename = 'release.json';
 		foreach ($products as $k => $v) {
@@ -263,7 +270,7 @@ class ProductManager extends Singleton
 				'adls_release_version' => $params['version']
 				, 'adls_release_date' => TIME
 			);
-			db_query('UPDATE ?:products SET ?e WHERE product_id = ?i', $productData, $productId);
+			db_query('UPDATE ?:products SET ?u WHERE product_id = ?i', $productData, $productId);
 		}
 
 		return $fileId;

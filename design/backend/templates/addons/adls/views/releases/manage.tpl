@@ -41,21 +41,29 @@
 						{/if}
 					</td>
 
+					{* Release Info *}
 					<td>
-						{$product.version}
+						{$product.adls_release_version|default:'&dash;' nofilter}
 					</td>
 
 					<td>
-						{if !empty($product.lastRelease)}
-							{$product.lastRelease.releaseDate}
+						{if !empty($product.adls_release_date)}
+							{$product.adls_release_date|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}
+						{else}
+							&dash;
 						{/if}
 					</td>
+
+
+					{* Development Info *}
 					<td>
 						{$product.version}
 					</td>
 					<td>
 						{if !empty($product.lastRelease)}
-							{$product.lastRelease.releaseDate}
+							{$product.lastRelease.releaseTimestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}
+						{else}
+							&dash;
 						{/if}
 					</td>
 
