@@ -88,4 +88,7 @@ msgctxt "Languages::adls.version"
 msgid "adls.version"
 msgstr "Version"
 
+msgctxt "Languages::adls.release_now"
+msgid "adls.release_now"
+msgstr "Release!"
 
