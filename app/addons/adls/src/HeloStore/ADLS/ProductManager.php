@@ -20,6 +20,29 @@ use Tygh\Registry;
 
 class ProductManager extends Singleton
 {
+	public function getReviewUrl($key)
+	{
+		static $map = array(
+			'company' => 'http://marketplace.cs-cart.com/vlad-sergiu-valentin-pfa.html?selected_section=discussion#discussion',
+			'developer' => 'http://marketplace.cs-cart.com/add-ons/integrations/developer.html?selected_section=discussion#discussion',
+			'free_shipping_notice' => 'http://marketplace.cs-cart.com/add-ons/customer-experience/free-shipping-incentive-add-on-for-cs-cart.html?selected_section=discussion#discussion',
+			'autoimage_lite' => 'http://marketplace.cs-cart.com/add-ons/customer-experience/autoimage-lite.html?selected_section=discussion#discussion',
+		);
+
+		return (isset($map[$key]) ? $map[$key] : null);
+	}
+
+	public function getReviewMessage($productCode)
+	{
+		$reviewMessage = "<p class='alert alert-info'>PS: would you mind taking a minute or two to write brief a review for <a href='[productReviewUrl]' target='_blank'>this product</a> or <a href='[developerReviewUrl]' target='_blank'>about us</a>? Your comments help others know what to expect from this product or from us, and will help us improve our services and products. Thank you very much <span style='font-size:1.5em;'>&#x263a;</span>.</p>";
+		$reviewMessage = strtr($reviewMessage, array(
+			'[developerReviewUrl]' => $this->getReviewUrl('company'),
+			'[productReviewUrl]' => $this->getReviewUrl($productCode),
+		));
+
+		return $reviewMessage;
+	}
+
 	public function isPaidSubscription($subscriptionId)
 	{
 		if (is_array($subscriptionId)) {
@@ -162,6 +185,7 @@ class ProductManager extends Singleton
 
 			$storeVersion = !empty($storeProduct['version']) ? $storeProduct['version'] : '';
 			$customerVersion = !empty($customerProduct['version']) ? $customerProduct['version'] : '';
+//			if ($productCode == 'developer') { $storeVersion = 1; }
 //			if ($productCode == 'sidekick') { $storeVersion = 1; }
 //			if ($productCode == 'autoimage_lite') { $storeVersion = 1; }
 			// @TODO: check update compatibility with platform (CS-Cart)!!!!
@@ -172,7 +196,9 @@ class ProductManager extends Singleton
 				$updates[$productCode] = array(
 					'version' => $storeVersion,
 					'code' => $productCode,
+					'reviewMessage' => $this->getReviewMessage($productCode)
 				);
+
 			} elseif ($comparison === -1) {
 				// customer version is newer !? product alteration?!
 			} elseif ($comparison === 0) {
