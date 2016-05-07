@@ -277,6 +277,15 @@ class LicenseServer
 		return $response;
 	}
 
+	/**
+	 * Handle a download request from a client
+	 *
+	 * @param $request
+	 *
+	 * @return array
+	 *
+	 * @throws \Tygh\Exceptions\DeveloperException
+	 */
 	public function downloadRequest($request)
 	{
 		$response = array(
