@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.1.60",
+        "releaseDate": "2016-05-07 09:36:15",
+        "releaseTimestamp": "1462656975",
+        "hash": "b1da9d1fcd148b9e1eedef04b031a2c05d8fd282",
+        "commits": [
+            "[2016-05-07] Bumped version to 0.1.60",
+            "[2016-05-08] Highlight in table unreleased versions"
+        ]
+    },
+    {
         "version": "0.1.59",
         "releaseDate": "2016-05-07 09:26:31",
         "releaseTimestamp": "1462656391",
@@ -31,16 +41,6 @@
             "[2016-04-05] Logic separation",
             "[2016-04-05] Logic separation",
             "[2016-04-05] Moved updateRelease logic from Developer Tools to ADLS add-on"
-        ]
-    },
-    {
-        "version": "0.1.56",
-        "releaseDate": "2016-04-04 11:37:38",
-        "releaseTimestamp": "1459813058",
-        "hash": "eb90e51ab90b82c1939b9190a5a89a59e7ac51d3",
-        "commits": [
-            "[2016-04-04] Bumped version to 0.1.56",
-            "[2016-04-05] Release test #5"
         ]
     }
 ]
