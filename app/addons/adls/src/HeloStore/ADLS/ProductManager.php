@@ -144,13 +144,20 @@ class ProductManager extends Singleton
 			$releaseLogPath = $addonsPath . $k . DIRECTORY_SEPARATOR . $releaseLogFilename;
 			$products[$k]['releases'] = array();
 			$products[$k]['lastRelease'] = array();
+			$products[$k]['has_unreleased_version'] = false;
 			if (file_exists($releaseLogPath)) {
 				$data = file_get_contents($releaseLogPath);
 				if (!empty($data)) {
 					$json = json_decode($data, true);
 					if (!empty($json) && is_array($json)) {
+						$lastRelease = reset($json);
 						$products[$k]['releases'] = $json;
-						$products[$k]['lastRelease'] = reset($json);
+						$products[$k]['lastRelease'] = $lastRelease;
+						$developmentVersion = $products[$k]['version'];
+						$releasedVersion = $products[$k]['adls_release_version'];
+						if (!empty($releasedVersion) && version_compare($developmentVersion, $releasedVersion, '>')) {
+							$products[$k]['has_unreleased_version'] = true;
+						}
 					}
 				}
 			}

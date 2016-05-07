@@ -2,6 +2,9 @@
 	.table tbody tr:hover > td, .table tbody tr:hover > th {
 		background-color: rgba(0, 0, 0, 0.1);
 	}
+	.has_unreleased_version td {
+		background-color: rgba(0, 127, 255, 0.3);
+	}
 </style>
 {capture name="mainbox"}
 
@@ -20,6 +23,7 @@
 				<th colspan="3">{__('adls.development')}</th>
 
 				<th rowspan="2">{__("action")}</th>
+				<th rowspan="2">{__("notes")}</th>
 			</tr>
 			<tr>
 				<th>{__("adls.version")}</th>
@@ -32,6 +36,9 @@
 			<tbody>
 			{foreach from=$products item="product" key="productCode"}
 				{$class = ""}
+				{if $product.has_unreleased_version}
+					{$class = "`$class` has_unreleased_version"}
+				{/if}
 
 				<tr class="{$class}">
 					<td>
@@ -95,6 +102,11 @@
 						but_text=__("adls.release_now")
 						but_href=fn_url("addons.pack?addon=`$productCode`")
 						but_meta="cm-ajax"}
+					</td>
+					<td>
+						{if $product.has_unreleased_version}
+							Contains unreleased versions
+						{/if}
 					</td>
 				</tr>
 			{/foreach}
