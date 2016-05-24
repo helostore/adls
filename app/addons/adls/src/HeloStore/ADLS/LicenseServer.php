@@ -58,8 +58,14 @@ class LicenseServer
 	public function activate($request)
 	{
 		$vars = $this->requireRequestVariables($request, array('server.hostname','email'));
-
 		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.code')));
+		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
+
+		$isMagicLicenseKey = (defined('ADLS_MAGIC_LICENSE_KEY') && $vars['product.license'] == ADLS_MAGIC_LICENSE_KEY);
+		if ($isMagicLicenseKey) {
+			$response['code'] = LicenseClient::CODE_SUCCESS;
+			$response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic key</em>!';
+		}
 
 		$productManager = ProductManager::instance();
 		$storeProduct = $productManager->getStoreProduct($vars['product.code']);
@@ -71,21 +77,26 @@ class LicenseServer
 
 		$manager = LicenseManager::instance();
 		$response = array();
-
-		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
 		$license = $manager->getLicenseByKey($vars['product.license']);
 
-		if (empty($license)) {
-			throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
-		} else if ($manager->isActiveLicense($license['license_id'], $vars['server.hostname'])) {
+		if ($isMagicLicenseKey) {
 			$response['code'] = LicenseClient::CODE_SUCCESS;
-			$response['message'] = 'License is already activated for specified domain.';
-		} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
-			throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+			$response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic key</em>!';
 		} else {
-			$response['code'] = LicenseClient::CODE_SUCCESS;
-			$response['message'] = 'Your license is now <b>active</b>!';
+			if (empty($license)) {
+				throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+			} else if ($manager->isActiveLicense($license['license_id'], $vars['server.hostname'])) {
+				$response['code'] = LicenseClient::CODE_SUCCESS;
+				$response['message'] = 'License is already activated for specified domain.';
+			} else if (!$manager->activateLicense($license['license_id'], $vars['server.hostname'])) {
+				throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+			} else {
+				$response['code'] = LicenseClient::CODE_SUCCESS;
+				$response['message'] = 'Your license is now <b>active</b>!';
+			}
 		}
+
+
 
 		return $response;
 	}
