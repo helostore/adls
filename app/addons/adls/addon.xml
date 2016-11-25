@@ -27,6 +27,7 @@
                 `domain_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `license_id`  mediumint(8) UNSIGNED NOT NULL ,
                 `domain`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `type`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `created_at`  datetime NOT NULL ,
                 `updated_at`  datetime NOT NULL ,
                 `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,

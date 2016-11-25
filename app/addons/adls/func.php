@@ -40,6 +40,8 @@ function fn_adls_get_order_info(&$order, $additional_data)
 		if (fn_is_adls_product($product)) {
 			$storeProduct = $productManager->getProductById($product['product_id']);
 			$product['license'] = LicenseManager::instance()->getOrderLicense($order['order_id'], $product['item_id']);
+//			aa($storeProduct);
+//			aa($product['license'],1);
 			if ($productManager->isPaidSubscription($storeProduct)) {
 			}
 		}
@@ -67,21 +69,42 @@ function fn_adls_process_order($order_info, $orderStatus)
 		}
 
 		$options = fn_adls_get_product_options($product);
-		$domain = (!empty($options['domain']) ? $options['domain'] : '');
+
+		$productionDomain = (!empty($options['domain']) ? $options['domain'] : '');
+		$developmentDomains = (!empty($options['dev_domain']) ? $options['dev_domain'] : '');
+		$domains = array();
+		if (!empty($productionDomain)) {
+			$domains[] = array(
+				'name' => $productionDomain,
+				'type' => License::DOMAIN_TYPE_PRODUCTION
+			);
+		}
+
+		if (!empty($developmentDomains)) {
+			$developmentDomains = is_array($developmentDomains) ? $developmentDomains : array($developmentDomains);
+			foreach ($developmentDomains as $developmentDomain) {
+				$domains[] = array(
+					'name' => $developmentDomain,
+					'type' => License::DOMAIN_TYPE_DEVELOPMENT
+				);
+			}
+		}
 		$licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
 		$notificationState = (AREA == 'A' ? 'I' : 'K');
 
 		if ($isPaidStatus) {
 			if (!empty($licenseId)) {
-				if ($manager->inactivateLicense($licenseId, $domain)) {
-					fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
+				foreach ($domains as $domain) {
+					if ($manager->inactivateLicense($licenseId, $domain['name'])) {
+						fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
+					}
 				}
 			} else {
 				$licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 				if ($licenseId) {
 					fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
-					if (!empty($options['domain'])) {
-						$domains = array($options['domain']);
+
+					if (!empty($domains)) {
 						$manager->updateLicenseDomains($licenseId, $domains);
 					}
 				} else {
@@ -90,8 +113,10 @@ function fn_adls_process_order($order_info, $orderStatus)
 				}
 			}
 		} else {
-			if ($manager->disableLicense($licenseId, $domain)) {
-				fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
+			foreach ($domains as $domain) {
+				if ($manager->disableLicense($licenseId, $domain['name'])) {
+					fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
+				}
 			}
 		}
 
@@ -115,11 +140,18 @@ function fn_adls_get_product_options($product)
 	$options = array();
 	foreach ($product['product_options'] as $opt) {
 		$optionId = $opt['option_id'];
-		$type = db_get_field('SELECT adls_option_type FROM ?:product_options WHERE option_id = ?i', $optionId);
+		$type = (string) db_get_field('SELECT adls_option_type FROM ?:product_options WHERE option_id = ?i', $optionId);
 
 		$value = $opt['value'];
 		if (!empty($type) && !empty($value)) {
-			$options[$type] = $value;
+			if (isset($options[$type])) {
+				$tmp = $options[$type];
+				$options[$type] = array();
+				$options[$type][] = $tmp;
+				$options[$type][] = $value;
+			} else {
+				$options[$type] = $value;
+			}
 		}
 	}
 

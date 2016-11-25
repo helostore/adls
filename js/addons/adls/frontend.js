@@ -9,6 +9,17 @@
 (function(_, $) {
 
     $(document).ready(function(){
-        new Clipboard('.adls-clipboard');
+        var clipboards = new Clipboard('.adls-clipboard');
+        clipboards.on('success', function(event) {
+            var $button = $(event.trigger);
+            var $successIcon = $button.find('.icon');
+            var $clipboardIcon = $button.find('.fa');
+            $clipboardIcon.fadeOut();
+            $successIcon.addClass('icon--order-success').fadeIn();
+            setTimeout(function() {
+                $successIcon.removeClass('icon--order-success').fadeOut();
+                $clipboardIcon.fadeIn();
+            }, 2000);
+        });
     });
 }(Tygh, Tygh.$));

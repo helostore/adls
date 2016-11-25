@@ -80,12 +80,13 @@ class LicenseManager extends Singleton
 	public function updateLicenseDomains($licenseId, $domains)
 	{
 		foreach ($domains as $domain) {
-			$entry = $this->getDomainByLicenseId($licenseId, $domain);
+			$entry = $this->getDomainByLicenseId($licenseId, $domain['name'], $domain['type']);
 			if (empty($entry)) {
 				$entry = array(
 					'license_id' => $licenseId,
-					'domain' => $domain,
+					'domain' => $domain['name'],
 					'created_at' =>  date("Y-m-d H:i:s", TIME),
+					'type' => $domain['type'],
 					'status' => License::STATUS_INACTIVE
 				);
 			}
@@ -100,9 +101,15 @@ class LicenseManager extends Singleton
 		return true;
 	}
 
-	public function getDomainByLicenseId($licenseId, $domain)
+	public function getDomainByLicenseId($licenseId, $domain, $type = '')
 	{
-		return db_get_row('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
+		$conditions = array();
+		if (!empty($type)) {
+			$conditions[] = db_quote('type = ?s', $type);
+		}
+		$conditions = !empty($conditions) ? ' AND ' . implode(' AND ', $conditions) : '';
+
+		return db_get_row('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s ?p', $licenseId, $domain, $conditions);
 	}
 
 	public function getLicenses($params)
@@ -170,8 +177,18 @@ class LicenseManager extends Singleton
 			'single' => true
 		);
 		$license = $this->getLicenses($params);
+		if (!empty($license)) {
+			$license['domains'] = $this->getLicenseDomains($license['license_id']);
+		}
 
 		return $license;
+	}
+
+	public function getLicenseDomains($licenseId)
+	{
+		$domains = db_get_array('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i ORDER BY domain_id', $licenseId);
+
+		return $domains;
 	}
 
 	public function isActiveLicense($licenseId, $domain = '')
@@ -191,11 +208,21 @@ class LicenseManager extends Singleton
 		return $result;
 	}
 
+	/**
+	 * Updates status of license AND domain (if provided)
+	 *
+	 * @param $licenseId
+	 * @param $status
+	 * @param string $domain
+	 *
+	 * @return bool
+	 */
 	public function changeLicenseStatus($licenseId, $status, $domain = '')
 	{
 		$update = array(
 			'status' => $status
 		);
+		$domainId = null;
 		if (!empty($domain)) {
 			$domainId = db_get_field('SELECT domain_id FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
 			if (!empty($domainId)) {
