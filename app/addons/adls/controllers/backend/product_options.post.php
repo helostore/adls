@@ -26,7 +26,8 @@ if (in_array($mode, array('update', 'add', 'manage'))) {
 
 	$types = array(
 		'domain' => 'Single domain',
-		'domains' => 'Multiple domains'
+		'dev_domain' => 'Development domain',
+		'domains' => 'Multiple domains',
 	);
 
 	$view->assign('adls_option_types', $types);

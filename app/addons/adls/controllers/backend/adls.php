@@ -87,6 +87,16 @@ if ($mode == 'update_logs_info') {
 	}
     fn_print_die('Updated ' . $i . ' items' . (!empty($countries) ? '; countries: ' . implode(', ', $countries) : '') );
 }
+if ($mode == 'test_order_process') {
+    //	$productId = 2;
+    $orderId = 95;
+//	$userId = 2;
+    $orderStatus = 'P';
+//
+    $order_info = fn_get_order_info($orderId);
+    fn_adls_process_order($order_info, $orderStatus);
+    exit;
+}
 if ($mode == 'test') {
 
 /*	$request = array (
@@ -174,12 +184,6 @@ if ($mode == 'test') {
 	));*/
 //	$manager = LicenseManager::instance();
 //
-//	$productId = 2;
-//	$orderId = 15;
-//	$userId = 2;
-//
-//	$order_info = fn_get_order_info($orderId);
-//	fn_adls_process_order($order_info);
 
 
 

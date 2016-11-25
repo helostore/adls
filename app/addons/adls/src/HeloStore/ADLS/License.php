@@ -20,4 +20,7 @@ class License
 	const STATUS_ACTIVE = 'A';
 	const STATUS_DISABLED = 'D';
 	const STATUS_INACTIVE = 'I';
+
+	const DOMAIN_TYPE_PRODUCTION = 'P';
+	const DOMAIN_TYPE_DEVELOPMENT = 'D';
 }
