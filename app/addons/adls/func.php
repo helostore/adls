@@ -48,6 +48,35 @@ function fn_adls_get_order_info(&$order, $additional_data)
 	}
 	unset($product);
 }
+
+function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
+{
+	// Exclude domain names from cid because we don't want to generated new cart item id each time we update a domain
+	$optionTypes = fn_adls_get_product_option_types();
+	$optionTypes = array_keys($optionTypes);
+	$excludeOptionIds = db_get_fields('SELECT option_id FROM ?:product_options WHERE adls_option_type IN (?a)', $optionTypes);
+
+
+	// Grab values of excluded options
+	$excludedValues = array();
+	if (!empty($extra['product_options']) && is_array($extra['product_options'])) {
+
+		// Try to select all options (including Globals)
+		Registry::set('runtime.skip_sharing_selection', true);
+
+		foreach ($extra['product_options'] as $k => $v) {
+			if ($only_selectable == true && ((string) intval($v) != $v || db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i", $k) != 'Y')) {
+				continue;
+			}
+			$excludedValues[] = $v;
+		}
+
+		Registry::set('runtime.skip_sharing_selection', false);
+	}
+	if (!empty($excludedValues)) {
+		$_cid = array_diff($_cid, $excludedValues);
+	}
+}
 /* /Hooks */
 
 function fn_adls_process_order($order_info, $orderStatus)
@@ -132,6 +161,16 @@ function fn_adls_process_order($order_info, $orderStatus)
 	return $success;
 }
 
+function fn_adls_get_product_option_types()
+{
+	$types = array(
+		'domain' => 'Single domain',
+		'dev_domain' => 'Development domain',
+		'domains' => 'Multiple domains',
+	);
+
+	return $types;
+}
 function fn_adls_get_product_options($product)
 {
 	if (empty($product['product_options'])) {

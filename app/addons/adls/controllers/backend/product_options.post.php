@@ -24,11 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if (in_array($mode, array('update', 'add', 'manage'))) {
 	$view = &Tygh::$app['view'];
 
-	$types = array(
-		'domain' => 'Single domain',
-		'dev_domain' => 'Development domain',
-		'domains' => 'Multiple domains',
-	);
-
+	$types = fn_adls_get_product_option_types();
 	$view->assign('adls_option_types', $types);
 }
