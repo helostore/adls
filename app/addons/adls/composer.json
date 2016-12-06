@@ -16,5 +16,7 @@
     "autoload": {
         "psr-0": { "HeloStore": "src/" }
     },
-    "require": {}
+    "require": {
+        "zendframework/zend-validator": "^2.8"
+    }
 }
