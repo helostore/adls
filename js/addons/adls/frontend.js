@@ -9,6 +9,7 @@
 (function(_, $) {
 
     $(document).ready(function(){
+        
         var clipboards = new Clipboard('.adls-clipboard');
         clipboards.on('success', function(event) {
             var $button = $(event.trigger);
@@ -20,6 +21,15 @@
                 $successIcon.removeClass('icon--order-success').fadeOut();
                 $clipboardIcon.fadeIn();
             }, 2000);
+        });
+        
+        // Hostname validator
+        // $('.adls-hostname').on('change', function() {
+        $('.adls-license-domains').on('change', '.adls-hostname', function () {
+            var $this = $(this);
+            var value = $this.val();
+            value = value.match(/[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/);
+            $this.val(value);
         });
     });
 }(Tygh, Tygh.$));
