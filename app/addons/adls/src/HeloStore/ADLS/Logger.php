@@ -88,6 +88,7 @@ class Logger extends Singleton
 	{
 		$conditions = array();
 		$joins = array();
+        $limit = '';
 
 		if (!empty($params['log_id'])) {
 			$conditions[] = db_quote('al.log_id = ?i', $params['log_id']);
@@ -107,6 +108,9 @@ class Logger extends Singleton
         if (!empty($params['user_id'])) {
             $conditions[] = db_quote('al.user_id = ?s', $params['user_id']);
 		}
+        if (!empty($params['limit'])) {
+            $limit = ' LIMIT 0,' . $params['limit'];
+		}
 
 		$joins[] = db_quote('LEFT JOIN ?:country_descriptions AS cd ON cd.code = al.country AND cd.lang_code = ?s', CART_LANGUAGE);
 
@@ -121,6 +125,7 @@ class Logger extends Singleton
 			' . $joins . '
 			' . $conditions . '
 			ORDER BY log_id DESC
+			' . $limit . '
 		');
 
         $result = array();

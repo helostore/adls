@@ -34,6 +34,7 @@ if ($mode == 'logs') {
 			'***REMOVED***'
 		);
 	}
+    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : 20;
 	list($logs, $result) = $logger->get($params);
 
 	if (!empty($params['log_id'])) {
