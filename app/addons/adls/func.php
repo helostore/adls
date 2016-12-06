@@ -56,7 +56,6 @@ function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 	$optionTypes = array_keys($optionTypes);
 	$excludeOptionIds = db_get_fields('SELECT option_id FROM ?:product_options WHERE adls_option_type IN (?a)', $optionTypes);
 
-
 	// Grab values of excluded options
 	$excludedValues = array();
 	if (!empty($extra['product_options']) && is_array($extra['product_options'])) {
@@ -66,9 +65,12 @@ function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 
 		foreach ($extra['product_options'] as $k => $v) {
 			if ($only_selectable == true && ((string) intval($v) != $v || db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i", $k) != 'Y')) {
+
 				continue;
 			}
-			$excludedValues[] = $v;
+			if (in_array($k, $excludeOptionIds)) {
+				$excludedValues[] = $v;
+			}
 		}
 
 		Registry::set('runtime.skip_sharing_selection', false);
