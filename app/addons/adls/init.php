@@ -14,7 +14,7 @@
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-require_once 'vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 define('ADLS_DIR', dirname(__FILE__));
 define('ADLS_AUTHOR_NAME', 'HELOstore');
