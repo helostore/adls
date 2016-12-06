@@ -20,6 +20,10 @@ msgctxt "Languages::adls.license"
 msgid "adls.license"
 msgstr "License key"
 
+msgctxt "Languages::adls.domains"
+msgid "adls.domains"
+msgstr "Domains"
+
 msgctxt "Languages::adls"
 msgid "adls"
 msgstr "ADLS"
