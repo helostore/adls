@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.1.64",
+        "releaseDate": "2016-12-06 03:04:55",
+        "releaseTimestamp": "1481036695",
+        "hash": "b3963b11e6b04a5ff4e2d18dedd6430d04ded8ba",
+        "commits": [
+            "[2016-12-06] Bumped version to 0.1.64",
+            "[2016-12-06] Bumped version to 0.1.63"
+        ]
+    },
+    {
         "version": "0.1.62",
         "releaseDate": "2016-12-06 01:07:13",
         "releaseTimestamp": "1481029633",
@@ -29,17 +39,6 @@
         "commits": [
             "[2016-05-07] Bumped version to 0.1.60",
             "[2016-05-08] Highlight in table unreleased versions"
-        ]
-    },
-    {
-        "version": "0.1.59",
-        "releaseDate": "2016-05-07 09:26:31",
-        "releaseTimestamp": "1462656391",
-        "hash": "cbe7e7624da1ba79eac6012675af75ff19cad1bd",
-        "commits": [
-            "[2016-05-07] Bumped version to 0.1.59",
-            "[2016-05-08] Attach a reviewMessage on update summary",
-            "[2016-04-05] Display commits from latest release"
         ]
     }
 ]
