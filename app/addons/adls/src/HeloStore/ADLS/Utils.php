@@ -14,6 +14,11 @@
 
 namespace HeloStore\ADLS;
 
+use Zend\I18n\Validator\Alnum;
+use Zend\Validator\Hostname;
+use Zend\Validator\StringLength;
+use Zend\Validator\ValidatorChain;
+
 
 class Utils
 {
@@ -45,5 +50,29 @@ class Utils
 	{
 		list($usec, $sec) = explode(' ', microtime());
 		return (float) $sec + ((float) $usec * 100000);
+	}
+
+	public static function validateHostname($hostname, $type = License::DOMAIN_TYPE_DEVELOPMENT) {
+		$flags = (Hostname::ALLOW_LOCAL | Hostname::ALLOW_IP);
+		if ($type == License::DOMAIN_TYPE_PRODUCTION) {
+			$flags = (Hostname::ALLOW_DNS);
+		}
+		$chain = new ValidatorChain();
+		$chain->attach(new Hostname($flags));
+
+		// Validate the $hostname
+		if ($chain->isValid($hostname)) {
+			if ($type == License::DOMAIN_TYPE_PRODUCTION) {
+				$ip = gethostbyname($hostname);
+				if ($ip == $hostname) {
+					return array(
+						'This is not a valid Internet domain.'
+					);
+				}
+			}
+			return true;
+		} else {
+			return $chain->getMessages();
+		}
 	}
 } 

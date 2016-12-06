@@ -186,7 +186,7 @@ class LicenseManager extends Singleton
 
 	public function getLicenseDomains($licenseId)
 	{
-		$domains = db_get_array('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i ORDER BY domain_id', $licenseId);
+		$domains = db_get_hash_array('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i ORDER BY domain_id', 'domain_id', $licenseId);
 
 		return $domains;
 	}
