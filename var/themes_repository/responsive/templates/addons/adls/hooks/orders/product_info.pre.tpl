@@ -22,14 +22,22 @@
 		{if !empty($product.license.domains)}
 			<div class="ty-control-group clearfix">
 				<label class="ty-product-options__title">{__('adls.domains')}</label>
-				<div class="adls-license-domains">
-					{foreach from=$product.license.domains item=domain}
-						<div class="adls-license-status status-{$domain.status|strtolower}">
-							<input value="{$domain.domain}" class="ty-input-text" type="text" size="36" />
-							&mdash; {$domain.status|fn_adls_get_license_status_label}
+				<div class="adls-license-domains" id="adls_license_domains_{$product.product_id}">
+					<form class="cm-ajax cm-ajax-full-render" action="{""|fn_url}" method="post" name="adls_domains_update_{$product.product_id}">
+						<input type="hidden" name="redirect_url" value="{$config.current_url}" />
+						<input type="hidden" name="result_ids" value="adls_license_domains_*" />
+						<input type="hidden" name="order_id" value="{$order_info.order_id}" />
+						{foreach from=$product.license.domains item=domain}
+							<div class="adls-license-status status-{$domain.status|strtolower}">
+								<input name="licenses[{$product.license.license_id}][domains][{$domain.domain_id}]" value="{$domain.domain}" class="ty-input-text adls-hostname" type="text" size="36" />
+								&mdash; {$domain.status|fn_adls_get_license_status_label}
+							</div>
+						{/foreach}
+						<div class="adls-license-status">
+							{include file="buttons/button.tpl" but_text=__("update") but_id="adls_domains_update_button_`$product.product_id`" but_meta="ty-btn__secondary" but_name="dispatch[orders.details]" but_role="action" obj_id=$product.product_id}
 						</div>
-					{/foreach}
-				</div>
+					</form>
+				<!--adls_license_domains_{$product.product_id}--></div>
 			</div>
 		{/if}
 	{/if}
