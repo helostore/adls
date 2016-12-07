@@ -34,7 +34,13 @@ class ProductManager extends Singleton
 
 	public function getReviewMessage($productCode)
 	{
-		$reviewMessage = "<p class='alert alert-info'>PS: would you mind taking a minute or two to write brief a review for <a href='[productReviewUrl]' target='_blank'>this product</a> or <a href='[developerReviewUrl]' target='_blank'>about us</a>? Your comments help others know what to expect from this product or from us, and will help us improve our services and products. Thank you very much <span style='font-size:1.5em;'>&#x263a;</span>.</p>";
+		$reviewMessage = "<p class='alert alert-info'>PS: would you mind taking a minute or two to write a brief review for <a href='[productReviewUrl]' target='_blank'>this product</a> or <a href='[developerReviewUrl]' target='_blank'>about us</a>? Your comments help others know what to expect from this product or from us, and will help us improve our services and products. Thank you very much <span style='font-size:1.5em;'>&#x263a;</span>.</p>";
+
+
+		if ($this->getReviewUrl($productCode) == null) {
+			return '';
+		}
+
 		$reviewMessage = strtr($reviewMessage, array(
 			'[developerReviewUrl]' => $this->getReviewUrl('company'),
 			'[productReviewUrl]' => $this->getReviewUrl($productCode),
