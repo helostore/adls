@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.1.68",
+        "releaseDate": "2016-12-07 08:10:25",
+        "releaseTimestamp": "1481098225",
+        "hash": "c695a1212a43c31d0d9ec2399d161a0c154302ea",
+        "commits": [
+            "[2016-12-07] Bumped version to 0.1.68",
+            "[2016-12-07] Feature: display products & domains summary in orders search"
+        ]
+    },
+    {
         "version": "0.1.67",
         "releaseDate": "2016-12-07 07:46:10",
         "releaseTimestamp": "1481096770",
@@ -32,16 +42,6 @@
             "[2016-12-07] Feature: allow customers to update development domains attached to their licenses",
             "[2016-12-07] Bugfix: editing order in backend, wrongfully generated new license keys (instead, it should have just updated the license's status to inactive)",
             "[2016-12-07] Bugfix: editing order in backend, wrongfully generated new license keys (instead, it should have just updated the license's status to inactive)"
-        ]
-    },
-    {
-        "version": "0.1.64",
-        "releaseDate": "2016-12-06 03:04:55",
-        "releaseTimestamp": "1481036695",
-        "hash": "b3963b11e6b04a5ff4e2d18dedd6430d04ded8ba",
-        "commits": [
-            "[2016-12-06] Bumped version to 0.1.64",
-            "[2016-12-06] Bumped version to 0.1.63"
         ]
     }
 ]
