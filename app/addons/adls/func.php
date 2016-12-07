@@ -21,6 +21,28 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 /* Hooks */
+function fn_adls_get_orders_post($params, &$orders)
+{
+	foreach ($orders as &$order) {
+
+		$query = db_quote('SELECT license_id FROM ?:adls_licenses WHERE order_id = ?i', $order['order_id']);
+		$query = db_quote('SELECT GROUP_CONCAT(DISTINCT domain) AS domains FROM ?:adls_license_domains WHERE license_id IN (?p)', $query);
+		$order['domains'] = db_get_field($query);
+		if (!empty($order['domains'])) {
+			$order['domains'] = explode(',', $order['domains']);
+		}
+
+
+		$query = db_quote('SELECT product_id FROM ?:order_details WHERE order_id = ?i', $order['order_id']);
+		$query = db_quote('SELECT GROUP_CONCAT(DISTINCT product) AS products FROM ?:product_descriptions WHERE product_id IN (?p) AND lang_code = ?s', $query, CART_LANGUAGE);
+		$order['products'] = db_get_field($query);
+		if (!empty($order['products'])) {
+			$order['products'] = explode(',', $order['products']);
+		}
+	}
+
+	unset($order);
+}
 function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
 {
 	foreach ($cart['products'] as $itemId => $item) {
