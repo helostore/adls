@@ -21,9 +21,36 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 /* Hooks */
-function fn_adls_change_order_status($status_to, $status_from, $order_info, $force_notification, $order_statuses, $place_order)
+function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
 {
-	fn_adls_process_order($order_info, $status_to);
+	foreach ($cart['products'] as $itemId => $item) {
+		if (!fn_is_adls_product($item)) {
+			continue;
+		}
+
+		// The cart/order item id changed (probably because domain changed), we should update it in our tables as well
+		if (!empty($item['prev_cart_id'])) {
+			$oldItemId = $item['prev_cart_id'];
+			if ($oldItemId != $itemId) {
+				$query = db_quote('
+					UPDATE ?:adls_licenses SET order_item_id = ?s WHERE
+					order_id = ?i
+					AND order_item_id = ?i
+					',
+					$itemId
+					, $orderId
+					, $oldItemId
+				);
+				db_query($query);
+			}
+		}
+	}
+	return false;
+
+}
+function fn_adls_change_order_status($status_to, $status_from, $orderInfo, $force_notification, $order_statuses, $place_order)
+{
+	fn_adls_process_order($orderInfo, $status_to);
 }
 
 function fn_adls_delete_order($orderId)
@@ -137,17 +164,17 @@ function fn_adls_validate_product_options($product_options)
 	}
 }
 
-function fn_adls_process_order($order_info, $orderStatus)
+function fn_adls_process_order($orderInfo, $orderStatus)
 {
 	$manager = LicenseManager::instance();
-	$orderId = $order_info['order_id'];
-	$userId = $order_info['user_id'];
+	$orderId = $orderInfo['order_id'];
+	$userId = $orderInfo['user_id'];
 	$errors = array();
 	$success = true;
 	$paidStatuses = array('P');
 	$isPaidStatus = in_array($orderStatus, $paidStatuses);
 
-	foreach ($order_info['products'] as $product) {
+	foreach ($orderInfo['products'] as $product) {
 		$productId = $product['product_id'];
 		$itemId = $product['item_id'];
 
@@ -155,54 +182,35 @@ function fn_adls_process_order($order_info, $orderStatus)
 			continue;
 		}
 
-		$options = fn_adls_get_product_options($product);
 
-		$productionDomain = (!empty($options['domain']) ? $options['domain'] : '');
-		$developmentDomains = (!empty($options['dev_domain']) ? $options['dev_domain'] : '');
-		$domains = array();
-		if (!empty($productionDomain)) {
-			$domains[] = array(
-				'name' => $productionDomain,
-				'type' => License::DOMAIN_TYPE_PRODUCTION
-			);
-		}
-
-		if (!empty($developmentDomains)) {
-			$developmentDomains = is_array($developmentDomains) ? $developmentDomains : array($developmentDomains);
-			foreach ($developmentDomains as $developmentDomain) {
-				$domains[] = array(
-					'name' => $developmentDomain,
-					'type' => License::DOMAIN_TYPE_DEVELOPMENT
-				);
-			}
-		}
 		$licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
 		$notificationState = (AREA == 'A' ? 'I' : 'K');
-
 		if ($isPaidStatus) {
+
+			$domainOptions = Utils::filterDomainProductOptions($product['product_options']);
+
 			if (!empty($licenseId)) {
-				foreach ($domains as $domain) {
-					if ($manager->inactivateLicense($licenseId, $domain['name'])) {
-						fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
-					}
-				}
+
+				Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
+
 			} else {
 				$licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 				if ($licenseId) {
 					fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
 
-					if (!empty($domains)) {
-						$manager->updateLicenseDomains($licenseId, $domains);
-					}
+					Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
 				} else {
 					$success = false;
 					$errors += $manager->getErrors();
 				}
 			}
 		} else {
-			foreach ($domains as $domain) {
-				if ($manager->disableLicense($licenseId, $domain['name'])) {
-					fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
+			if (!defined('ORDER_MANAGEMENT')) {
+				$domains = $manager->getLicenseDomains($licenseId);
+				foreach ($domains as $domain) {
+					if ($manager->disableLicense($licenseId, $domain['name'])) {
+						fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
+					}
 				}
 			}
 		}
@@ -225,7 +233,9 @@ function fn_adls_is_product_option_domain($option)
 		return false;
 	}
 
-	if ($option['adls_option_type'] == 'domain' || $option['adls_option_type'] == 'dev_domain') {
+	$domainTypes = array(License::DOMAIN_TYPE_PRODUCTION, License::DOMAIN_TYPE_DEVELOPMENT);
+
+	if (in_array($option['adls_option_type'], $domainTypes)) {
 		return true;
 	}
 
@@ -234,9 +244,8 @@ function fn_adls_is_product_option_domain($option)
 function fn_adls_get_product_option_types()
 {
 	$types = array(
-		'domain' => 'Single domain',
-		'dev_domain' => 'Development domain',
-		'domains' => 'Multiple domains',
+		License::DOMAIN_TYPE_PRODUCTION => 'Production domain',
+		License::DOMAIN_TYPE_DEVELOPMENT => 'Development domain',
 	);
 
 	return $types;
@@ -247,20 +256,11 @@ function fn_adls_get_product_options($product)
 		return array();
 	}
 	$options = array();
-	foreach ($product['product_options'] as $opt) {
+	foreach ($product['product_options'] as $k => $opt) {
 		$optionId = $opt['option_id'];
-		$type = (string) db_get_field('SELECT adls_option_type FROM ?:product_options WHERE option_id = ?i', $optionId);
-
-		$value = $opt['value'];
-		if (!empty($type) && !empty($value)) {
-			if (isset($options[$type])) {
-				$tmp = $options[$type];
-				$options[$type] = array();
-				$options[$type][] = $tmp;
-				$options[$type][] = $value;
-			} else {
-				$options[$type] = $value;
-			}
+		$type = db_get_field('SELECT adls_option_type FROM ?:product_options WHERE option_id = ?i', $optionId);
+		if (!empty($type)) {
+			$options[$k] = $opt;
 		}
 	}
 

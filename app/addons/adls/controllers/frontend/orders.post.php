@@ -19,7 +19,9 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'details') {
+
         if (!empty($_REQUEST['order_id']) && !empty($_REQUEST['licenses'])) {
+            $orderChanged = false;
 
             $orderId = intval($_REQUEST['order_id']);
             $licenseManager = LicenseManager::instance();
@@ -82,9 +84,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         $message = __($langVar, array('[old]' => $oldDomainValue, '[new]' => $newDomainValue));
                         fn_set_notification('N', __('notice'), $message, 'K');
+
+                        // update product option value as well
+//                        $domain = $licenseManager->getDomainBy(array(
+//                            'license_id' => $licenseId,
+//                            'domain_id' => $domainId,
+//                        ));
+
+
+                        $extra = db_get_field('SELECT extra FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
+                            $license['order_item_id'],
+                            $license['order_id'],
+                            $license['product_id']
+                        );
+                        $productOptionId = $domain['product_option_id'];
+                        if (!empty($extra) && !empty($productOptionId)) {
+                            $extra = unserialize($extra);
+                            if (!empty($extra) && is_array($extra)) {
+                                $extra['product_options'][$productOptionId] = $newDomainValue;
+                                foreach ($extra['product_options_value'] as $k => $extraOption) {
+                                    if ($extraOption['option_id'] == $productOptionId) {
+                                        $extra['product_options_value'][$k]['value'] = $newDomainValue;
+                                        $extra['product_options_value'][$k]['variant_name'] = $newDomainValue;
+                                    }
+                                }
+                                $extra = serialize($extra);
+                                db_query('UPDATE ?:order_details SET extra = ?s WHERE item_id = ?i AND order_id = ?i AND product_id = ?i',
+                                    $extra,
+                                    $license['order_item_id'],
+                                    $license['order_id'],
+                                    $license['product_id']
+                                );
+                                $orderChanged = true;
+                            }
+                        }
                     }
                 }
 
+            }
+
+            if ($orderChanged) {
+//                $order = \Tygh\Tygh::$app['view']->getTemplateVars('order_info');
             }
 
             return array(CONTROLLER_STATUS_OK, 'orders.details?order_id=' . $_REQUEST['order_id']);

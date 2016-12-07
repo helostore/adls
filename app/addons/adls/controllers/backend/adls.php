@@ -12,6 +12,7 @@
  * @version    $Id$
  */
 
+use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseClient;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseServer;
@@ -191,3 +192,77 @@ if ($mode == 'test') {
 
 	exit;
 }
+
+
+if ($mode == 'fix_orphaned_licenses') {
+    $licenses = db_get_array('SELECT * FROM ?:adls_licenses');
+    foreach ($licenses as $license) {
+        $item = db_get_row('SELECT * FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
+            $license['order_item_id']
+            , $license['order_id']
+            , $license['product_id']
+        );
+        if (empty($item)) {
+            $manager = LicenseManager::instance();
+            $license = $manager->getOrderLicense($license['order_id'], $license['order_item_id']);
+            if (!empty($license)) {
+                aa('Deleted orphan license #' . $license['license_id']);
+                $manager->deleteLicense($license['license_id']);
+            }
+        }
+    }
+
+    exit;
+}
+if ($mode == 'fix_domain_product_option_ids') {
+    $licenses = db_get_array('SELECT * FROM ?:adls_licenses');
+    foreach ($licenses as $license) {
+//        $domains = db_get_array('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i', $license['license_id']);
+        $order = fn_get_order_info($license['order_id']);
+        foreach ($order['products'] as $item) {
+
+            $options = array();
+            foreach ($item['product_options'] as $option) {
+                $type = $option['adls_option_type'];
+                if ($type == 'domain') {
+                    $type = License::DOMAIN_TYPE_PRODUCTION;
+                }
+                if ($type == 'dev_domain') {
+                    $type = License::DOMAIN_TYPE_DEVELOPMENT;
+                }
+                if (empty($type)) {
+                    continue;
+                }
+                if (!isset($options[$type])) {
+                    $options[$type] = array();
+                }
+
+                $options[$type][] = $option;
+            }
+
+            $domains = array();
+            foreach ($item['license']['domains'] as $domain) {
+                $type = $domain['type'];
+                if (!isset($domains[$type])) {
+                    $domains[$type] = array();
+                }
+
+                $domains[$type][] = $domain;
+            }
+
+            foreach ($domains as $type => $_domains) {
+                foreach ($_domains as $domain) {
+                    $option = array_shift($options[$type]);
+                    if (!empty($option)) {
+                        $query = db_quote('UPDATE ?:adls_license_domains SET product_option_id = ?i WHERE domain_id = ?i', $option['option_id'], $domain['domain_id']);
+                        aa($query);
+                        db_query($query);
+                    }
+                }
+
+            }
+        }
+    }
+    exit;
+}
+
