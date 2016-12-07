@@ -29,9 +29,47 @@
             $this.val(adlsHostnameFormat($this.val()));
         });
 
+
+        $(document).on('change', '.ty-product-options :input', function(event) {
+            var $this = $(this);
+            var id = $this.attr('id');
+            var matches = id.match(/\d+/g);
+            if (!matches || matches.length != 2) {
+                console.error('ADLS: failed to retrieve product and option IDs of field', this);
+                return;
+            }
+            var optionId = matches.pop();
+            var productId = matches.pop();
+            if (!optionId) {
+                console.error('ADLS: failed to retrieve option ID of field', this);
+                return;
+            }
+            if (!adlsOptionIds || adlsOptionIds.length == 0) {
+                return;
+            }
+            var isAdlsOption = (adlsOptionIds.indexOf(optionId) > -1);
+            if (!isAdlsOption) {
+                return;
+            }
+
+            $this.val(adlsHostnameFormat($this.val()));
+
+            matches = id.split('_');
+            if (!matches || matches.length < 2) {
+                console.error('ADLS: failed to retrieve ID parts of field', this);
+                return false;
+            }
+
+            var _objPrefixWithId = matches[1];
+            var _id = matches[1];
+            var _optionId = matches[2];
+
+            fn_change_options(_objPrefixWithId, _id, _optionId);
+        });
+
         $.ceEvent('on', 'ce.ajaxdone', function(elms, inlineScripts, params, data, responseText){
             if (data) {
-                if (data.adls_options_changed_in_cart) {
+                if (data.adls_recalculate_cart) {
                     // automatically recalculate cart
                     $('#button_cart').trigger('click');
                 }

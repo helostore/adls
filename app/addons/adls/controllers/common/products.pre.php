@@ -9,10 +9,6 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($mode == 'options') {
 
-    if (defined('AJAX_REQUEST')) {
-        Tygh::$app['ajax']->assign('adls_options_changed_in_cart', true);
-    }
-
     if (!empty($_REQUEST['product_data'])) {
 
     } else {
@@ -22,6 +18,8 @@ if ($mode == 'options') {
                 continue;
             }
             $changedOptionId = $changedOption[$itemId];
+            $success = true;
+            $changes = false;
             foreach ($item['product_options'] as $optionId => $optionValue) {
 
                 $option = db_get_row("SELECT * FROM ?:product_options WHERE option_id = ?i", $optionId);
@@ -36,6 +34,7 @@ if ($mode == 'options') {
 
                 $result = Utils::validateHostname($optionValue, $domainType);
                 if ($result !== true) {
+                    $success = false;
                     $message = __('adls.order_license_domain_update_failed', array('[domain]' => $optionValue));
                     foreach ($result as $value) {
                         $message .= '<br> - ' . $value;
@@ -49,8 +48,16 @@ if ($mode == 'options') {
 
                     }
                     $_REQUEST['cart_products'][$itemId]['product_options'][$optionId] = $prevValue;
+                } else {
+                    $changes = true;
                 }
+            }
 
+
+            if ($changes && $success) {
+                if (defined('AJAX_REQUEST')) {
+                    Tygh::$app['ajax']->assign('adls_recalculate_cart', true);
+                }
             }
         }
 
