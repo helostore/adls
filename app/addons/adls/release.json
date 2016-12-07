@@ -1,5 +1,19 @@
 [
     {
+        "version": "0.1.65",
+        "releaseDate": "2016-12-07 04:08:28",
+        "releaseTimestamp": "1481083708",
+        "hash": "d9b022881bd39af497171e7ceb6f53dec96dcae7",
+        "commits": [
+            "[2016-12-07] Bumped version to 0.1.65",
+            "[2016-12-07] Feature: validate domains on frontend",
+            "[2016-12-07] Feature: allow customers to update development domains attached to their licenses",
+            "[2016-12-07] Feature: allow customers to update development domains attached to their licenses",
+            "[2016-12-07] Bugfix: editing order in backend, wrongfully generated new license keys (instead, it should have just updated the license's status to inactive)",
+            "[2016-12-07] Bugfix: editing order in backend, wrongfully generated new license keys (instead, it should have just updated the license's status to inactive)"
+        ]
+    },
+    {
         "version": "0.1.64",
         "releaseDate": "2016-12-06 03:04:55",
         "releaseTimestamp": "1481036695",
@@ -29,16 +43,6 @@
             "[2016-11-25] Bumped version to 0.1.61",
             "[2016-11-25] Feature: support for multiple development domains",
             "[2016-05-24] Allow developers using magic keys for quick license activation"
-        ]
-    },
-    {
-        "version": "0.1.60",
-        "releaseDate": "2016-05-07 09:36:15",
-        "releaseTimestamp": "1462656975",
-        "hash": "b1da9d1fcd148b9e1eedef04b031a2c05d8fd282",
-        "commits": [
-            "[2016-05-07] Bumped version to 0.1.60",
-            "[2016-05-08] Highlight in table unreleased versions"
         ]
     }
 ]
