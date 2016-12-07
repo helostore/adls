@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.1.66",
+        "releaseDate": "2016-12-07 04:49:38",
+        "releaseTimestamp": "1481086178",
+        "hash": "c0c3499fc240b275a7968ab4a28368875773abfd",
+        "commits": [
+            "[2016-12-07] Bumped version to 0.1.66",
+            "[2016-12-07] Feature: validate domains on frontend"
+        ]
+    },
+    {
         "version": "0.1.65",
         "releaseDate": "2016-12-07 04:08:28",
         "releaseTimestamp": "1481083708",
@@ -32,17 +42,6 @@
             "[2016-12-06] Bumped version to 0.1.62",
             "[2016-12-06] Misc improvements",
             "[2016-12-06] Updated translations"
-        ]
-    },
-    {
-        "version": "0.1.61",
-        "releaseDate": "2016-11-25 09:30:23",
-        "releaseTimestamp": "1480066223",
-        "hash": "0c3cd55263c9bd2681a0af04fbd42b4ecf1894d7",
-        "commits": [
-            "[2016-11-25] Bumped version to 0.1.61",
-            "[2016-11-25] Feature: support for multiple development domains",
-            "[2016-05-24] Allow developers using magic keys for quick license activation"
         ]
     }
 ]
