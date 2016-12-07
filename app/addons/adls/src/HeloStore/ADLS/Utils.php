@@ -75,4 +75,34 @@ class Utils
 			return $chain->getMessages();
 		}
 	}
+
+	public static function filterDomainProductOptions($options)
+	{
+		$opts = array();
+		foreach ($options as $k => $option) {
+			if (!fn_adls_is_product_option_domain($option)) {
+				continue;
+			}
+
+			$opts[$k] = $option;
+		}
+		return $opts;
+	}
+	public static function updateLicenseDomainsFromProductOptions($licenseId, $options)
+	{
+		$domains = array();
+		foreach ($options as $option) {
+			$domainType = $option['adls_option_type'];
+			$domains[] = array(
+				'name' => $option['value'],
+				'type' => $domainType,
+				'product_option_id' => $option['option_id'],
+			);
+
+		}
+		if (!empty($domains)) {
+			$manager = LicenseManager::instance();
+			$manager->updateLicenseDomains($licenseId, $domains);
+		}
+	}
 } 

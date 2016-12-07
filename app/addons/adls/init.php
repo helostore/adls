@@ -25,6 +25,7 @@ fn_register_hooks(
 	'change_order_status'
 	, 'get_product_options'
 	, 'get_order_info'
+	, 'place_order'
 	, 'delete_order'
 	, 'generate_cart_id'
 	, 'get_additional_information'

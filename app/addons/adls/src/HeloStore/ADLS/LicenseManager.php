@@ -52,6 +52,39 @@ class LicenseManager extends Singleton
 		return $result;
 	}
 
+	public function updateDomain()
+	{
+		$licenseId = $this->existsLicense($productId, $itemId, $orderId, $userId);
+		if (!empty($licenseId)) {
+			$this->addError('license_already_attached_to_order');
+			return false;
+		}
+
+		$key = $this->generateUniqueKey();
+
+		if ($key == false) {
+			$this->addError('license_uniqueness_generating_failure');
+			return false;
+		}
+		$now = date("Y-m-d H:i:s", TIME);
+
+		$license = array(
+			'product_id' => $productId,
+			'order_item_id' => $itemId,
+			'order_id' => $orderId,
+			'user_id' => $userId,
+			'created_at' => $now,
+			'updated_at' => $now,
+			'license_key' => $key,
+			'status' => License::STATUS_INACTIVE,
+		);
+
+		$result = db_query('INSERT INTO ?:adls_licenses ?e', $license);
+
+		return $result;
+	}
+
+
 	public function deleteLicense($licenseId)
 	{
 		db_query('DELETE FROM ?:adls_license_domains WHERE license_id = ?i', $licenseId);
@@ -80,42 +113,85 @@ class LicenseManager extends Singleton
 	public function updateLicenseDomains($licenseId, $domains)
 	{
 		foreach ($domains as $domain) {
-			$entry = $this->getDomainByLicenseId($licenseId, $domain['name'], $domain['type']);
+			$productOptionId = null;
+			if (!empty($domain['product_option_id'])) {
+				$entry = $this->getDomainByOptionId($licenseId, $domain['product_option_id']);
+				$productOptionId = $domain['product_option_id'];
+			} else {
+				$entry = $this->getDomainByType($licenseId, $domain['type']);
+			}
+			$domainChanged = false;
 			if (empty($entry)) {
 				$entry = array(
 					'license_id' => $licenseId,
-					'domain' => $domain['name'],
 					'created_at' =>  date("Y-m-d H:i:s", TIME),
 					'type' => $domain['type'],
+					'product_option_id' => $productOptionId,
 					'status' => License::STATUS_INACTIVE
 				);
+			} else {
+				if ($entry['domain'] != $domain['name']) {
+					$domainChanged = true;
+				}
 			}
-			$entry['updated_at'] =  date("Y-m-d H:i:s", TIME);
+			$entry['domain'] = $domain['name'];
+			$entry['updated_at'] = date("Y-m-d H:i:s", TIME);
 			if (empty($entry['domain_id'])) {
 				db_query('INSERT INTO ?:adls_license_domains ?e', $entry);
 			} else {
 				db_query('UPDATE ?:adls_license_domains SET ?u WHERE domain_id = ?i', $entry, $entry['domain_id']);
+			}
+
+			if ($domainChanged) {
+				if ($this->inactivateLicense($licenseId, $entry['domain'])) {
+					fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), 'K');
+				}
 			}
 		}
 
 		return true;
 	}
 
-	public function getDomainByLicenseId($licenseId, $domain, $type = '')
+	public function getDomainByType($licenseId, $type)
+	{
+		return $this->getDomainBy(array('license_id' => $licenseId, 'type' => $type));
+	}
+	public function getDomainByOptionId($licenseId, $option_id)
+	{
+		return $this->getDomainBy(array('license_id' => $licenseId, 'product_option_id' => $option_id));
+	}
+	public function getDomainBy($params)
 	{
 		$conditions = array();
-		if (!empty($type)) {
-			$conditions[] = db_quote('type = ?s', $type);
+		if (!empty($params['license_id'])) {
+			$conditions[] = db_quote('license_id = ?s', $params['license_id']);
+		}
+		if (!empty($params['domain_id'])) {
+			$conditions[] = db_quote('domain_id = ?i', $params['domain_id']);
+		}
+		if (!empty($params['domain'])) {
+			$conditions[] = db_quote('domain = ?s', $params['domain']);
+		}
+		if (!empty($params['type'])) {
+			$conditions[] = db_quote('type = ?s', $params['type']);
+		}
+		if (!empty($params['product_option_id'])) {
+			$conditions[] = db_quote('product_option_id = ?s', $params['product_option_id']);
 		}
 		$conditions = !empty($conditions) ? ' AND ' . implode(' AND ', $conditions) : '';
+		$query = db_quote('SELECT * FROM ?:adls_license_domains WHERE 1 ?p', $conditions);
 
-		return db_get_row('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s ?p', $licenseId, $domain, $conditions);
+		return db_get_row($query);
 	}
-
+	
 	public function getLicenses($params)
 	{
 		$conditions = array();
 		$joins = array();
+
+		if (!empty($params['license_id'])) {
+			$conditions[] = db_quote('al.license_id = ?s', $params['license_id']);
+		}
 
 		if (!empty($params['domain'])) {
 			$joins[] = db_quote('LEFT JOIN ?:adls_license_domains AS ald ON ald.license_id = al.license_id');

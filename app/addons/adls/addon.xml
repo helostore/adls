@@ -31,6 +31,7 @@
                 `created_at`  datetime NOT NULL ,
                 `updated_at`  datetime NOT NULL ,
                 `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `product_option_id`  mediumint(8) UNSIGNED NULL ,
             PRIMARY KEY (`domain_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
