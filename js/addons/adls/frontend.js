@@ -29,7 +29,6 @@
             $this.val(adlsHostnameFormat($this.val()));
         });
 
-
         $(document).on('change', '.ty-product-options :input', function(event) {
             var $this = $(this);
             var id = $this.attr('id');
@@ -81,11 +80,4 @@
 
 function adlsHostnameFormat(value) {
     return value.match(/[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/);
-}
-
-function fn_adls_change_options(el, obj_id, id, option_id) {
-    var $this = $(el);
-    $this.val(adlsHostnameFormat($this.val()));
-
-    return fn_change_options(obj_id, id, option_id);
 }
