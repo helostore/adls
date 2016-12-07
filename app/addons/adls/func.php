@@ -58,9 +58,7 @@ function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 	}
 
 	// Exclude domain names from cid because we don't want to generated new cart item id each time we update a domain
-	$optionTypes = fn_adls_get_product_option_types();
-	$optionTypes = array_keys($optionTypes);
-	$excludeOptionIds = db_get_fields('SELECT option_id FROM ?:product_options WHERE adls_option_type IN (?a)', $optionTypes);
+	$excludeOptionIds = fn_adls_get_options_ids();
 
 	// Grab values of excluded options
 	$excludedValues = array();
@@ -310,4 +308,18 @@ function fn_adls_log_type_is_success($code)
 function fn_adls_get_log_type($code)
 {
 	return Logger::instance()->getLogTypeLabel($code);
+}
+
+/**
+ * Get ADLS related option IDs
+ *
+ * @return array
+ */
+function fn_adls_get_options_ids()
+{
+	$optionTypes = fn_adls_get_product_option_types();
+	$optionTypes = array_keys($optionTypes);
+	$optionIds = db_get_fields('SELECT option_id FROM ?:product_options WHERE adls_option_type IN (?a)', $optionTypes);
+
+	return $optionIds;
 }
