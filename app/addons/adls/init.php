@@ -27,4 +27,5 @@ fn_register_hooks(
 	, 'get_order_info'
 	, 'delete_order'
 	, 'generate_cart_id'
+	, 'get_additional_information'
 );

@@ -24,12 +24,30 @@
         });
         
         // Hostname validator
-        // $('.adls-hostname').on('change', function() {
         $('.adls-license-domains').on('change', '.adls-hostname', function () {
             var $this = $(this);
-            var value = $this.val();
-            value = value.match(/[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/);
-            $this.val(value);
+            $this.val(adlsHostnameFormat($this.val()));
         });
+
+        $.ceEvent('on', 'ce.ajaxdone', function(elms, inlineScripts, params, data, responseText){
+            if (data) {
+                if (data.adls_options_changed_in_cart) {
+                    // automatically recalculate cart
+                    $('#button_cart').trigger('click');
+                }
+            }
+        });
+
     });
 }(Tygh, Tygh.$));
+
+function adlsHostnameFormat(value) {
+    return value.match(/[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/);
+}
+
+function fn_adls_change_options(el, obj_id, id, option_id) {
+    var $this = $(el);
+    $this.val(adlsHostnameFormat($this.val()));
+
+    return fn_change_options(obj_id, id, option_id);
+}
