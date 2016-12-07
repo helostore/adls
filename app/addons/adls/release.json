@@ -1,5 +1,16 @@
 [
     {
+        "version": "0.1.67",
+        "releaseDate": "2016-12-07 07:46:10",
+        "releaseTimestamp": "1481096770",
+        "hash": "c6760907bf55e66b2e223f8ab70e0a751bc4c4f8",
+        "commits": [
+            "[2016-12-07] Bumped version to 0.1.67",
+            "[2016-12-07] Feature: validate domains on frontend",
+            "[2016-12-07] Feature: validate domains on frontend"
+        ]
+    },
+    {
         "version": "0.1.66",
         "releaseDate": "2016-12-07 04:49:38",
         "releaseTimestamp": "1481086178",
@@ -31,17 +42,6 @@
         "commits": [
             "[2016-12-06] Bumped version to 0.1.64",
             "[2016-12-06] Bumped version to 0.1.63"
-        ]
-    },
-    {
-        "version": "0.1.62",
-        "releaseDate": "2016-12-06 01:07:13",
-        "releaseTimestamp": "1481029633",
-        "hash": "d825f815a6dd9d9c2ccc3bb3c5cf81f624ff094f",
-        "commits": [
-            "[2016-12-06] Bumped version to 0.1.62",
-            "[2016-12-06] Misc improvements",
-            "[2016-12-06] Updated translations"
         ]
     }
 ]
