@@ -15,6 +15,7 @@
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\Utils;
 use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
@@ -40,8 +41,6 @@ function fn_adls_get_order_info(&$order, $additional_data)
 		if (fn_is_adls_product($product)) {
 			$storeProduct = $productManager->getProductById($product['product_id']);
 			$product['license'] = LicenseManager::instance()->getOrderLicense($order['order_id'], $product['item_id']);
-//			aa($storeProduct);
-//			aa($product['license'],1);
 			if ($productManager->isPaidSubscription($storeProduct)) {
 			}
 		}
@@ -51,6 +50,13 @@ function fn_adls_get_order_info(&$order, $additional_data)
 
 function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 {
+	return;
+
+
+	if (defined('GET_OPTIONS')) {
+		return;
+	}
+
 	// Exclude domain names from cid because we don't want to generated new cart item id each time we update a domain
 	$optionTypes = fn_adls_get_product_option_types();
 	$optionTypes = array_keys($optionTypes);
@@ -79,7 +85,59 @@ function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 		$_cid = array_diff($_cid, $excludedValues);
 	}
 }
+
+function fn_adls_get_additional_information(&$product, $product_data)
+{
+
+	foreach ($product['selected_options'] as $optionId => $optionValue) {
+
+		$option = db_get_row("SELECT * FROM ?:product_options WHERE option_id = ?i", $optionId);
+		if (!fn_adls_is_product_option_domain($option)) {
+			continue;
+		}
+		$domainType = License::DOMAIN_TYPE_DEVELOPMENT;
+		if ($option['adls_option_type'] == 'domain') {
+			$domainType = License::DOMAIN_TYPE_PRODUCTION;
+		}
+
+		$result = Utils::validateHostname($optionValue, $domainType);
+		if ($result !== true) {
+			unset($product['selected_options'][$optionId]);
+			$message = __('adls.order_license_domain_update_failed', array('[domain]' => $optionValue));
+			foreach ($result as $value) {
+				$message .= '<br> - ' . $value;
+			}
+			fn_set_notification('E', __('error'), $message, 'K');
+		}
+	}
+}
 /* /Hooks */
+
+function fn_adls_validate_product_options($product_options)
+{
+
+	foreach ($product_options as $optionId => $optionValue) {
+
+		$option = db_get_row("SELECT * FROM ?:product_options WHERE option_id = ?i", $optionId);
+		if (!fn_adls_is_product_option_domain($option)) {
+			continue;
+		}
+		$domainType = License::DOMAIN_TYPE_DEVELOPMENT;
+		if ($option['adls_option_type'] == 'domain') {
+			$domainType = License::DOMAIN_TYPE_PRODUCTION;
+		}
+
+		$result = Utils::validateHostname($optionValue, $domainType);
+		if ($result !== true) {
+			unset($product_options[$optionId]);
+			$message = __('adls.order_license_domain_update_failed', array('[domain]' => $optionValue));
+			foreach ($result as $value) {
+				$message .= '<br> - ' . $value;
+			}
+			fn_set_notification('E', __('error'), $message, 'K');
+		}
+	}
+}
 
 function fn_adls_process_order($order_info, $orderStatus)
 {
@@ -163,6 +221,18 @@ function fn_adls_process_order($order_info, $orderStatus)
 	return $success;
 }
 
+function fn_adls_is_product_option_domain($option)
+{
+	if (empty($option) || empty($option['adls_option_type'])) {
+		return false;
+	}
+
+	if ($option['adls_option_type'] == 'domain' || $option['adls_option_type'] == 'dev_domain') {
+		return true;
+	}
+
+	return false;
+}
 function fn_adls_get_product_option_types()
 {
 	$types = array(
