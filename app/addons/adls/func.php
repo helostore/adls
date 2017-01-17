@@ -26,7 +26,7 @@ function fn_adls_get_orders_post($params, &$orders)
 	foreach ($orders as &$order) {
 
 		$query = db_quote('SELECT license_id FROM ?:adls_licenses WHERE order_id = ?i', $order['order_id']);
-		$query = db_quote('SELECT GROUP_CONCAT(DISTINCT domain) AS domains FROM ?:adls_license_domains WHERE license_id IN (?p)', $query);
+		$query = db_quote('SELECT GROUP_CONCAT(DISTINCT name) AS domains FROM ?:adls_license_domains WHERE license_id IN (?p)', $query);
 		$order['domains'] = db_get_field($query);
 		if (!empty($order['domains'])) {
 			$order['domains'] = explode(',', $order['domains']);
@@ -196,6 +196,7 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 	$paidStatuses = array('P');
 	$isPaidStatus = in_array($orderStatus, $paidStatuses);
 
+
 	foreach ($orderInfo['products'] as $product) {
 		$productId = $product['product_id'];
 		$itemId = $product['item_id'];
@@ -204,7 +205,6 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 			continue;
 		}
 
-
 		$licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
 		$notificationState = (AREA == 'A' ? 'I' : 'K');
 		if ($isPaidStatus) {
@@ -212,8 +212,21 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 			$domainOptions = Utils::filterDomainProductOptions($product['product_options']);
 
 			if (!empty($licenseId)) {
-
 				Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
+
+				// If there were any disabled licenses, inactive them, so they can become usable
+				$domains = $manager->getLicenseDomains($licenseId);
+				if (!empty($domains)) {
+					foreach ($domains as $domain) {
+						if ($manager->inactivateLicense($licenseId, $domain['name'])) {
+							fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
+						}
+					}
+				} else {
+					if ($manager->inactivateLicense($licenseId)) {
+						fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
+					}
+				}
 
 			} else {
 				$licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
@@ -229,11 +242,19 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 		} else {
 			if (!defined('ORDER_MANAGEMENT')) {
 				$domains = $manager->getLicenseDomains($licenseId);
-				foreach ($domains as $domain) {
-					if ($manager->disableLicense($licenseId, $domain['name'])) {
+				if (!empty($domains)) {
+					foreach ($domains as $domain) {
+						if ($manager->disableLicense($licenseId, $domain['name'])) {
+							fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
+						}
+					}
+
+				} else {
+					if ($manager->disableLicense($licenseId)) {
 						fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
 					}
 				}
+
 			}
 		}
 
@@ -296,6 +317,18 @@ function fn_is_adls_product($product)
 	return in_array($productType, array(ADLS_PRODUCT_TYPE_ADDON, ADLS_PRODUCT_TYPE_THEME));
 }
 
+function fn_adls_license_is_inactive($status)
+{
+	return $status == License::STATUS_INACTIVE;
+}
+function fn_adls_license_is_disabled($status)
+{
+	return $status == License::STATUS_DISABLED;
+}
+function fn_adls_license_is_active($status)
+{
+	return $status == License::STATUS_ACTIVE;
+}
 function fn_adls_get_license_status_label($status)
 {
 	if ($status == License::STATUS_INACTIVE) {

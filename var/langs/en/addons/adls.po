@@ -80,9 +80,13 @@ msgctxt "Languages::adls.order_license_development_domain_updated"
 msgid "order_license_development_domain_updated"
 msgstr "Development domain was changed from <b>[old]</b> to <b>[new]</b>. The license can now be activated on the new domain. <br><br>Please note: this domain should belong to a <u>development</u> environment (ie. a store which is closed, non-public or not indexed by Google)."
 
-msgctxt "Languages::adls.order_license_domain_update_failed"
-msgid "order_license_domain_update_failed"
-msgstr "Sorry, failed updating development domain: [domain]"
+msgctxt "Languages::adls.order_license_domain_update_failed_license_is_disabled"
+msgid "order_license_domain_update_failed_license_is_disabled"
+msgstr "Sorry, failed updating development domain: [domain]. Your license is <b>disabled</b>."
+
+msgctxt "Languages::adls.order_licenses_disabled"
+msgid "order_licenses_disabled"
+msgstr "Your license(s) have been disabled."
 
 msgctxt "Languages::adls.hostname"
 msgid "adls.hostname"
