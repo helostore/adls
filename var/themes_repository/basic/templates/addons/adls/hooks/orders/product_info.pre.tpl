@@ -16,6 +16,9 @@
 						</svg>
 					</span>
 				</button>
+				{if empty($product.license.domains)}
+					&mdash; {$product.license.status|fn_adls_get_license_status_label}
+				{/if}
 			</span>
 			{*<div class="adls-license-status status-{$product.license.status|strtolower}">{$product.license.status|fn_adls_get_license_status_label}</div>*}
 		</div>
@@ -29,12 +32,18 @@
 						<input type="hidden" name="order_id" value="{$order_info.order_id}" />
 						{foreach from=$product.license.domains item=domain}
 							<div class="adls-license-status status-{$domain.status|strtolower}">
-								<input name="licenses[{$product.license.license_id}][domains][{$domain.domain_id}]" value="{$domain.domain}" class="ty-input-text adls-hostname" type="text" size="36" />
+								{if !fn_adls_license_is_disabled($domain.status)}
+								<input name="licenses[{$product.license.license_id}][domains][{$domain.domain_id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
+								{else}
+									{$domain.name}
+								{/if}
 								&mdash; {$domain.status|fn_adls_get_license_status_label}
 							</div>
 						{/foreach}
 						<div class="adls-license-status">
-							{include file="buttons/button.tpl" but_text=__("update") but_id="adls_domains_update_button_`$product.product_id`" but_meta="ty-btn__secondary" but_name="dispatch[orders.details]" but_role="action" obj_id=$product.product_id}
+							{if !fn_adls_license_is_disabled($product.license.status) && empty($product.license.domains_disabled)}
+								{include file="buttons/button.tpl" but_text=__("update") but_id="adls_domains_update_button_`$product.product_id`" but_meta="ty-btn__secondary" but_name="dispatch[orders.details]" but_role="action" obj_id=$product.product_id}
+							{/if}
 						</div>
 					</form>
 				<!--adls_license_domains_{$product.product_id}--></div>
