@@ -52,6 +52,12 @@ class LicenseManager extends Singleton
 		return $result;
 	}
 
+	/**
+	 * @deprecated
+	 * @return bool
+	 */
+
+	/*
 	public function updateDomain()
 	{
 		$licenseId = $this->existsLicense($productId, $itemId, $orderId, $userId);
@@ -83,6 +89,7 @@ class LicenseManager extends Singleton
 
 		return $result;
 	}
+	*/
 
 
 	public function deleteLicense($licenseId)
@@ -130,11 +137,11 @@ class LicenseManager extends Singleton
 					'status' => License::STATUS_INACTIVE
 				);
 			} else {
-				if ($entry['domain'] != $domain['name']) {
+				if ($entry['name'] != $domain['name']) {
 					$domainChanged = true;
 				}
 			}
-			$entry['domain'] = $domain['name'];
+			$entry['name'] = $domain['name'];
 			$entry['updated_at'] = date("Y-m-d H:i:s", TIME);
 			if (empty($entry['domain_id'])) {
 				db_query('INSERT INTO ?:adls_license_domains ?e', $entry);
@@ -143,7 +150,7 @@ class LicenseManager extends Singleton
 			}
 
 			if ($domainChanged) {
-				if ($this->inactivateLicense($licenseId, $entry['domain'])) {
+				if ($this->inactivateLicense($licenseId, $entry['name'])) {
 					fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), 'K');
 				}
 			}
@@ -170,7 +177,7 @@ class LicenseManager extends Singleton
 			$conditions[] = db_quote('domain_id = ?i', $params['domain_id']);
 		}
 		if (!empty($params['domain'])) {
-			$conditions[] = db_quote('domain = ?s', $params['domain']);
+			$conditions[] = db_quote('name = ?s', $params['domain']);
 		}
 		if (!empty($params['type'])) {
 			$conditions[] = db_quote('type = ?s', $params['type']);
@@ -195,13 +202,13 @@ class LicenseManager extends Singleton
 
 		if (!empty($params['domain'])) {
 			$joins[] = db_quote('LEFT JOIN ?:adls_license_domains AS ald ON ald.license_id = al.license_id');
-			$conditions[] = db_quote('ald.domain = ?s', $params['domain']);
+			$conditions[] = db_quote('ald.name = ?s', $params['domain']);
 		}
 
-		if (!empty($params['license'])) {
-			$joins[] = db_quote('LEFT JOIN ?:users AS u ON u.license_id = al.license_id');
-			$conditions[] = db_quote('ald.domain = ?s', $params['domain']);
-		}
+//		if (!empty($params['license'])) {
+//			$joins[] = db_quote('LEFT JOIN ?:users AS u ON u.license_id = al.license_id');
+//			$conditions[] = db_quote('ald.name = ?s', $params['domain']);
+//		}
 
 		if (!empty($params['product'])) {
 			$joins[] = db_quote('LEFT JOIN ?:products AS p ON p.product_id = al.product_id');
@@ -227,10 +234,31 @@ class LicenseManager extends Singleton
 			' . $joins . '
 			' . $conditions . '
 		');
+		$items = db_get_array($query);
+
+		if (!empty($items)) {
+			foreach ($items as &$item) {
+				if (!empty($item)) {
+					$item['domains'] = $this->getLicenseDomains($item['license_id']);
+				}
+
+				if (!empty($item['domains'])) {
+					$disabled = 0;
+					foreach ($item['domains'] as $domain) {
+						if ($domain['status'] == License::STATUS_DISABLED) {
+							$disabled++;
+						}
+					}
+					if ($disabled == count($item['domains'])) {
+						$item['domains_disabled'] = true;
+					}
+				}
+			}
+			unset($item);
+		}
+
 		if (!empty($params['single'])) {
-			$items = db_get_row($query);
-		} else {
-			$items = db_get_array($query);
+			$items = reset($items);
 		}
 
 		return $items;
@@ -250,12 +278,22 @@ class LicenseManager extends Singleton
 		$params = array(
 			'order_id' => $orderId,
 			'order_item_id' => $itemId,
+			'get_domains' => true,
 			'single' => true
 		);
 		$license = $this->getLicenses($params);
-		if (!empty($license)) {
-			$license['domains'] = $this->getLicenseDomains($license['license_id']);
-		}
+
+		return $license;
+	}
+
+	public function getLicense($licenseId)
+	{
+		$params = array(
+			'license_id' => $licenseId,
+			'get_domains' => true,
+			'single' => true
+		);
+		$license = $this->getLicenses($params);
 
 		return $license;
 	}
@@ -276,7 +314,7 @@ class LicenseManager extends Singleton
 	public function getLicenseStatus($licenseId, $domain = '')
 	{
 		if (!empty($domain)) {
-			$result = db_get_field('SELECT status FROM  ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
+			$result = db_get_field('SELECT status FROM  ?:adls_license_domains WHERE license_id = ?i AND name = ?s', $licenseId, $domain);
 		} else {
 			$result = db_query('SELECT status FROM ?:adls_licenses WHERE license_id = ?i', $licenseId);
 		}
@@ -300,9 +338,9 @@ class LicenseManager extends Singleton
 		);
 		$domainId = null;
 		if (!empty($domain)) {
-			$domainId = db_get_field('SELECT domain_id FROM ?:adls_license_domains WHERE license_id = ?i AND domain = ?s', $licenseId, $domain);
+			$domainId = db_get_field('SELECT domain_id FROM ?:adls_license_domains WHERE license_id = ?i AND name = ?s', $licenseId, $domain);
 			if (!empty($domainId)) {
-				$result = db_query('UPDATE ?:adls_license_domains SET ?u WHERE license_id = ?i AND domain = ?s', $update, $licenseId, $domain);
+				$result = db_query('UPDATE ?:adls_license_domains SET ?u WHERE license_id = ?i AND name = ?s', $update, $licenseId, $domain);
 				if (!$result) {
 					return false;
 				}

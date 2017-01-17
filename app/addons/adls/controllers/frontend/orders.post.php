@@ -12,6 +12,7 @@
  * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  ****************************************************************************/
 
+use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\Utils;
 use Tygh\Registry;
@@ -37,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 // update domains
                 $requestLicense = $requestLicenses[$licenseId];
+
                 if (empty($requestLicense)) {
                     continue;
                 }
@@ -49,13 +51,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (!isset($requestLicense['domains'][$domainId])) {
                         continue;
                     }
+
                     $newDomainValue = $requestLicense['domains'][$domainId];
                     $newDomainValue = trim($newDomainValue);
-                    $oldDomainValue = $domain['domain'];
+                    $oldDomainValue = $domain['name'];
                     if ($newDomainValue == $oldDomainValue) {
                         continue;
                     }
 
+                    if ($domain['status'] == License::STATUS_DISABLED) {
+                        $message = __('adls.order_license_domain_update_failed_license_is_disabled', array('[domain]' => $newDomainValue));
+                        foreach ($result as $value) {
+                            $message .= '<br> - ' . $value;
+                        }
+                        fn_set_notification('E', __('error'), $message, 'K');
+                        continue;
+                    }
 
                     $result = Utils::validateHostname($newDomainValue, $domain['type']);
                     if ($result !== true) {
@@ -69,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                     $updates = array(
-                        'domain' => $newDomainValue
+                        'name' => $newDomainValue
                     );
                     $licenseManager->inactivateLicense($licenseId, $oldDomainValue);
                     if (!empty($updates)) {

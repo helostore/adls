@@ -79,6 +79,9 @@ class Utils
 	public static function filterDomainProductOptions($options)
 	{
 		$opts = array();
+		if (empty($options)) {
+			return array();
+		}
 		foreach ($options as $k => $option) {
 			if (!fn_adls_is_product_option_domain($option)) {
 				continue;
