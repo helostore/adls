@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.1.73",
+        "releaseDate": "2017-01-17 02:53:44",
+        "releaseTimestamp": "1484664824",
+        "hash": "5aa62460ac3240491bbf6f310b725ea9ae26cbfe",
+        "commits": [
+            "[2017-01-17] Bumped version to 0.1.73",
+            "[2017-01-17] Bugfix: disable\/enable licenses according to order status"
+        ]
+    },
+    {
         "version": "0.1.72",
         "releaseDate": "2017-01-17 02:38:49",
         "releaseTimestamp": "1484663929",
@@ -27,16 +37,6 @@
         "commits": [
             "[2016-12-07] Bumped version to 0.1.69",
             "[2016-12-07] Feature: validate domains on frontend"
-        ]
-    },
-    {
-        "version": "0.1.68",
-        "releaseDate": "2016-12-07 08:10:25",
-        "releaseTimestamp": "1481098225",
-        "hash": "c695a1212a43c31d0d9ec2399d161a0c154302ea",
-        "commits": [
-            "[2016-12-07] Bumped version to 0.1.68",
-            "[2016-12-07] Feature: display products & domains summary in orders search"
         ]
     }
 ]
