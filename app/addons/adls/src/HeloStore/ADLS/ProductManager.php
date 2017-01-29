@@ -262,6 +262,8 @@ class ProductManager extends Singleton
 	}
 
 	/**
+	 * @deprecated Instead, use HeloStore\ADLS\ReleaseManager::release()
+	 *
 	 * Updates release data attached to a CS-Cart product. Used by Developers Tools add-on.
 	 *
 	 * @param $productCode
@@ -270,46 +272,6 @@ class ProductManager extends Singleton
 	 */
 	public function updateRelease($productCode, $params)
 	{
-		$productId = db_get_field('SELECT product_id FROM ?:products WHERE adls_addon_id = ?s', $productCode);
-		if (empty($productId)) {
-			return false;
-		}
-		list ($files, ) = fn_get_product_files(array('product_id' => $productId));
-		$filename = $params['filename'];
-		if (!empty($files)) {
-			$file = array_shift($files);
-			$fileId = $file['file_id'];
-		} else {
-			$file = array(
-				'product_id' => $productId,
-				'file_name' => $filename,
-				'position' => 0,
-				'folder_id' => null,
-				'activation_type' => 'P',
-				'max_downloads' => 0,
-				'license' => '',
-				'agreement' => 'Y',
-				'readme' => '',
-			);
-			$fileId = 0;
-		}
-		$file['file_name'] = $filename;
-
-		$_REQUEST['file_base_file'] = array(
-			$fileId => $params['archiveUrl']
-		);
-		$_REQUEST['type_base_file'] = array(
-			$fileId => 'url'
-		);
-		$fileId = fn_update_product_file($file, $fileId);
-		if (!empty($fileId)) {
-			$productData = array(
-				'adls_release_version' => $params['version']
-				, 'adls_release_date' => TIME
-			);
-			db_query('UPDATE ?:products SET ?u WHERE product_id = ?i', $productData, $productId);
-		}
-
-		return $fileId;
+		return ReleaseManager::instance()->release($productCode, $params);
 	}
 }
