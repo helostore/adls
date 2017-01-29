@@ -51,6 +51,29 @@
                 PRIMARY KEY (`log_id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
+        <item for="install">
+            CREATE TABLE `?:adls_subscriptions` (
+                `subscription_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `license_id`  mediumint(8) NOT NULL ,
+                `user_id`  mediumint(8) UNSIGNED NOT NULL ,
+                `type`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `start_date`  datetime NOT NULL ,
+                `end_date`  datetime NULL ,
+                `never_expires`  tinyint(1) UNSIGNED NOT NULL DEFAULT 0 ,
+                `created_at`  datetime NOT NULL ,
+                `updated_at`  datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP ,
+                PRIMARY KEY (`subscription_id`)
+            )
+        </item>
+        <item for="install">
+            CREATE TABLE `?:adls_releases` (
+                `release_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `product_id`  mediumint(8) UNSIGNED NOT NULL ,
+                `created_at`  datetime NOT NULL ,
+                `file_id`  mediumint(8) UNSIGNED NOT NULL ,
+                PRIMARY KEY (`release_id`)
+            )
+        </item>
 
         <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64);</item>
