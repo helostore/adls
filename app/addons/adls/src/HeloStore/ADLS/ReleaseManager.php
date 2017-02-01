@@ -18,38 +18,62 @@ use Tygh\Registry;
 class ReleaseManager extends Singleton
 {
 	/**
-	 * Updates release data attached to a CS-Cart product. Used by Developers Tools add-on.
+	 * Release a new version
 	 *
 	 * @param $productCode
 	 * @param $params
 	 * @return bool|int
 	 */
-	public function update($productCode, $params)
+	public function release($productCode, $params)
 	{
 		$productId = db_get_field('SELECT product_id FROM ?:products WHERE adls_addon_id = ?s', $productCode);
 		if (empty($productId)) {
 			return false;
 		}
+
+		$date = new \DateTime();
+		$fileId = $this->attachFile($productId, $params);
+
+		$data = array(
+			'product_id' => $productId,
+			'created_at' => $date->format('Y-m-d H:i:s'),
+			'file_id' => $fileId,
+			'version' => $params['version']
+		);
+
+		$releaseId = db_query('INSERT INTO ?:adls_releases ?e', $data);
+
+		return $releaseId;
+	}
+
+	/**
+	 * Attach release file to product
+	 *
+	 * @param $productId
+	 * @param $params
+	 * @return int
+	 */
+	public function attachFile($productId, $params)
+	{
+
 		list ($files, ) = fn_get_product_files(array('product_id' => $productId));
-		
+		$position = ($files ? count($files) : 1);
+		$position++;
+
 		$filename = $params['filename'];
-		if (!empty($files)) {
-			$file = array_shift($files);
-			$fileId = $file['file_id'];
-		} else {
-			$file = array(
-				'product_id' => $productId,
-				'file_name' => $filename,
-				'position' => 0,
-				'folder_id' => null,
-				'activation_type' => 'P',
-				'max_downloads' => 0,
-				'license' => '',
-				'agreement' => 'Y',
-				'readme' => '',
-			);
-			$fileId = 0;
-		}
+
+		$file = array(
+			'product_id' => $productId,
+			'file_name' => $filename,
+			'position' => $position,
+			'folder_id' => null,
+			'activation_type' => 'M',
+			'max_downloads' => 0,
+			'license' => '',
+			'agreement' => 'Y',
+			'readme' => '',
+		);
+		$fileId = 0;
 		$file['file_name'] = $filename;
 
 		$_REQUEST['file_base_file'] = array(
@@ -61,8 +85,8 @@ class ReleaseManager extends Singleton
 		$fileId = fn_update_product_file($file, $fileId);
 		if (!empty($fileId)) {
 			$productData = array(
-				'adls_release_version' => $params['version']
-			, 'adls_release_date' => TIME
+				'adls_release_version' => $params['version'],
+				'adls_release_date' => TIME
 			);
 			db_query('UPDATE ?:products SET ?u WHERE product_id = ?i', $productData, $productId);
 		}

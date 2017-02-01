@@ -149,6 +149,14 @@ class ProductManager extends Singleton
 			$products[$k]['releases'] = array();
 			$products[$k]['lastRelease'] = array();
 			$products[$k]['has_unreleased_version'] = false;
+
+			$developmentVersion = $products[$k]['version'];
+			$releasedVersion = $products[$k]['adls_release_version'];
+			if (!empty($releasedVersion) && version_compare($developmentVersion, $releasedVersion, '>')) {
+				$products[$k]['has_unreleased_version'] = true;
+			}
+
+			// read commits
 			if (file_exists($releaseLogPath)) {
 				$data = file_get_contents($releaseLogPath);
 				if (!empty($data)) {
@@ -157,16 +165,11 @@ class ProductManager extends Singleton
 						$lastRelease = reset($json);
 						$products[$k]['releases'] = $json;
 						$products[$k]['lastRelease'] = $lastRelease;
-						$developmentVersion = $products[$k]['version'];
-						$releasedVersion = $products[$k]['adls_release_version'];
-						if (!empty($releasedVersion) && version_compare($developmentVersion, $releasedVersion, '>')) {
-							$products[$k]['has_unreleased_version'] = true;
-						}
 					}
 				}
 			}
 		}
-
+		
 		return $products;
 	}
 	public function getStoreProducts($params = array())

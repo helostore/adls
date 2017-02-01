@@ -71,6 +71,7 @@
                 `product_id`  mediumint(8) UNSIGNED NOT NULL ,
                 `created_at`  datetime NOT NULL ,
                 `file_id`  mediumint(8) UNSIGNED NOT NULL ,
+                `version`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 PRIMARY KEY (`release_id`)
             )
         </item>

@@ -15,6 +15,7 @@
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\SubscriptionManager;
 use HeloStore\ADLS\Utils;
 use Tygh\Registry;
 
@@ -142,8 +143,9 @@ function fn_adls_get_additional_information(&$product, $product_data)
 		if (!fn_adls_is_product_option_domain($option)) {
 			continue;
 		}
+
 		$domainType = License::DOMAIN_TYPE_DEVELOPMENT;
-		if ($option['adls_option_type'] == 'domain') {
+		if ($option['adls_option_type'] == License::DOMAIN_TYPE_PRODUCTION) {
 			$domainType = License::DOMAIN_TYPE_PRODUCTION;
 		}
 
@@ -188,14 +190,14 @@ function fn_adls_validate_product_options($product_options)
 
 function fn_adls_process_order($orderInfo, $orderStatus)
 {
-	$manager = LicenseManager::instance();
+	$licenseManager = LicenseManager::instance();
+	$subscriptionManager = SubscriptionManager::instance();
 	$orderId = $orderInfo['order_id'];
 	$userId = $orderInfo['user_id'];
 	$errors = array();
 	$success = true;
 	$paidStatuses = array('P');
 	$isPaidStatus = in_array($orderStatus, $paidStatuses);
-
 
 	foreach ($orderInfo['products'] as $product) {
 		$productId = $product['product_id'];
@@ -205,7 +207,7 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 			continue;
 		}
 
-		$licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
+		$licenseId = $licenseManager->existsLicense($productId, $itemId, $orderId, $userId);
 		$notificationState = (AREA == 'A' ? 'I' : 'K');
 		if ($isPaidStatus) {
 
@@ -215,42 +217,44 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 				Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
 
 				// If there were any disabled licenses, inactive them, so they can become usable
-				$domains = $manager->getLicenseDomains($licenseId);
+				$domains = $licenseManager->getLicenseDomains($licenseId);
 				if (!empty($domains)) {
 					foreach ($domains as $domain) {
-						if ($manager->inactivateLicense($licenseId, $domain['name'])) {
+						if ($licenseManager->inactivateLicense($licenseId, $domain['name'])) {
 							fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
 						}
 					}
 				} else {
-					if ($manager->inactivateLicense($licenseId)) {
+					if ($licenseManager->inactivateLicense($licenseId)) {
 						fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
 					}
 				}
 
 			} else {
-				$licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
+				$licenseId = $licenseManager->createLicense($productId, $itemId, $orderId, $userId);
 				if ($licenseId) {
 					fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
-
 					Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
+
+					$subscriptionManager->create($licenseId, $userId);
+					
 				} else {
 					$success = false;
-					$errors += $manager->getErrors();
+					$errors += $licenseManager->getErrors();
 				}
 			}
 		} else {
 			if (!defined('ORDER_MANAGEMENT')) {
-				$domains = $manager->getLicenseDomains($licenseId);
+				$domains = $licenseManager->getLicenseDomains($licenseId);
 				if (!empty($domains)) {
 					foreach ($domains as $domain) {
-						if ($manager->disableLicense($licenseId, $domain['name'])) {
+						if ($licenseManager->disableLicense($licenseId, $domain['name'])) {
 							fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
 						}
 					}
 
 				} else {
-					if ($manager->disableLicense($licenseId)) {
+					if ($licenseManager->disableLicense($licenseId)) {
 						fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
 					}
 				}
