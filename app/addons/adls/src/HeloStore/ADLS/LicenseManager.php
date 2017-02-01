@@ -316,7 +316,7 @@ class LicenseManager extends Singleton
 		if (!empty($domain)) {
 			$result = db_get_field('SELECT status FROM  ?:adls_license_domains WHERE license_id = ?i AND name = ?s', $licenseId, $domain);
 		} else {
-			$result = db_query('SELECT status FROM ?:adls_licenses WHERE license_id = ?i', $licenseId);
+			$result = db_get_field('SELECT status FROM ?:adls_licenses WHERE license_id = ?i', $licenseId);
 		}
 
 		return $result;
