@@ -15,7 +15,7 @@
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\Logger;
-use HeloStore\ADLS\SubscriptionManager;
+use HeloStore\ADLS\Subscription\SubscriptionManager;
 use HeloStore\ADLS\Utils;
 use Tygh\Registry;
 
@@ -191,7 +191,7 @@ function fn_adls_validate_product_options($product_options)
 function fn_adls_process_order($orderInfo, $orderStatus)
 {
 	$licenseManager = LicenseManager::instance();
-	$subscriptionManager = SubscriptionManager::instance();
+//	$subscriptionManager = SubscriptionManager::instance();
 	$orderId = $orderInfo['order_id'];
 	$userId = $orderInfo['user_id'];
 	$errors = array();
@@ -236,7 +236,7 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 					fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
 					Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
 
-					$subscriptionManager->create($licenseId, $userId);
+//					$subscriptionManager->create($licenseId, $userId);
 					
 				} else {
 					$success = false;
