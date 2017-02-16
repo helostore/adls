@@ -272,6 +272,11 @@ class ProductManager extends Singleton
 	 */
 	public function updateRelease($productCode, $params)
 	{
-		return ReleaseManager::instance()->release($productCode, $params);
+		$releaseManager = ReleaseManager::instance();
+		if (method_exists($releaseManager, 'release')) {
+			return ReleaseManager::instance()->release($productCode, $params);
+		}
+
+		return true;
 	}
 }
