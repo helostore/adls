@@ -91,10 +91,13 @@ class Utils
 		}
 		return $opts;
 	}
-	public static function updateLicenseDomainsFromProductOptions($licenseId, $options)
+	public static function extractDomainsFromProductOptions($options)
 	{
 		$domains = array();
 		foreach ($options as $option) {
+			if (!fn_adls_is_product_option_domain($option)) {
+				continue;
+			}
 			$domainType = $option['adls_option_type'];
 			$domains[] = array(
 				'name' => $option['value'],
@@ -103,6 +106,13 @@ class Utils
 			);
 
 		}
+
+		return $domains;
+	}
+	public static function updateLicenseDomainsFromProductOptions($licenseId, $options)
+	{
+		$domains = self::extractDomainsFromProductOptions($options);
+
 		if (!empty($domains)) {
 			$manager = LicenseManager::instance();
 			$manager->updateLicenseDomains($licenseId, $domains);

@@ -30,4 +30,5 @@ fn_register_hooks(
 	, 'delete_order'
 	, 'generate_cart_id'
 	, 'get_additional_information'
+	, 'required_products_pre_add_to_cart'
 );
