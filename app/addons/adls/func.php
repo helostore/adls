@@ -135,26 +135,23 @@ function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 
 function fn_adls_get_additional_information(&$product, $product_data)
 {
-
     foreach ($product['selected_options'] as $optionId => $optionValue) {
 
         $option = db_get_row("SELECT * FROM ?:product_options WHERE option_id = ?i", $optionId);
         if (!fn_adls_is_product_option_domain($option)) {
             continue;
         }
-        $domainType = License::DOMAIN_TYPE_DEVELOPMENT;
-        if ($option['adls_option_type'] == 'domain') {
-            $domainType = License::DOMAIN_TYPE_PRODUCTION;
-        }
+        $domainType = $option['adls_option_type'];
 
         $result = Utils::validateHostname($optionValue, $domainType);
+
         if ($result !== true) {
             unset($product['selected_options'][$optionId]);
             $message = __('adls.order_license_domain_update_failed', array('[domain]' => $optionValue));
             foreach ($result as $value) {
                 $message .= '<br> - ' . $value;
             }
-            fn_set_notification('E', __('error'), $message, 'K');
+            fn_set_notification('E', __('error'), $message, 'I');
         }
     }
 }
@@ -208,9 +205,12 @@ function fn_adls_validate_product_options($product_options)
         if (!fn_adls_is_product_option_domain($option)) {
             continue;
         }
-        $domainType = License::DOMAIN_TYPE_DEVELOPMENT;
-        if ($option['adls_option_type'] == 'domain') {
+        $domainType = $option['adls_option_type'];
+        if ($domainType == 'domain') {
             $domainType = License::DOMAIN_TYPE_PRODUCTION;
+        }
+        if ($domainType == 'dev_domain') {
+            $domainType = License::DOMAIN_TYPE_DEVELOPMENT;
         }
 
         $result = Utils::validateHostname($optionValue, $domainType);
@@ -220,7 +220,7 @@ function fn_adls_validate_product_options($product_options)
             foreach ($result as $value) {
                 $message .= '<br> - ' . $value;
             }
-            fn_set_notification('E', __('error'), $message, 'K');
+            fn_set_notification('E', __('error'), $message, 'I');
         }
     }
 }

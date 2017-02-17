@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         foreach ($result as $value) {
                             $message .= '<br> - ' . $value;
                         }
-                        fn_set_notification('E', __('error'), $message, 'K');
+                        fn_set_notification('E', __('error'), $message, 'I');
                         continue;
                     }
 

@@ -28,8 +28,11 @@ if ($mode == 'options') {
                     continue;
                 }
                 $domainType = License::DOMAIN_TYPE_DEVELOPMENT;
-                if ($option['adls_option_type'] == 'domain') {
+                if ($domainType == 'domain') {
                     $domainType = License::DOMAIN_TYPE_PRODUCTION;
+                }
+                if ($domainType == 'dev_domain') {
+                    $domainType = License::DOMAIN_TYPE_DEVELOPMENT;
                 }
 
                 $result = Utils::validateHostname($optionValue, $domainType);
@@ -39,7 +42,7 @@ if ($mode == 'options') {
                     foreach ($result as $value) {
                         $message .= '<br> - ' . $value;
                     }
-                    fn_set_notification('E', __('error'), $message, 'K');
+                    fn_set_notification('E', __('error'), $message, 'I');
 
                     // restore previous value
                     $prevValue = '';
