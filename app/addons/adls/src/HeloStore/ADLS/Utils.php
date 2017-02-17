@@ -54,6 +54,7 @@ class Utils
 
 	public static function validateHostname($hostname, $type = License::DOMAIN_TYPE_DEVELOPMENT) {
 		$flags = (Hostname::ALLOW_LOCAL | Hostname::ALLOW_IP);
+		
 		if ($type == License::DOMAIN_TYPE_PRODUCTION) {
 			$flags = (Hostname::ALLOW_DNS);
 		}

@@ -51,7 +51,10 @@
                 return;
             }
 
-            $this.val(adlsHostnameFormat($this.val()));
+            var sanitized = adlsHostnameFormat($this.val());
+            if (sanitized) {
+                $this.val(sanitized);
+            }
 
             matches = id.split('_');
             if (!matches || matches.length < 2) {
