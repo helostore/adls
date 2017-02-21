@@ -21,6 +21,10 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 /* Hooks */
+function fn_adls_adls_subscriptions_post_suspend(\HeloStore\ADLS\Subscription\Subscription $subscription)
+{
+//    die('wtfdfffffffffff');
+}
 function fn_adls_get_orders_post($params, &$orders)
 {
     foreach ($orders as &$order) {

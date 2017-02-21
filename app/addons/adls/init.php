@@ -31,4 +31,5 @@ fn_register_hooks(
 	, 'generate_cart_id'
 	, 'get_additional_information'
 	, 'required_products_pre_add_to_cart'
+	, 'adls_subscriptions_post_suspend'
 );
