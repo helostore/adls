@@ -48,8 +48,10 @@ class Utils
 	}
 	private static function make_seed()
 	{
+		static $count = 0;
+		$count++;
 		list($usec, $sec) = explode(' ', microtime());
-		return (float) $sec + ((float) $usec * 100000);
+		return (float) $count + (float) $sec + ((float) $usec * 100000);
 	}
 
 	public static function validateHostname($hostname, $type = License::DOMAIN_TYPE_DEVELOPMENT) {
