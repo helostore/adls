@@ -31,7 +31,7 @@ class LicenseManager extends Singleton
 		$key = $this->generateUniqueKey();
 
 		if ($key == false) {
-			$this->addError('license_uniqueness_generating_failure');
+			$this->addError('license_uniqueness_generating_failure' . 'pid: ' . $productId . ', oid: ' . $orderId . 'oiid: ' . $itemId);
 			return false;
 		}
 		$now = date("Y-m-d H:i:s", TIME);
@@ -103,7 +103,7 @@ class LicenseManager extends Singleton
 		return db_get_row('SELECT * FROM ?:adls_licenses WHERE license_key = ?s', $key);
 	}
 	public function generateUniqueKey() {
-		static $tries = 0;
+		$tries = 0;
 		$maxTries = 10;
 		while ($tries < $maxTries) {
 			$tries++;
