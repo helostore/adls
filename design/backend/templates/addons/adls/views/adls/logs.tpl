@@ -37,14 +37,14 @@
 				{if fn_adls_log_type_is_log($log.type)}{$class = ""}{/if}
 
 				<tr class="{$class}">
-					<td>#{$log.log_id}</td>
+					<td>#{$log.id}</td>
                     <td><span class="nowrap">{$log.timestamp|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</span></td>
                     <td>{$log.type|fn_adls_get_log_type}</td>
-                    <td>{$log.object_type}</td>
-                    <td>{$log.object_action}</td>
+                    <td>{$log.objectType}</td>
+                    <td>{$log.objectAction}</td>
 					<td>
-						{if $log.user_id}
-							<a title="User ID #{$log.user_id}" href="{"profiles.update?user_id=`$log.user_id`"|fn_url}">{$log.lastname}{if $log.firstname || $log.lastname}&nbsp;{/if}{$log.firstname}</a>
+						{if $log.userId}
+							<a title="User ID #{$log.userId}" href="{"profiles.update?user_id=`$log.userId`"|fn_url}">{$log.lastname}{if $log.firstname || $log.lastname}&nbsp;{/if}{$log.firstname}</a>
 						{/if}
                         {if !empty($log.email)}
                             {$log.email}
@@ -60,17 +60,17 @@
 					<td>
 						{include
 						file="common/popupbox.tpl"
-						id="log_view_`$log.log_id`"
+						id="log_view_`$log.id`"
 						act="link"
-						text="Log #`$log.log_id`"
+						text="Log #`$log.id`"
 						link_text=__("view")
-						href=fn_url("adls.logs?log_id=`$log.log_id`")
+						href=fn_url("adls.logs?log_id=`$log.id`")
 						no_icon_link=true
 						opener_ajax_class="cm-ajax"}
 
 						{if !empty($log.backtrace)}
-							<p><a onclick="Tygh.$('#backtrace_{$log.log_id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
-							<div id="backtrace_{$log.log_id}" class="notice-box hidden">
+							<p><a onclick="Tygh.$('#backtrace_{$log.id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
+							<div id="backtrace_{$log.id}" class="notice-box hidden">
 								{$log.backtrace|nl2br}
 								{*
 								{foreach from=$log.backtrace item="v"}

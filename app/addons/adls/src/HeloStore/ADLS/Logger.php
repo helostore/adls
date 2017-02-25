@@ -18,6 +18,11 @@ namespace HeloStore\ADLS;
 use Net_GeoIP;
 use Tygh\Registry;
 
+/**
+ * Class Logger
+ * 
+ * @package HeloStore\ADLS
+ */
 class Logger extends Singleton
 {
 	const TYPE_ERROR = 'E';
@@ -48,13 +53,13 @@ class Logger extends Singleton
 	{
 		$entry = array();
 		$entry['type'] = $type;
-		$entry['object_type'] = $objectType;
-		$entry['object_action'] = $objectAction;
+		$entry['objectType'] = $objectType;
+		$entry['objectAction'] = $objectAction;
 		$entry['timestamp'] = TIME;
 
 		if (!empty($request['auth'])) {
 			if (!empty($request['auth']['user_id'])) {
-				$entry['user_id'] = $request['auth']['user_id'];
+				$entry['userId'] = $request['auth']['user_id'];
 
 			}
 		}
@@ -90,23 +95,23 @@ class Logger extends Singleton
 		$joins = array();
         $limit = '';
 
-		if (!empty($params['log_id'])) {
-			$conditions[] = db_quote('al.log_id = ?i', $params['log_id']);
+		if (!empty($params['id'])) {
+			$conditions[] = db_quote('al.id = ?i', $params['id']);
 		}
 		if (!empty($params['type'])) {
 			$conditions[] = db_quote('al.type = ?s', $params['type']);
 		}
-		if (!empty($params['object_type'])) {
-			$conditions[] = db_quote('al.object_type = ?s', $params['object_type']);
+		if (!empty($params['objectType'])) {
+			$conditions[] = db_quote('al.objectType = ?s', $params['objectType']);
 		}
 		if (!empty($params['ip'])) {
 			$conditions[] = db_quote('al.ip = ?s', $params['ip']);
 		}
-		if (!empty($params['exclude_ips'])) {
-            $conditions[] = db_quote('al.ip NOT IN (?a)', $params['exclude_ips']);
+		if (!empty($params['excludeIps'])) {
+            $conditions[] = db_quote('al.ip NOT IN (?a)', $params['excludeIps']);
         }
-        if (!empty($params['user_id'])) {
-            $conditions[] = db_quote('al.user_id = ?s', $params['user_id']);
+        if (!empty($params['userId'])) {
+            $conditions[] = db_quote('al.userId = ?s', $params['userId']);
 		}
         if (!empty($params['limit'])) {
             $limit = ' LIMIT 0,' . $params['limit'];
@@ -124,7 +129,7 @@ class Logger extends Singleton
 			FROM ?:adls_logs AS al
 			' . $joins . '
 			' . $conditions . '
-			ORDER BY log_id DESC
+			ORDER BY id DESC
 			' . $limit . '
 		');
 

@@ -19,7 +19,11 @@ use Zend\Validator\Hostname;
 use Zend\Validator\StringLength;
 use Zend\Validator\ValidatorChain;
 
-
+/**
+ * Class Utils
+ *
+ * @package HeloStore\ADLS
+ */
 class Utils
 {
 	public static function generateKey($length = 16, $groupLength = 4) {
@@ -105,7 +109,7 @@ class Utils
 			$domains[] = array(
 				'name' => $option['value'],
 				'type' => $domainType,
-				'product_option_id' => $option['option_id'],
+				'productOptionId' => $option['option_id'],
 			);
 
 		}
