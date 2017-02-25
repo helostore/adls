@@ -15,6 +15,11 @@ namespace HeloStore\ADLS;
 
 use Tygh\Registry;
 
+/**
+ * Class ReleaseManager
+ * 
+ * @package HeloStore\ADLS
+ */
 class ReleaseManager extends Singleton
 {
 	/**

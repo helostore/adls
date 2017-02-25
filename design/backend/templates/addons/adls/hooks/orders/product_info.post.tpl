@@ -7,8 +7,8 @@
     <div class="ty-control-group clearfix">
         <label class="ty-product-options__title">{__('adls.license')}</label>
         <span class="adls-highlight clearfix">
-            {$htmlId = "license_`$product.license.license_id`"}
-            <input value="{$product.license.license_key}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
+            {$htmlId = "license_`$product.license.id`"}
+            <input value="{$product.license.licenseKey}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
 
             &mdash; {$product.license.status|fn_adls_get_license_status_label}
 
@@ -36,7 +36,7 @@
                     <input type="hidden" name="order_id" value="{$order_info.order_id}" />
                     {foreach from=$product.license.domains item=domain}
                         <div class="adls-license-status status-{$domain.status|strtolower}">
-                            <input name="licenses[{$product.license.license_id}][domains][{$domain.domain_id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
+                            <input name="licenses[{$product.license.id}][domains][{$domain.id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
                             &mdash; {$domain.status|fn_adls_get_license_status_label}
                         </div>
                     {/foreach}
