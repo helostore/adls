@@ -29,6 +29,7 @@ if ($mode == 'manage') {
 	$licenseRepository = LicenseRepository::instance();
 	$params = $_REQUEST;
 	$params['extended'] = true;
+	$params['getDomains'] = true;
 	$params['items_per_page'] = !empty($params['items_per_page']) ? $params['items_per_page'] : Registry::get('settings.Appearance.admin_elements_per_page');
 	list($licenses, $search) = $licenseRepository->find($params);
 

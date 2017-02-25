@@ -44,6 +44,39 @@ msgctxt "Languages::adls.subscription_type"
 msgid "subscription_type"
 msgstr "Subscription type"
 
+
+
+
+msgctxt "Languages::adls.license.status.i"
+msgid "i"
+msgstr "Inactive"
+
+msgctxt "Languages::adls.license.status.a"
+msgid "a"
+msgstr "Active"
+
+msgctxt "Languages::adls.license.status.d"
+msgid "d"
+msgstr "Disabled"
+
+msgctxt "Languages::adls.license.status."
+msgid "Unknown"
+msgstr "Unknown"
+
+msgctxt "Languages::adls.license.key"
+msgid "key"
+msgstr "License Key"
+
+msgctxt "Languages::adls.license.updatedAt"
+msgid "updatedAt"
+msgstr "Updated"
+
+msgctxt "Languages::adls.license.createdAt"
+msgid "createdAt"
+msgstr "Created"
+
+
+
 msgctxt "Languages::adls.license_status_inactive"
 msgid "license_status_inactive"
 msgstr "Inactive, ready to be used"
@@ -59,6 +92,11 @@ msgstr "Disabled"
 msgctxt "Languages::adls.license_status_unknown"
 msgid "license_status_unknown"
 msgstr "Unknown"
+
+
+msgctxt "Languages::adls.licenses"
+msgid "licenses"
+msgstr "Licenses"
 
 msgctxt "Languages::adls.order_licenses_created"
 msgid "order_licenses_created"

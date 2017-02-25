@@ -59,25 +59,29 @@ class LicenseRepository extends EntityRepository
         $fields[] = 'license.*';
         $langCode = !empty($params['langCode']) ? $params['langCode'] : CART_LANGUAGE;
 
-        if (isset($params['id'])) {
+        if (!empty($params['id'])) {
 			$condition[] = db_quote('license.id = ?n', $params['id']);
 		}
-        if (isset($params['userId'])) {
+        if (!empty($params['userId'])) {
             $condition[] = db_quote('license.userId = ?n', $params['userId']);
         }
-        if (isset($params['orderId'])) {
+        if (!empty($params['orderId'])) {
             $condition[] = db_quote('license.orderId = ?n', $params['orderId']);
         }
-        if (isset($params['orderItemId'])) {
+        if (!empty($params['orderItemId'])) {
             $condition[] = db_quote('license.orderItemId = ?s', $params['orderItemId']);
         }
-        if (isset($params['productId'])) {
+        if (!empty($params['productId'])) {
             $condition[] = db_quote('license.productId = ?n', $params['productId']);
         }
-        if (isset($params['status'])) {
-            $condition[] = db_quote('license.status = ?s', $params['status']);
+        if (!empty($params['status'])) {
+            $params['status'] = is_array($params['status']) ? $params['status'] : array($params['status']);
+            $condition[] = db_quote('license.status IN (?a)', $params['status']);
         }
-		if (isset($params['extended'])) {
+        if (!empty($params['licenseKey'])) {
+            $condition[] = db_quote('license.licenseKey = ?s', $params['licenseKey']);
+        }
+		if (!empty($params['extended'])) {
             $joins[] = db_quote('LEFT JOIN ?:users AS user ON user.user_id = license.userId');
             $fields[] = 'user.user_id AS user$id';
             $fields[] = 'user.email AS user$email';
@@ -97,8 +101,31 @@ class LicenseRepository extends EntityRepository
                 AND orderItem.order_id = license.orderId'
             );
             $fields[] = 'orderItem.price AS orderItem$price';
-		}
 
+            $joins[] = db_quote('LEFT JOIN ?:orders AS orders
+                ON orders.order_id = license.orderId'
+            );
+
+            if (!empty($params['customerName'])) {
+                $customerName = fn_explode(' ', $params['customerName']);
+                $customerName = array_filter($customerName, "fn_string_not_empty");
+
+                if (sizeof($customerName) == 2) {
+                    $condition[] = db_quote("orders.firstname LIKE ?l AND orders.lastname LIKE ?l",
+                        "%" . array_shift($customerName) . "%"
+                        , "%" . array_shift($customerName) . "%");
+                } else {
+                    $condition[] = db_quote("(orders.firstname LIKE ?l OR orders.lastname LIKE ?l)"
+                        , "%" . trim($params['customerName']) . "%"
+                        , "%" . trim($params['customerName']) . "%");
+                }
+            }
+
+            if (!empty($params['email']) && fn_string_not_empty($params['email'])) {
+                $condition[] = db_quote("orders.email LIKE ?l", "%" . trim($params['email']) . "%");
+            }
+
+		}
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'license.*' : implode(', ', $fields);
 		$condition = !empty($condition) ? ' WHERE ' . implode(' AND ', $condition) . '' : '';
@@ -124,6 +151,31 @@ class LicenseRepository extends EntityRepository
 		foreach ($items as $k => $v) {
 			$items[$k] = new License($v);
 		}
+
+        if (!empty($params['getDomains']) && !empty($items)) {
+            $licenseManager = LicenseManager::instance();
+            /** @var License $item */
+            foreach ($items as &$item) {
+                if (!empty($item)) {
+                    $item->setDomains($licenseManager->getLicenseDomains($item->getId()));
+                }
+
+                if ($item->hasDomains()) {
+                    $disabled = 0;
+                    $domains = $item->getDomains();
+                    foreach ($domains as $domain) {
+                        if ($domain['status'] == License::STATUS_DISABLED) {
+                            $disabled++;
+                        }
+                    }
+                    if ($disabled == count($domains)) {
+                        $item->setAllDomainsDisabled(true);
+                    }
+                }
+            }
+            unset($item);
+        }
+
 
 		if (isset($params['one'])) {
 			$items = !empty($items) ? reset($items) : null;
