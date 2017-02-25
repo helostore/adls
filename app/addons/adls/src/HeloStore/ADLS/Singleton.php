@@ -16,6 +16,11 @@ namespace HeloStore\ADLS;
 
 use Tygh\CompanySingleton;
 
+/**
+ * Class Singleton
+ *
+ * @package HeloStore\ADLS
+ */
 class Singleton extends CompanySingleton {
 
 	protected $errors = array();
@@ -28,7 +33,6 @@ class Singleton extends CompanySingleton {
 	{
 		$this->errors[] = $message;
 	}
-
 
 	/**
 	 * @param int $company_id

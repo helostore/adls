@@ -10,68 +10,54 @@
     <queries>
         <item for="install">
             CREATE TABLE `?:adls_licenses` (
-                `license_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
-                `order_id`  mediumint(8) NOT NULL ,
-                `product_id`  mediumint(8) UNSIGNED NOT NULL ,
-                `order_item_id`  int(11) UNSIGNED NULL,
-                `user_id`  mediumint(8) UNSIGNED NOT NULL ,
-                `created_at`  datetime NOT NULL ,
-                `updated_at`  datetime NOT NULL ,
-                `license_key`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `orderId`  mediumint(8) NOT NULL ,
+                `productId`  mediumint(8) UNSIGNED NOT NULL ,
+                `orderItemId`  int(11) UNSIGNED NULL,
+                `userId`  mediumint(8) UNSIGNED NOT NULL ,
+                `createdAt`  datetime NOT NULL ,
+                `updatedAt`  datetime NOT NULL ,
+                `licenseKey`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                PRIMARY KEY (`license_id`)
+                PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
             CREATE TABLE `?:adls_license_domains` (
-                `domain_id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
-                `license_id`  mediumint(8) UNSIGNED NOT NULL ,
+                `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `licenseId`  mediumint(8) UNSIGNED NOT NULL ,
                 `name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `type`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                `created_at`  datetime NOT NULL ,
-                `updated_at`  datetime NOT NULL ,
+                `createdAt`  datetime NOT NULL ,
+                `updatedAt`  datetime NOT NULL ,
                 `status`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                `product_option_id`  mediumint(8) UNSIGNED NULL ,
-            PRIMARY KEY (`domain_id`)
+                `productOptionId`  mediumint(8) UNSIGNED NULL ,
+            PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
             CREATE TABLE `?:adls_logs` (
-                `log_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `type`  char(1) NOT NULL ,
-                `object_type`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                `object_action`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `objectType`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+                `objectAction`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
                 `timestamp`  int(11) UNSIGNED NOT NULL ,
-                `user_id`  mediumint(8) UNSIGNED NULL ,
+                `userId`  mediumint(8) UNSIGNED NULL ,
                 `ip`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 `hostname`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 `country`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 `content`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
                 `backtrace`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
-                PRIMARY KEY (`log_id`)
+                PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
-            CREATE TABLE `?:adls_subscriptions` (
-                `subscription_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
-                `license_id`  mediumint(8) NOT NULL ,
-                `user_id`  mediumint(8) UNSIGNED NOT NULL ,
-                `type`  char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                `start_date`  datetime NOT NULL ,
-                `end_date`  datetime NULL ,
-                `never_expires`  tinyint(1) UNSIGNED NOT NULL DEFAULT 0 ,
-                `created_at`  datetime NOT NULL ,
-                `updated_at`  datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP ,
-                PRIMARY KEY (`subscription_id`)
-            )
-        </item>
-        <item for="install">
             CREATE TABLE `?:adls_releases` (
-                `release_id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
-                `product_id`  mediumint(8) UNSIGNED NOT NULL ,
-                `created_at`  datetime NOT NULL ,
-                `file_id`  mediumint(8) UNSIGNED NOT NULL ,
-                PRIMARY KEY (`release_id`)
+                `id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `productId`  mediumint(8) UNSIGNED NOT NULL ,
+                `createdAt`  datetime NOT NULL ,
+                `fileId`  mediumint(8) UNSIGNED NOT NULL ,
+                PRIMARY KEY (`id`)
             )
         </item>
 

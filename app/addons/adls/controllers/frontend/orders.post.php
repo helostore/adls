@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $requestLicensesIds = array_keys($requestLicenses);
 
             foreach ($licenses as $license) {
-                $licenseId = $license['license_id'];
+                $licenseId = $license['id'];
                 if (!in_array($licenseId, $requestLicensesIds)) {
                     continue;
                 }
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 $currentDomains = $licenseManager->getLicenseDomains($licenseId);
                 foreach ($currentDomains as $domain) {
-                    $domainId = $domain['domain_id'];
+                    $domainId = $domain['id'];
                     if (!isset($requestLicense['domains'][$domainId])) {
                         continue;
                     }
@@ -61,9 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     if ($domain['status'] == License::STATUS_DISABLED) {
                         $message = __('adls.order_license_domain_update_failed_license_is_disabled', array('[domain]' => $newDomainValue));
-                        foreach ($result as $value) {
-                            $message .= '<br> - ' . $value;
-                        }
+//                        foreach ($result as $value) {
+//                            $message .= '<br> - ' . $value;
+//                        }
                         fn_set_notification('E', __('error'), $message, 'K');
                         continue;
                     }
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     );
                     $licenseManager->inactivateLicense($licenseId, $oldDomainValue);
                     if (!empty($updates)) {
-                        $query = db_quote('UPDATE ?:adls_license_domains SET ?u WHERE license_id = ?i AND domain_id = ?i', $updates, $licenseId, $domainId);
+                        $query = db_quote('UPDATE ?:adls_license_domains SET ?u WHERE licenseId = ?i AND id = ?i', $updates, $licenseId, $domainId);
                         db_query($query);
 
                         if ($domain['type'] == \HeloStore\ADLS\License::DOMAIN_TYPE_PRODUCTION) {
@@ -104,11 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                         $extra = db_get_field('SELECT extra FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
-                            $license['order_item_id'],
-                            $license['order_id'],
-                            $license['product_id']
+                            $license['orderItemId'],
+                            $license['orderId'],
+                            $license['productId']
                         );
-                        $productOptionId = $domain['product_option_id'];
+                        $productOptionId = $domain['productOptionId'];
                         if (!empty($extra) && !empty($productOptionId)) {
                             $extra = unserialize($extra);
                             if (!empty($extra) && is_array($extra)) {
@@ -122,9 +122,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $extra = serialize($extra);
                                 db_query('UPDATE ?:order_details SET extra = ?s WHERE item_id = ?i AND order_id = ?i AND product_id = ?i',
                                     $extra,
-                                    $license['order_item_id'],
-                                    $license['order_id'],
-                                    $license['product_id']
+                                    $license['orderItemId'],
+                                    $license['orderId'],
+                                    $license['productId']
                                 );
                                 $orderChanged = true;
                             }

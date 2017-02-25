@@ -16,6 +16,11 @@ namespace HeloStore\ADLS;
 
 use Tygh\Storage;
 
+/**
+ * Class LicenseServer
+ * 
+ * @package HeloStore\ADLS
+ */
 class LicenseServer
 {
 	public function __construct()
@@ -88,17 +93,17 @@ class LicenseServer
 				throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
 			}
 
-            $license['domains'] = $manager->getLicenseDomains($license['license_id']);
+            $license['domains'] = $manager->getLicenseDomains($license['id']);
             
             // if this license has no domain attached, means it's wide-available to any domain, so don't check the domain
             if (empty($license['domains'])) {
                 $domain = '';
             }
 
-            if ($manager->isActiveLicense($license['license_id'], $domain)) {
+            if ($manager->isActiveLicense($license['id'], $domain)) {
 				$response['code'] = LicenseClient::CODE_SUCCESS;
 				$response['message'] = 'License is already activated for specified domain.';
-			} else if (!$manager->activateLicense($license['license_id'], $domain)) {
+			} else if (!$manager->activateLicense($license['id'], $domain)) {
 				throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
 			} else {
 				$response['code'] = LicenseClient::CODE_SUCCESS;
@@ -123,10 +128,10 @@ class LicenseServer
 			return $response;
 		}
 
-		if (!$manager->isActiveLicense($license['license_id'], $vars['server.hostname'])) {
+		if (!$manager->isActiveLicense($license['id'], $vars['server.hostname'])) {
 			return $response;
 		}
-		$manager->inactivateLicense($license['license_id'], $vars['server.hostname']);
+		$manager->inactivateLicense($license['id'], $vars['server.hostname']);
 
 		return $response;
 	}

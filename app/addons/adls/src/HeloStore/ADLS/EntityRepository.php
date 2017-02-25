@@ -12,22 +12,26 @@
  * @version    $Id$
  */
 
-$schema['central']['adls'] = array(
-	'items' => array(
-		'adls.licenses' => array(
-			'href' => 'licenses.manage',
-			'position' => 20
-		),
-		'adls.releases' => array(
-			'href' => 'releases.manage',
-			'position' => 50
-		),
-		'logs' => array(
-			'href' => 'adls.logs',
-			'position' => 100
-		)
-	),
-	'position' => 900,
-);
+namespace HeloStore\ADLS;
 
-return $schema;
+
+/**
+ * Class EntityRepository
+ *
+ * @package HeloStore\ADLS
+ */
+abstract class EntityRepository extends Singleton {
+
+    /**
+     * @var string|null
+     */
+	protected $table = null;
+
+	/**
+	 * @return string
+	 */
+	public function getTable()
+	{
+		return $this->table;
+	}
+}
