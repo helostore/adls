@@ -372,6 +372,11 @@ function fn_adls_license_is_active($status)
 {
     return $status == License::STATUS_ACTIVE;
 }
+
+function fn_adls_get_license_statuses()
+{
+    return LicenseManager::instance()->getLicenseStatuses();
+}
 function fn_adls_get_license_status_label($status)
 {
     if ($status == License::STATUS_INACTIVE) {

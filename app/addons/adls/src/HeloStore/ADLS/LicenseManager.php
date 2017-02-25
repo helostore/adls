@@ -327,4 +327,13 @@ class LicenseManager extends Singleton
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_INACTIVE, $domain);
 	}
+
+    public function getLicenseStatuses()
+    {
+        return array(
+            License::STATUS_ACTIVE => License::convertStatusToLabel(License::STATUS_ACTIVE),
+            License::STATUS_INACTIVE => License::convertStatusToLabel(License::STATUS_INACTIVE),
+            License::STATUS_DISABLED => License::convertStatusToLabel(License::STATUS_DISABLED),
+        );
+    }
 }

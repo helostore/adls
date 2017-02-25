@@ -14,13 +14,12 @@
 
 namespace HeloStore\ADLS;
 
-
 /**
  * Class License
  * 
  * @package HeloStore\ADLS
  */
-class License
+class License extends Entity
 {
 	const STATUS_ACTIVE = 'A';
 	const STATUS_DISABLED = 'D';
@@ -74,6 +73,20 @@ class License
 	 * @var string
 	 */
 	protected $status;
+
+    /**
+     * Non-stored fields
+     */
+
+    /**
+     * @var array
+     */
+    protected $domains;
+
+    /**
+     * @var bool
+     */
+    protected $allDomainsDisabled;
 
 
 	/**
@@ -228,6 +241,45 @@ class License
 		return $this;
 	}
 
+    /**
+     * @return string
+     */
+    public function getLicenseKey()
+    {
+        return $this->licenseKey;
+    }
+
+    /**
+     * @param string $licenseKey
+     *
+     * @return $this
+     */
+    public function setLicenseKey($licenseKey)
+    {
+        $this->licenseKey = $licenseKey;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDomains()
+    {
+        return $this->domains;
+    }
+
+    /**
+     * @param array $domains
+     *
+     * @return $this
+     */
+    public function setDomains($domains)
+    {
+        $this->domains = $domains;
+
+        return $this;
+    }
 
 
 	/**
@@ -237,8 +289,40 @@ class License
 	/**
 	 * @return string
 	 */
+    public static function convertStatusToLabel($status)
+    {
+		return __('adls.license.status.' . strtolower($status));
+    }
+
+    /**
+     * @return string
+     */
 	public function getStatusLabel()
 	{
-		return __('adls.license.status.' . strtolower($this->status));
+        return self::convertStatusToLabel($this->status);
 	}
+
+    /**
+     * @return bool
+     */
+    public function hasDomains()
+    {
+        return !empty($this->domains);
+    }
+
+    /**
+     * @return boolean
+     */
+    public function areAllDomainsDisabled()
+    {
+        return $this->allDomainsDisabled;
+    }
+
+    /**
+     * @param boolean $allDomainsDisabled
+     */
+    public function setAllDomainsDisabled($allDomainsDisabled)
+    {
+        $this->allDomainsDisabled = $allDomainsDisabled;
+    }
 }
