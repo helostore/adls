@@ -39,7 +39,7 @@ class Entity
         $vars = get_object_vars($this);
         $array = array();
         foreach ($vars as $field => $value) {
-            if (in_array($field, array('_fieldsMap'))) {
+            if (in_array($field, array('_fieldsMap')) || $field == 'extra') {
                 continue;
             }
             if (in_array($field, array(
