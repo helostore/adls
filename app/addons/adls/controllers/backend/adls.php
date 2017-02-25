@@ -38,7 +38,7 @@ if ($mode == 'logs') {
     $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : 20;
 	list($logs, $result) = $logger->get($params);
 
-	if (!empty($params['log_id'])) {
+	if (!empty($params['id'])) {
 
 		echo '<pre>' . var_export($logs, 1) . '</pre>';
 		exit;
@@ -52,7 +52,7 @@ if ($mode == 'logs') {
 
 if ($mode == 'update_logs_info') {
 
-	$entries = db_get_array('SELECT log_id, ip, country, hostname, server FROM ?:adls_logs');
+	$entries = db_get_array('SELECT id, ip, country, hostname, server FROM ?:adls_logs');
     $i = 0;
 
     $logger = Logger::instance();
@@ -83,7 +83,7 @@ if ($mode == 'update_logs_info') {
 		}
 
         if (!empty($update)) {
-            db_query('UPDATE ?:adls_logs SET ?u WHERE log_id = ?i', $update, $entry['log_id']);
+            db_query('UPDATE ?:adls_logs SET ?u WHERE id = ?i', $update, $entry['id']);
             $i++;
         }
 	}
@@ -198,16 +198,16 @@ if ($mode == 'fix_orphaned_licenses') {
     $licenses = db_get_array('SELECT * FROM ?:adls_licenses');
     foreach ($licenses as $license) {
         $item = db_get_row('SELECT * FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
-            $license['order_item_id']
-            , $license['order_id']
-            , $license['product_id']
+            $license['orderItemId']
+            , $license['orderId']
+            , $license['productId']
         );
         if (empty($item)) {
             $manager = LicenseManager::instance();
-            $license = $manager->getOrderLicense($license['order_id'], $license['order_item_id']);
+            $license = $manager->getOrderLicense($license['orderId'], $license['orderItemId']);
             if (!empty($license)) {
-                aa('Deleted orphan license #' . $license['license_id']);
-                $manager->deleteLicense($license['license_id']);
+                aa('Deleted orphan license #' . $license['id']);
+                $manager->deleteLicense($license['id']);
             }
         }
     }
@@ -218,7 +218,7 @@ if ($mode == 'fix_domain_product_option_ids') {
     $licenses = db_get_array('SELECT * FROM ?:adls_licenses');
     foreach ($licenses as $license) {
 //        $domains = db_get_array('SELECT * FROM ?:adls_license_domains WHERE license_id = ?i', $license['license_id']);
-        $order = fn_get_order_info($license['order_id']);
+        $order = fn_get_order_info($license['orderId']);
         foreach ($order['products'] as $item) {
 
             $options = array();
@@ -254,7 +254,7 @@ if ($mode == 'fix_domain_product_option_ids') {
                 foreach ($_domains as $domain) {
                     $option = array_shift($options[$type]);
                     if (!empty($option)) {
-                        $query = db_quote('UPDATE ?:adls_license_domains SET product_option_id = ?i WHERE domain_id = ?i', $option['option_id'], $domain['domain_id']);
+                        $query = db_quote('UPDATE ?:adls_license_domains SET productOptionId = ?i WHERE id = ?i', $option['option_id'], $domain['id']);
                         aa($query);
                         db_query($query);
                     }

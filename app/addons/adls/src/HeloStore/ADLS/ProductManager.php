@@ -18,6 +18,11 @@ namespace HeloStore\ADLS;
 use Tygh\Addons\SchemesManager;
 use Tygh\Registry;
 
+/**
+ * Class ProductManager
+ * 
+ * @package HeloStore\ADLS
+ */
 class ProductManager extends Singleton
 {
 	public function getReviewUrl($key)

@@ -29,16 +29,16 @@ function fn_adls_get_orders_post($params, &$orders)
 {
     foreach ($orders as &$order) {
 
-        $query = db_quote('SELECT license_id FROM ?:adls_licenses WHERE order_id = ?i', $order['order_id']);
-        $query = db_quote('SELECT GROUP_CONCAT(DISTINCT name) AS domains FROM ?:adls_license_domains WHERE license_id IN (?p)', $query);
+        $queryLicense = db_quote('SELECT id FROM ?:adls_licenses WHERE orderId = ?i', $order['order_id']);
+        $query = db_quote('SELECT GROUP_CONCAT(DISTINCT name) AS domains FROM ?:adls_license_domains WHERE licenseId IN (?p)', $queryLicense);
         $order['domains'] = db_get_field($query);
         if (!empty($order['domains'])) {
             $order['domains'] = explode(',', $order['domains']);
         }
 
 
-        $query = db_quote('SELECT product_id FROM ?:order_details WHERE order_id = ?i', $order['order_id']);
-        $query = db_quote('SELECT GROUP_CONCAT(DISTINCT product) AS products FROM ?:product_descriptions WHERE product_id IN (?p) AND lang_code = ?s', $query, CART_LANGUAGE);
+        $queryDetails = db_quote('SELECT product_id FROM ?:order_details WHERE order_id = ?i', $order['order_id']);
+        $query = db_quote('SELECT GROUP_CONCAT(DISTINCT product) AS products FROM ?:product_descriptions WHERE product_id IN (?p) AND lang_code = ?s', $queryDetails, CART_LANGUAGE);
         $order['products'] = db_get_field($query);
         if (!empty($order['products'])) {
             $order['products'] = explode(',', $order['products']);
@@ -59,9 +59,9 @@ function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
             $oldItemId = $item['prev_cart_id'];
             if ($oldItemId != $itemId) {
                 $query = db_quote('
-					UPDATE ?:adls_licenses SET order_item_id = ?s WHERE
-					order_id = ?i
-					AND order_item_id = ?i
+					UPDATE ?:adls_licenses SET orderItemId = ?s WHERE
+					orderId = ?i
+					AND orderItemId = ?i
 					',
                     $itemId
                     , $orderId
@@ -84,7 +84,7 @@ function fn_adls_delete_order($orderId)
     $manager = LicenseManager::instance();
     $licenses = $manager->getOrderLicenses($orderId);
     foreach ($licenses as $license) {
-        $manager->deleteLicense($license['license_id']);
+        $manager->deleteLicense($license['id']);
     }
 }
 function fn_adls_get_order_info(&$order, $additional_data)
@@ -103,38 +103,38 @@ function fn_adls_get_order_info(&$order, $additional_data)
 
 function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
 {
-    return;
-
-
-    if (defined('GET_OPTIONS')) {
-        return;
-    }
-
-    // Exclude domain names from cid because we don't want to generated new cart item id each time we update a domain
-    $excludeOptionIds = fn_adls_get_options_ids();
-
-    // Grab values of excluded options
-    $excludedValues = array();
-    if (!empty($extra['product_options']) && is_array($extra['product_options'])) {
-
-        // Try to select all options (including Globals)
-        Registry::set('runtime.skip_sharing_selection', true);
-
-        foreach ($extra['product_options'] as $k => $v) {
-            if ($only_selectable == true && ((string) intval($v) != $v || db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i", $k) != 'Y')) {
-
-                continue;
-            }
-            if (in_array($k, $excludeOptionIds)) {
-                $excludedValues[] = $v;
-            }
-        }
-
-        Registry::set('runtime.skip_sharing_selection', false);
-    }
-    if (!empty($excludedValues)) {
-        $_cid = array_diff($_cid, $excludedValues);
-    }
+//    return;
+//
+//
+//    if (defined('GET_OPTIONS')) {
+//        return;
+//    }
+//
+//    // Exclude domain names from cid because we don't want to generated new cart item id each time we update a domain
+//    $excludeOptionIds = fn_adls_get_options_ids();
+//
+//    // Grab values of excluded options
+//    $excludedValues = array();
+//    if (!empty($extra['product_options']) && is_array($extra['product_options'])) {
+//
+//        // Try to select all options (including Globals)
+//        Registry::set('runtime.skip_sharing_selection', true);
+//
+//        foreach ($extra['product_options'] as $k => $v) {
+//            if ($only_selectable == true && ((string) intval($v) != $v || db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i", $k) != 'Y')) {
+//
+//                continue;
+//            }
+//            if (in_array($k, $excludeOptionIds)) {
+//                $excludedValues[] = $v;
+//            }
+//        }
+//
+//        Registry::set('runtime.skip_sharing_selection', false);
+//    }
+//    if (!empty($excludedValues)) {
+//        $_cid = array_diff($_cid, $excludedValues);
+//    }
 }
 
 function fn_adls_get_additional_information(&$product, $product_data)
