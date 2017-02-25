@@ -3,8 +3,8 @@
 		<div class="ty-control-group clearfix">
 			<label class="ty-product-options__title">{__('adls.license')}</label>
 			<span class="adls-highlight clearfix">
-				{$htmlId = "license_`$product.license.license_id`"}
-				<input value="{$product.license.license_key}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
+				{$htmlId = "license_`$product.license.id`"}
+				<input value="{$product.license.licenseKey}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
 				<button class="ty-btn ty-btn__secondary adls-clipboard" data-clipboard-target="#{$htmlId}" title="{__('adls.copy_to_clipboard')}">
 					<i class="fa fa-clipboard"></i>
 					<span class="icon svg hidden">
@@ -33,7 +33,7 @@
 						{foreach from=$product.license.domains item=domain}
 							<div class="adls-license-status status-{$domain.status|strtolower}">
 								{if !fn_adls_license_is_disabled($domain.status)}
-								<input name="licenses[{$product.license.license_id}][domains][{$domain.domain_id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
+								<input name="licenses[{$product.license.id}][domains][{$domain.id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
 								{else}
 									{$domain.name}
 								{/if}
