@@ -57,6 +57,7 @@
                 `productId`  mediumint(8) UNSIGNED NOT NULL ,
                 `createdAt`  datetime NOT NULL ,
                 `fileId`  mediumint(8) UNSIGNED NOT NULL ,
+                `version` varchar(16) DEFAULT NULL,
                 PRIMARY KEY (`id`)
             )
         </item>
