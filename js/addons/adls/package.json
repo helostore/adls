@@ -1,0 +1,15 @@
+{
+  "name": "adls",
+  "version": "1.0.0",
+  "description": "",
+  "main": "common.js",
+  "dependencies": {
+    "tldjs": "^1.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC"
+}
