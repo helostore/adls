@@ -80,7 +80,3 @@
 
     });
 }(Tygh, Tygh.$));
-
-function adlsHostnameFormat(value) {
-    return value.match(/[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+/);
-}
