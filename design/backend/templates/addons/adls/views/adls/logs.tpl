@@ -64,7 +64,7 @@
 						act="link"
 						text="Log #`$log.id`"
 						link_text=__("view")
-						href=fn_url("adls.logs?log_id=`$log.id`")
+						href=fn_url("adls.logs?id=`$log.id`")
 						no_icon_link=true
 						opener_ajax_class="cm-ajax"}
 

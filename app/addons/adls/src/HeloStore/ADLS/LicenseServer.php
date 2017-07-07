@@ -84,6 +84,7 @@ class LicenseServer
 		$response = array();
 		$license = $manager->getLicenseByKey($vars['product.license']);
 		$domain = $vars['server.hostname'];
+        $domain = Utils::stripDomainWWW($domain);
 
 		if ($isMagicLicenseKey) {
 			$response['code'] = LicenseClient::CODE_SUCCESS;
