@@ -14,6 +14,7 @@
 
 namespace HeloStore\ADLS;
 
+use DateTime;
 use Zend\I18n\Validator\Alnum;
 use Zend\Validator\Hostname;
 use Zend\Validator\StringLength;
@@ -24,7 +25,7 @@ use Zend\Validator\ValidatorChain;
  *
  * @package HeloStore\ADLS
  */
-class Utils
+class Utils extends Singleton
 {
 	public static function generateKey($length = 16, $groupLength = 4) {
 		$chars = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
@@ -124,5 +125,27 @@ class Utils
 			$manager = LicenseManager::instance();
 			$manager->updateLicenseDomains($licenseId, $domains);
 		}
+	}
+
+	/**
+	 * @param DateTime $date
+	 *
+	 * @return $this
+	 */
+	public function overridePresentDate(DateTime $date)
+	{
+		global $_timeTravelDate;
+
+		$_timeTravelDate = $date;
+
+		return $this;
+	}
+	/**
+	 * @return DateTime
+	 */
+	public function getCurrentDate()
+	{
+        global $_timeTravelDate;
+		return (empty($_timeTravelDate)) ? new \DateTime() : clone $_timeTravelDate;
 	}
 } 

@@ -28,8 +28,10 @@ fn_register_hooks(
 	, 'place_order'
 	, 'get_orders_post'
 	, 'delete_order'
-	, 'generate_cart_id'
 	, 'get_additional_information'
 	, 'required_products_pre_add_to_cart'
 	, 'adls_subscriptions_post_suspend'
+	, 'adls_subscriptions_post_fail'
+	, 'adls_subscriptions_post_begin'
+	, 'adls_subscriptions_post_resume'
 );

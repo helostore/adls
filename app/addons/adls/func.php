@@ -21,10 +21,7 @@ use Tygh\Registry;
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 /* Hooks */
-function fn_adls_adls_subscriptions_post_suspend(\HeloStore\ADLS\Subscription\Subscription $subscription)
-{
-//    die('wtfdfffffffffff');
-}
+
 function fn_adls_get_orders_post($params, &$orders)
 {
     foreach ($orders as &$order) {
@@ -35,7 +32,6 @@ function fn_adls_get_orders_post($params, &$orders)
         if (!empty($order['domains'])) {
             $order['domains'] = explode(',', $order['domains']);
         }
-
 
         $queryDetails = db_quote('SELECT product_id FROM ?:order_details WHERE order_id = ?i', $order['order_id']);
         $query = db_quote('SELECT GROUP_CONCAT(DISTINCT product) AS products FROM ?:product_descriptions WHERE product_id IN (?p) AND lang_code = ?s', $queryDetails, CART_LANGUAGE);
@@ -76,20 +72,25 @@ function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
 }
 function fn_adls_change_order_status($status_to, $status_from, $orderInfo, $force_notification, $order_statuses, $place_order)
 {
-    fn_adls_process_order($orderInfo, $status_to);
+    fn_adls_process_order($orderInfo, $status_to, $status_from);
 }
 
 function fn_adls_delete_order($orderId)
 {
     $manager = LicenseManager::instance();
+    $licenseRepository = \HeloStore\ADLS\LicenseRepository::instance();
     $licenses = $manager->getOrderLicenses($orderId);
     foreach ($licenses as $license) {
-        $manager->deleteLicense($license['id']);
+        $licenseRepository->delete($license['id']);
     }
 }
 function fn_adls_get_order_info(&$order, $additional_data)
 {
     $productManager = \HeloStore\ADLS\ProductManager::instance();
+    // CS-Cart bug: this gets called on non-existing orders as well?!
+    if (empty($order['products'])) {
+        return;
+    }
     foreach ($order['products'] as $i => &$product) {
         if (fn_is_adls_product($product)) {
             $storeProduct = $productManager->getProductById($product['product_id']);
@@ -99,42 +100,6 @@ function fn_adls_get_order_info(&$order, $additional_data)
         }
     }
     unset($product);
-}
-
-function fn_adls_generate_cart_id(&$_cid, $extra, $only_selectable)
-{
-//    return;
-//
-//
-//    if (defined('GET_OPTIONS')) {
-//        return;
-//    }
-//
-//    // Exclude domain names from cid because we don't want to generated new cart item id each time we update a domain
-//    $excludeOptionIds = fn_adls_get_options_ids();
-//
-//    // Grab values of excluded options
-//    $excludedValues = array();
-//    if (!empty($extra['product_options']) && is_array($extra['product_options'])) {
-//
-//        // Try to select all options (including Globals)
-//        Registry::set('runtime.skip_sharing_selection', true);
-//
-//        foreach ($extra['product_options'] as $k => $v) {
-//            if ($only_selectable == true && ((string) intval($v) != $v || db_get_field("SELECT inventory FROM ?:product_options WHERE option_id = ?i", $k) != 'Y')) {
-//
-//                continue;
-//            }
-//            if (in_array($k, $excludeOptionIds)) {
-//                $excludedValues[] = $v;
-//            }
-//        }
-//
-//        Registry::set('runtime.skip_sharing_selection', false);
-//    }
-//    if (!empty($excludedValues)) {
-//        $_cid = array_diff($_cid, $excludedValues);
-//    }
 }
 
 function fn_adls_get_additional_information(&$product, $product_data)
@@ -229,8 +194,12 @@ function fn_adls_validate_product_options($product_options)
     }
 }
 
-function fn_adls_process_order($orderInfo, $orderStatus)
+function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 {
+    if (defined('ORDER_MANAGEMENT')) {
+        return false;
+    }
+
     $manager = LicenseManager::instance();
     $orderId = $orderInfo['order_id'];
     $userId = $orderInfo['user_id'];
@@ -238,7 +207,6 @@ function fn_adls_process_order($orderInfo, $orderStatus)
     $success = true;
     $paidStatuses = array('P');
     $isPaidStatus = in_array($orderStatus, $paidStatuses);
-
 
     foreach ($orderInfo['products'] as $product) {
         $productId = $product['product_id'];
@@ -250,6 +218,7 @@ function fn_adls_process_order($orderInfo, $orderStatus)
 
         $licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
         $notificationState = (AREA == 'A' ? 'I' : 'K');
+
         if ($isPaidStatus) {
 
             $domainOptions = Utils::filterDomainProductOptions($product['product_options']);
@@ -425,4 +394,25 @@ function fn_adls_get_options_ids()
     $optionIds = db_get_fields('SELECT option_id FROM ?:product_options WHERE adls_option_type IN (?a)', $optionTypes);
 
     return $optionIds;
+}
+
+function fn_adls_adls_subscriptions_post_fail(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
+{
+    $statusFrom = $orderInfo['prev_status'];
+    $statusTo = $orderInfo['status'];
+}
+function fn_adls_adls_subscriptions_post_begin(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
+{
+    $statusFrom = $orderInfo['prev_status'];
+    $statusTo = $orderInfo['status'];
+}
+function fn_adls_adls_subscriptions_post_resume(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
+{
+    $statusFrom = $orderInfo['prev_status'];
+    $statusTo = $orderInfo['status'];
+}
+function fn_adls_adls_subscriptions_post_suspend(\HeloStore\ADLS\Subscription\Subscription $subscription)
+{
+//    $statusFrom = $orderInfo['prev_status'];
+//    $statusTo = $orderInfo['status'];
 }

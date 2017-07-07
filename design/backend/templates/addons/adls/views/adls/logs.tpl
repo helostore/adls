@@ -64,14 +64,14 @@
 						act="link"
 						text="Log #`$log.id`"
 						link_text=__("view")
-						href=fn_url("adls.logs?log_id=`$log.id`")
+						href=fn_url("adls.logs?id=`$log.id`")
 						no_icon_link=true
 						opener_ajax_class="cm-ajax"}
 
 						{if !empty($log.backtrace)}
 							<p><a onclick="Tygh.$('#backtrace_{$log.id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
 							<div id="backtrace_{$log.id}" class="notice-box hidden">
-								{$log.backtrace|nl2br}
+								{$log.backtrace|nl2br nofilter}
 								{*
 								{foreach from=$log.backtrace item="v"}
 									{$v.file}{if $v.function}&nbsp;({$v.function }){/if}:&nbsp;{$v.line}<br />

@@ -32,6 +32,8 @@ class Logger extends Singleton
 
 	const OBJECT_TYPE_REQUEST = 'request';
 	const OBJECT_TYPE_API = 'api';
+	const OBJECT_TYPE_SUBSCRIPTION_ALERT = 'subscription_alert';
+	const OBJECT_TYPE_SUBSCRIPTION_MIGRATE_ALERT = 'subscription_migrate_alert';
 
 	public function success($request, $server, $objectType = '', $objectAction = '', $content = '')
 	{

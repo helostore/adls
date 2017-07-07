@@ -325,4 +325,26 @@ class License extends Entity
     {
         $this->allDomainsDisabled = $allDomainsDisabled;
     }
+
+	/**
+	 * @return bool
+	 */
+	public function isActive()
+	{
+		return $this->status == self::STATUS_ACTIVE;
+	}
+	/**
+	 * @return bool
+	 */
+	public function isInactive()
+	{
+		return $this->status == self::STATUS_INACTIVE;
+	}
+	/**
+	 * @return bool
+	 */
+	public function isDisabled()
+	{
+		return $this->status == self::STATUS_DISABLED;
+	}
 }
