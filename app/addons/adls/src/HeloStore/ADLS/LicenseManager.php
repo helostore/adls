@@ -19,8 +19,21 @@ namespace HeloStore\ADLS;
  *
  * @package HeloStore\ADLS
  */
-class LicenseManager extends Singleton
+class LicenseManager extends Manager
 {
+	/**
+	 * @var LicenseRepository
+	 */
+	protected $repository;
+
+	/**
+	 * LicenseManager constructor.
+	 */
+	public function __construct()
+	{
+		$this->setRepository(LicenseRepository::instance());
+	}
+
 	public function existsLicense($productId, $itemId, $orderId, $userId)
 	{
 		return db_get_field('SELECT id FROM ?:adls_licenses WHERE productId = ?i AND orderItemId = ?i AND orderId = ?i and userId = ?i', $productId, $itemId, $orderId, $userId);
@@ -57,12 +70,7 @@ class LicenseManager extends Singleton
 		return $result;
 	}
 
-	public function deleteLicense($licenseId)
-	{
-		db_query('DELETE FROM ?:adls_license_domains WHERE licenseId = ?i', $licenseId);
 
-		return db_query('DELETE FROM ?:adls_licenses WHERE id = ?i', $licenseId);
-	}
 
 	public function getLicenseByKey($key) {
 		return db_get_row('SELECT * FROM ?:adls_licenses WHERE licenseKey = ?s', $key);
@@ -124,6 +132,12 @@ class LicenseManager extends Singleton
 		return true;
 	}
 
+    public function isValidLicenseDomain($licenseId, $domainName)
+    {
+        $domain = $this->getDomainBy(array('licenseId' => $licenseId, 'domain' => $domainName));
+
+        return !empty($domain);
+    }
 	public function getDomainByType($licenseId, $type)
 	{
 		return $this->getDomainBy(array('licenseId' => $licenseId, 'type' => $type));
@@ -304,25 +318,40 @@ class LicenseManager extends Singleton
 		$domainId = null;
 		if (!empty($domain)) {
 			$domainId = db_get_field('SELECT id FROM ?:adls_license_domains WHERE licenseId = ?i AND name = ?s', $licenseId, $domain);
-			if (!empty($domainId)) {
-				$result = db_query('UPDATE ?:adls_license_domains SET ?u WHERE licenseId = ?i AND name = ?s', $update, $licenseId, $domain);
-				if (!$result) {
-					return false;
-				}
-			} // else wildcard license (for any domain)
-		}
-		$result = db_query('UPDATE ?:adls_licenses SET ?u WHERE id = ?i', $update, $licenseId);
 
-		return $result;
+			if (!empty($domainId)) {
+                if (!$this->updateLicenseDomainStatus($domainId, $status)) {
+                    return false;
+                }
+			} else {
+
+                // else wildcard license (for any domain)
+            }
+		}
+
+        return $this->updateLicenseStatus($licenseId, $status);
 	}
+
+    public function updateLicenseStatus($licenseId, $status)
+    {
+        return db_query('UPDATE ?:adls_licenses SET status = ?s WHERE id = ?i', $status, $licenseId);
+    }
+
+    public function updateLicenseDomainStatus($domainId, $status)
+    {
+        return db_query('UPDATE ?:adls_license_domains SET status = ?s WHERE id = ?i', $status, $domainId);
+    }
+
 	public function disableLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_DISABLED, $domain);
 	}
+
 	public function activateLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_ACTIVE, $domain);
 	}
+
 	public function inactivateLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_INACTIVE, $domain);

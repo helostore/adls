@@ -14,6 +14,8 @@
 
 namespace HeloStore\ADLS;
 
+use HeloStore\ADLS\Subscription\Subscription;
+use HeloStore\ADLS\Subscription\SubscriptionRepository;
 use Tygh\Storage;
 
 /**
@@ -65,20 +67,45 @@ class LicenseServer
 		$vars = $this->requireRequestVariables($request, array('server.hostname','email'));
 		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.code')));
 		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
+		$vars = array_merge($vars, $this->requireRequestVariables($request, array('product.version')));
 
 		$isMagicLicenseKey = (defined('ADLS_MAGIC_LICENSE_KEY') && $vars['product.license'] == ADLS_MAGIC_LICENSE_KEY);
-		if ($isMagicLicenseKey) {
-			$response['code'] = LicenseClient::CODE_SUCCESS;
-			$response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic key</em>!';
-		}
 
 		$productManager = ProductManager::instance();
 		$storeProduct = $productManager->getStoreProduct($vars['product.code']);
 		if (empty($storeProduct['adls_subscription_id'])) {
 			throw new \Exception('Unable to determine the subscription type of specified product', LicenseClient::CODE_ERROR_PRODUCT_SUBSCRIPTION_TYPE_NOT_FOUND);
 		}
-		$freeSubscription = $productManager->isFreeSubscription($storeProduct['adls_subscription_id']);
-		$paidSubscription = $productManager->isPaidSubscription($storeProduct['adls_subscription_id']);
+
+        $freeSubscription = $productManager->isFreeSubscription($storeProduct['adls_subscription_id']);
+        $paidSubscription = $productManager->isPaidSubscription($storeProduct['adls_subscription_id']);
+        $productId = $storeProduct['product_id'];
+
+        if (empty($productId)) {
+            throw new \Exception('Product not found in our store', LicenseClient::CODE_ERROR_PRODUCT_NOT_FOUND);
+        }
+
+        $requestVersion = $vars['product.version'];
+
+        if (empty($requestVersion)) {
+			throw new \Exception('Missing product version in request', LicenseClient::CODE_ERROR_PRODUCT_INVALID_VERSION);
+        }
+
+        // Check if version is valid
+        if (!ReleaseManager::instance()->isValidVersion($productId, $requestVersion)) {
+			throw new \Exception('Invalid product version requested', LicenseClient::CODE_ERROR_PRODUCT_INVALID_VERSION);
+        }
+        
+
+
+        // We can now control for newer Sidekick versions here, > v0.1.100
+        if (!empty($request['licenseClient'])) {
+            $requestSidekick = $request['licenseClient'];
+        }
+
+
+
+
 
 		$manager = LicenseManager::instance();
 		$response = array();
@@ -92,23 +119,56 @@ class LicenseServer
 			if (empty($license)) {
 				throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
 			}
+            $licenseId = $license['id'];
 
-            $license['domains'] = $manager->getLicenseDomains($license['id']);
-            
-            // if this license has no domain attached, means it's wide-available to any domain, so don't check the domain
-            if (empty($license['domains'])) {
+            $license['domains'] = $manager->getLicenseDomains($licenseId);
+
+            if (!empty($license['domains'])) {
+                if (!$manager->isValidLicenseDomain($licenseId, $domain)) {
+                    throw new \Exception('Unable to activate license for specified domain (I)', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+                }
+            } else {
                 $domain = '';
             }
 
-            if ($manager->isActiveLicense($license['id'], $domain)) {
-				$response['code'] = LicenseClient::CODE_SUCCESS;
-				$response['message'] = 'License is already activated for specified domain.';
-			} else if (!$manager->activateLicense($license['id'], $domain)) {
-				throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
-			} else {
-				$response['code'] = LicenseClient::CODE_SUCCESS;
-				$response['message'] = 'Your license is now <b>active</b>!';
-			}
+            if ($manager->isActiveLicense($licenseId, $domain)) {
+                $response['code'] = LicenseClient::CODE_SUCCESS;
+                $response['message'] = 'License is already activated for specified domain.';
+            } else {
+
+                // Check if subscription allows activation to requested version
+//                fn_set_hook('adls_api_license_pre_activation', $licenseId, $orderId, $productId);
+
+                $orderId = $license['orderId'];
+                $orderItemId = $license['orderItemId'];
+                if (class_exists('HeloStore\\ADLS\\Subscription\\SubscriptionRepository')) {
+
+                    /** @var Subscription $subscription */
+                    $subscription = SubscriptionRepository::instance()->findOneByOrderItem($orderId, $orderItemId);
+                    if (!empty($subscription)) {
+                        if (!ReleaseManager::instance()->isVersionAvailableToSubscription($subscription, $requestVersion)) {
+                            throw new \Exception('The subscription attached to this license must be re-newed in order to use the new version of this product',
+                                LicenseClient::CODE_ERROR_ACTIVATION_SUBSCRIPTION_NO_ACCESS_TO_RELEASE
+                            );
+                        }
+                    }
+                }
+
+
+                if (!$manager->activateLicense($licenseId, $domain)) {
+                    throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+                } else {
+                    $response['code'] = LicenseClient::CODE_SUCCESS;
+                    $response['message'] = 'Your license is now <b>active</b>!';
+                }
+            }
+
+            if (empty($license['domains'])) {
+            } else {
+
+                // license with domains, status gets changed on domain level as well
+            }
+
 		}
 
 		return $response;
@@ -206,6 +266,7 @@ class LicenseServer
 					'email' => LicenseClient::CODE_ERROR_MISSING_EMAIL,
 					'password' => LicenseClient::CODE_ERROR_MISSING_PASSWORD,
 					'product.license' => LicenseClient::CODE_ERROR_MISSING_LICENSE,
+					'product.version' => LicenseClient::CODE_ERROR_MISSING_PRODUCT_VERSION,
 					'server.hostname' => LicenseClient::CODE_ERROR_MISSING_DOMAIN,
 					'token' => LicenseClient::CODE_ERROR_MISSING_TOKEN
 				);

@@ -31,6 +31,7 @@ class ProductManager extends Singleton
 			'company' => 'http://marketplace.cs-cart.com/vlad-sergiu-valentin-pfa.html?selected_section=discussion#discussion',
 			'developer' => 'http://marketplace.cs-cart.com/add-ons/integrations/developer.html?selected_section=discussion#discussion',
 			'free_shipping_notice' => 'http://marketplace.cs-cart.com/add-ons/customer-experience/free-shipping-incentive-add-on-for-cs-cart.html?selected_section=discussion#discussion',
+			'free_shipping_incentive' => 'http://marketplace.cs-cart.com/add-ons/customer-experience/free-shipping-incentive-add-on-for-cs-cart.html?selected_section=discussion#discussion',
 			'autoimage_lite' => 'http://marketplace.cs-cart.com/add-ons/customer-experience/autoimage-lite.html?selected_section=discussion#discussion',
 		);
 
@@ -103,6 +104,7 @@ class ProductManager extends Singleton
 			SELECT
 				p.product_id,
 				p.adls_addon_id,
+				p.adls_release_version,
 				p.adls_subscription_id
 			FROM ?:products AS p
 			' . $joins . '
@@ -146,6 +148,7 @@ class ProductManager extends Singleton
 			FROM ?:products WHERE adls_addon_id IN (?a)', 'adls_addon_id', array_keys($products));
 		$addonsPath = Registry::get('config.dir.addons');
 		$releaseLogFilename = 'release.json';
+
 		foreach ($products as $k => $v) {
 			if (isset($productsData[$k])) {
 				$products[$k] = array_merge($v, $productsData[$k]);
@@ -275,13 +278,15 @@ class ProductManager extends Singleton
 	 * @param $params
 	 * @return bool|int
 	 */
-	public function updateRelease($productCode, $params)
+	public function release($productCode, $params)
 	{
 		$releaseManager = ReleaseManager::instance();
-		if (method_exists($releaseManager, 'update')) {
-			return ReleaseManager::instance()->update($productCode, $params);
+		if (method_exists($releaseManager, 'release')) {
+			$storeProduct = $this->getStoreProduct($productCode);
+
+			return ReleaseManager::instance()->release($storeProduct, $params);
 		}
 
-		return false;
+		return null;
 	}
 }

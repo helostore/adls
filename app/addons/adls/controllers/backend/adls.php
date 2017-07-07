@@ -196,6 +196,9 @@ if ($mode == 'test') {
 
 if ($mode == 'fix_orphaned_licenses') {
     $licenses = db_get_array('SELECT * FROM ?:adls_licenses');
+    $licenseRepository = \HeloStore\ADLS\LicenseRepository::instance();
+    $manager = LicenseManager::instance();
+
     foreach ($licenses as $license) {
         $item = db_get_row('SELECT * FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
             $license['orderItemId']
@@ -203,11 +206,10 @@ if ($mode == 'fix_orphaned_licenses') {
             , $license['productId']
         );
         if (empty($item)) {
-            $manager = LicenseManager::instance();
             $license = $manager->getOrderLicense($license['orderId'], $license['orderItemId']);
             if (!empty($license)) {
                 aa('Deleted orphan license #' . $license['id']);
-                $manager->deleteLicense($license['id']);
+                $licenseRepository->delete($license['id']);
             }
         }
     }
@@ -255,7 +257,6 @@ if ($mode == 'fix_domain_product_option_ids') {
                     $option = array_shift($options[$type]);
                     if (!empty($option)) {
                         $query = db_quote('UPDATE ?:adls_license_domains SET productOptionId = ?i WHERE id = ?i', $option['option_id'], $domain['id']);
-                        aa($query);
                         db_query($query);
                     }
                 }
