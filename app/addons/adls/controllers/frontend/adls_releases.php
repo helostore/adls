@@ -56,7 +56,11 @@ if ($mode == 'download' && !empty($_REQUEST['orderId']) && !empty($_REQUEST['id'
         if (empty($subscription)) {
             return array(CONTROLLER_STATUS_NO_PAGE);
         }
-        $release = $releaseRepository->findOneBySubscriptionAndId($subscription, $requestReleaseId);
+        if ($requestReleaseId == $subscription->getReleaseId()) {
+            $release = $releaseRepository->findOneById($subscription->getReleaseId());
+        } else {
+            $release = $releaseRepository->findOneBySubscriptionAndId($subscription, $requestReleaseId);
+        }
     } else {
         $release = $releaseRepository->findOneById($requestReleaseId);
     }

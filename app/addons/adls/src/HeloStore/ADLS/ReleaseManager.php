@@ -190,6 +190,7 @@ class ReleaseManager extends Manager
     public function getOrderItemReleases($product)
     {
         if (!empty($product['subscription'])) {
+            /** @var Subscription $subscription */
             $subscription = $product['subscription'];
             list($releases, ) = $this->repository->findBySubscription($subscription);
         } else {

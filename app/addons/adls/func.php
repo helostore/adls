@@ -15,6 +15,8 @@
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\ReleaseRepository;
+use HeloStore\ADLS\Subscription\Subscription;
 use HeloStore\ADLS\Utils;
 use Tygh\Registry;
 
@@ -405,6 +407,22 @@ function fn_adls_adls_subscriptions_post_begin(\HeloStore\ADLS\Subscription\Subs
 {
     $statusFrom = $orderInfo['prev_status'];
     $statusTo = $orderInfo['status'];
+
+    // Assign most recent product release to subscription, to be used when querying for subscription's releases because the latest release might be out of subscriptions start/end range.
+    if (!$subscription->getProductId()) {
+        return;
+    }
+    list($releases, ) = ReleaseRepository::instance()->findBySubscription($subscription);
+    if (empty($releases) && $subscription->hasEndDate()) {
+        list($releases, ) = ReleaseRepository::instance()->findLatestByProduct($subscription->getProductId(), $subscription->getEndDate());
+    }
+    if (empty($releases)) {
+        return;
+    }
+    /** @var \HeloStore\ADLS\Release $latest */
+    $latest = reset($releases);
+    $subscription->setReleaseId($latest->getId());
+    \HeloStore\ADLS\Subscription\SubscriptionRepository::instance()->update($subscription);
 }
 function fn_adls_adls_subscriptions_post_resume(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
 {
@@ -416,3 +434,4 @@ function fn_adls_adls_subscriptions_post_suspend(\HeloStore\ADLS\Subscription\Su
 //    $statusFrom = $orderInfo['prev_status'];
 //    $statusTo = $orderInfo['status'];
 }
+
