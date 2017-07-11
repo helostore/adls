@@ -70,7 +70,7 @@ class ReleaseRepository extends EntityRepository
 	/**
 	 * @param array $params
 	 *
-	 * @return Release[]|Release|null
+	 * @return array|null
 	 */
 	public function find($params = array())
 	{
@@ -93,6 +93,7 @@ class ReleaseRepository extends EntityRepository
         $sorting = db_sort($params, $sortingFields, 'createdAt', 'desc');
 
 		$condition = array();
+        $orCondition = array();
         $joins = array();
         $fields = array();
         $fields[] = 'releases.*';
@@ -123,6 +124,9 @@ class ReleaseRepository extends EntityRepository
                 $condition[] = db_quote('releases.createdAt <= ?s', $endDate);
             }
         }
+        if (!empty($params['fromReleaseId'])) {
+            $orCondition[] = db_quote('releases.id = ?i', $params['fromReleaseId']);
+        }
 
 		if (!empty($params['extended'])) {
             $joins[] = db_quote('LEFT JOIN ?:product_descriptions AS productDesc 
@@ -135,18 +139,22 @@ class ReleaseRepository extends EntityRepository
 		}
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'releases.*' : implode(', ', $fields);
-		$condition = !empty($condition) ? ' WHERE ' . implode(' AND ', $condition) . '' : '';
-
+		$condition = implode(' AND ', $condition);
+        $orCondition = implode(' AND ', $orCondition);
+		$conditions = !empty($condition) ? ' WHERE (' . $condition . ')' : '';
+        if (!empty($orCondition)) {
+            $conditions .= ' OR (' . $orCondition . ')';
+        }
 
         $limit = '';
         if (isset($params['one'])) {
             $limit = 'LIMIT 0,1';
         } else if (!empty($params['items_per_page'])) {
-            $query = db_quote('SELECT COUNT(DISTINCT releases.id) FROM ?p AS releases ?p ?p ?p', $this->table, $joins, $condition, $limit);
+            $query = db_quote('SELECT COUNT(DISTINCT releases.id) FROM ?p AS releases ?p ?p ?p', $this->table, $joins, $conditions, $limit);
             $params['total_items'] = db_get_field($query);
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
-        $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p ?p ?p', $fields, $this->table, $joins, $condition, $sorting, $limit);
+        $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p ?p ?p', $fields, $this->table, $joins, $conditions, $sorting, $limit);
 
         $items = db_get_array($query);
 
@@ -169,9 +177,9 @@ class ReleaseRepository extends EntityRepository
      * @param \DateTime $startDate
      * @param \DateTime $endDate
      * @param array $params
-     * @return Release|null
+     * @return array|null
      */
-	public function findInRange(\DateTime $startDate, \DateTime $endDate, $params = array())
+	public function findInRange(\DateTime $startDate = null, \DateTime $endDate = null, $params = array())
     {
         $params['startDate'] = $startDate;
         $params['endDate'] = $endDate;
@@ -184,11 +192,12 @@ class ReleaseRepository extends EntityRepository
      * @param \DateTime $startDate
      * @param \DateTime $endDate
      * @param array $params
-     * @return Release[]|null
+     * @return array|null
      */
     public function findByProductInRange($productId, \DateTime $startDate, \DateTime $endDate, $params = array())
     {
         $params['productId'] = $productId;
+
         return $this->findInRange(
             $startDate
             , $endDate
@@ -197,9 +206,27 @@ class ReleaseRepository extends EntityRepository
     }
 
     /**
+     * @param $productId
+     * @param \DateTime $endDate
+     * @param array $params
+     * @return array|null
+     */
+    public function findLatestByProduct($productId, \DateTime $endDate, $params = array())
+    {
+        $params['productId'] = $productId;
+        $params['items_per_page'] = 1;
+
+        return $this->findInRange(
+            null
+            , $endDate
+            , $params
+        );
+    }
+
+    /**
      * @param Subscription $subscription
      * @param array $params
-     * @return Release[]|null
+     * @return array|null
      */
     public function findBySubscription(Subscription $subscription, $params = array())
     {
@@ -215,6 +242,10 @@ class ReleaseRepository extends EntityRepository
             $y = clone $subscription->getEndDate();
         }
 
+        if ($subscription->getReleaseId() && !isset($params['one'])) {
+            $params['fromReleaseId'] = $subscription->getReleaseId();
+        }
+
         return $this->findByProductInRange(
             $subscription->getProductId()
             , $x
@@ -226,7 +257,7 @@ class ReleaseRepository extends EntityRepository
     /**
      * @param Subscription $subscription
      * @param $version
-     * @return Release[]|null
+     * @return array|null
      */
     public function findBySubscriptionAndVersion(Subscription $subscription, $version)
     {

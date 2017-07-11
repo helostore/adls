@@ -160,9 +160,7 @@ if ($mode == 'details') {
             if (!fn_is_adls_product($product)) {
                 continue;
             }
-
             $product['releases'] = $releaseManager->getOrderItemReleases($product);
-
             $changed = true;
         }
         unset($product);
