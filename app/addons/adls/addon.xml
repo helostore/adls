@@ -9,7 +9,7 @@
     <default_language>en</default_language>
     <queries>
         <item for="install">
-            CREATE TABLE `?:adls_licenses` (
+            CREATE IF NOT EXISTS `?:adls_licenses` (
                 `id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `orderId`  mediumint(8) NOT NULL ,
                 `productId`  mediumint(8) UNSIGNED NOT NULL ,
@@ -23,7 +23,7 @@
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
-            CREATE TABLE `?:adls_license_domains` (
+            CREATE TABLE IF NOT EXISTS `?:adls_license_domains` (
                 `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `licenseId`  mediumint(8) UNSIGNED NOT NULL ,
                 `name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -36,7 +36,7 @@
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
-            CREATE TABLE `?:adls_logs` (
+            CREATE TABLE IF NOT EXISTS `?:adls_logs` (
                 `id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `type`  char(1) NOT NULL ,
                 `objectType`  varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -52,7 +52,7 @@
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
-            CREATE TABLE `?:adls_releases` (
+            CREATE TABLE IF NOT EXISTS `?:adls_releases` (
                 `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `productId` mediumint(8) unsigned NOT NULL,
                 `createdAt` datetime NOT NULL,

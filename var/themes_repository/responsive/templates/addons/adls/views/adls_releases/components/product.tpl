@@ -15,8 +15,6 @@
             </ul>
         </div>
     </div>
-
-
 {else}
     Downloads not ready, yet.
 {/if}
