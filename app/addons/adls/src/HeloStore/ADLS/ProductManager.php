@@ -289,4 +289,25 @@ class ProductManager extends Singleton
 
 		return null;
 	}
+
+	/**
+	 * @deprecated Instead, use HeloStore\ADLS\ReleaseManager::release()
+	 *
+	 * Updates release data attached to a CS-Cart product. Used by Developers Tools add-on.
+	 *
+	 * @param $productCode
+	 * @param $params
+	 * @return bool|int
+	 */
+	public function updateRelease($productCode, $params)
+	{
+		$releaseManager = ReleaseManager::instance();
+		if (method_exists($releaseManager, 'release')) {
+			$storeProduct = $this->getStoreProduct($productCode);
+
+			return ReleaseManager::instance()->release($storeProduct, $params);
+		}
+
+		return null;
+	}
 }
