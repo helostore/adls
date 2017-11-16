@@ -13,6 +13,7 @@
  */
 namespace HeloStore\ADLS;
 
+use HeloStore\ADLSS\Subscription;
 use Tygh\Registry;
 
 /**
@@ -216,5 +217,22 @@ class LicenseRepository extends EntityRepository
 		));
 	}
 
+	/**
+	 * @param Subscription $subscription
+	 *
+	 * @param array $params
+	 *
+	 * @return License|null
+	 */
+	public function findOneBySubscription(Subscription $subscription, $params = array()) {
 
+		$params = array_merge(array(
+			'orderId' => $subscription->getOrderId(),
+			'productId' => $subscription->getProductId(),
+			'orderItemId' => $subscription->getItemId(),
+			'userId' => $subscription->getUserId()
+		), $params);
+
+		return $this->findOne($params);
+	}
 }

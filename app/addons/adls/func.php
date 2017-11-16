@@ -14,10 +14,12 @@
 
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
+use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
 use HeloStore\ADLS\ReleaseRepository;
-use HeloStore\ADLS\Subscription\Subscription;
 use HeloStore\ADLS\Utils;
+use HeloStore\ADLSS\Subscription;
+use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
@@ -80,7 +82,7 @@ function fn_adls_change_order_status($status_to, $status_from, $orderInfo, $forc
 function fn_adls_delete_order($orderId)
 {
     $manager = LicenseManager::instance();
-    $licenseRepository = \HeloStore\ADLS\LicenseRepository::instance();
+    $licenseRepository = LicenseRepository::instance();
     $licenses = $manager->getOrderLicenses($orderId);
     foreach ($licenses as $license) {
         $licenseRepository->delete($license['id']);
@@ -255,20 +257,7 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
             }
         } else {
             if (!defined('ORDER_MANAGEMENT')) {
-                $domains = $manager->getLicenseDomains($licenseId);
-                if (!empty($domains)) {
-                    foreach ($domains as $domain) {
-                        if ($manager->disableLicense($licenseId, $domain['name'])) {
-                            fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
-                        }
-                    }
-
-                } else {
-                    if ($manager->disableLicense($licenseId)) {
-                        fn_set_notification('N', __('notice'), __('adls.order_licenses_disabled'), $notificationState);
-                    }
-                }
-
+	            $manager->doDisableLicense( $licenseId );
             }
         }
 
@@ -398,12 +387,12 @@ function fn_adls_get_options_ids()
     return $optionIds;
 }
 
-function fn_adls_adls_subscriptions_post_fail(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
+function fn_adls_adls_subscriptions_post_fail(Subscription $subscription, $product, $orderInfo)
 {
     $statusFrom = $orderInfo['prev_status'];
     $statusTo = $orderInfo['status'];
 }
-function fn_adls_adls_subscriptions_post_begin(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
+function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $product, $orderInfo)
 {
     $statusFrom = $orderInfo['prev_status'];
     $statusTo = $orderInfo['status'];
@@ -422,15 +411,20 @@ function fn_adls_adls_subscriptions_post_begin(\HeloStore\ADLS\Subscription\Subs
     /** @var \HeloStore\ADLS\Release $latest */
     $latest = reset($releases);
     $subscription->setReleaseId($latest->getId());
-    \HeloStore\ADLS\Subscription\SubscriptionRepository::instance()->update($subscription);
+    SubscriptionRepository::instance()->update($subscription);
 }
-function fn_adls_adls_subscriptions_post_resume(\HeloStore\ADLS\Subscription\Subscription $subscription, $product, $orderInfo)
+function fn_adls_adls_subscriptions_post_resume(Subscription $subscription, $product, $orderInfo)
 {
     $statusFrom = $orderInfo['prev_status'];
     $statusTo = $orderInfo['status'];
 }
-function fn_adls_adls_subscriptions_post_suspend(\HeloStore\ADLS\Subscription\Subscription $subscription)
+function fn_adls_adls_subscriptions_post_suspend(Subscription $subscription)
 {
+
+	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
+	if ( ! empty( $license ) ) {
+		LicenseManager::instance()->doDisableLicense( $license->getId() );
+	}
 //    $statusFrom = $orderInfo['prev_status'];
 //    $statusTo = $orderInfo['status'];
 }

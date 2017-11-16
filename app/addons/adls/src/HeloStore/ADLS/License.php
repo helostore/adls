@@ -287,6 +287,21 @@ class License extends Entity
 	 */
 
 	/**
+	 * @return bool|mixed
+	 */
+	public function getProductionDomain() {
+		if ( ! $this->hasDomains() ) {
+			return false;
+		}
+
+		foreach ( $this->domains as $domain ) {
+			if ( $domain['type'] === License::DOMAIN_TYPE_PRODUCTION ) {
+				return $domain;
+			}
+		}
+	}
+
+	/**
 	 * @return string
 	 */
     public static function convertStatusToLabel($status)

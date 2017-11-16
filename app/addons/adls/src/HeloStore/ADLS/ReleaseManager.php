@@ -13,7 +13,7 @@
  */
 namespace HeloStore\ADLS;
 
-use HeloStore\ADLS\Subscription\Subscription;
+use HeloStore\ADLSS\Subscription;
 use Tygh\Registry;
 
 /**
