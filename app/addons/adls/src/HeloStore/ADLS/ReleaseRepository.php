@@ -12,7 +12,7 @@
  * @version    $Id$
  */
 namespace HeloStore\ADLS;
-use HeloStore\ADLS\Subscription\Subscription;
+use HeloStore\ADLSS\Subscription;
 
 /**
  * Class ReleaseRepository

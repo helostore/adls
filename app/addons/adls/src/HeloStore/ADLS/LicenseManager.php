@@ -342,6 +342,27 @@ class LicenseManager extends Manager
         return db_query('UPDATE ?:adls_license_domains SET status = ?s WHERE id = ?i', $status, $domainId);
     }
 
+	public function doDisableLicense( $licenseId ) {
+
+		$domains = $this->getLicenseDomains($licenseId);
+
+		if (!empty($domains)) {
+			$success = true;
+			foreach ($domains as $domain) {
+				if (!$this->disableLicense($licenseId, $domain['name'])) {
+					$success = false;
+				}
+			}
+			return $success;
+
+		} else {
+			if ($this->disableLicense($licenseId)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 	public function disableLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_DISABLED, $domain);

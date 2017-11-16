@@ -26,7 +26,7 @@ class MigrationManager extends Manager
 
         foreach ($storeProducts as $storeProduct) {
             if (empty($storeProduct['product_id'])) {
-                aa('Skipping `' . $storeProduct['name'] . ': no store product found');
+                fn_print_r('Skipping `' . $storeProduct['name'] . ': no store product found');
                 continue;
             }
             $productId = $storeProduct['product_id'];
@@ -34,7 +34,7 @@ class MigrationManager extends Manager
             list($releases, ) = $releaseRepository->findByProductId($productId);
 
             if (!empty($releases)) {
-                aa('Skipping `' . $storeProduct['name'] . '` already got ' . count($releases) . ' releases');
+                fn_print_r('Skipping `' . $storeProduct['name'] . '` already got ' . count($releases) . ' releases');
                 continue;
             }
 
@@ -42,7 +42,7 @@ class MigrationManager extends Manager
                 'product_id' => $productId
             ));
             if (empty($files)) {
-                aa('Skipping `' . $storeProduct['name'] . '`: no release files found');
+                fn_print_r('Skipping `' . $storeProduct['name'] . '`: no release files found');
                 continue;
             }
 
@@ -58,15 +58,15 @@ class MigrationManager extends Manager
                 , $fileSize
             );
             if ($releaseId === null) {
-                aa('Skipping existing release for `' . $storeProduct['name'] . '`');
+                fn_print_r('Skipping existing release for `' . $storeProduct['name'] . '`');
             } else if (!empty($releaseId)) {
-                aa('OK `' . $storeProduct['name'] . '`');
+                fn_print_r('OK `' . $storeProduct['name'] . '`');
             } else {
                 throw new \Exception('Failed creating release for `' . $storeProduct['name'] . '`');
             }
 
             if (fn_delete_product_files($latestFile['file_id']) == false) {
-                aa(' - OK `' . $storeProduct['name'] . '`, deleted edp file');
+                fn_print_r(' - OK `' . $storeProduct['name'] . '`, deleted edp file');
             }
 
         }
