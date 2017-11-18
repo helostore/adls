@@ -444,10 +444,6 @@ function fn_adls_adlss_get_subscriptions_post($items , $params ) {
 		);
 
 		$license = new License($data);
-//		aa( $license, 1 );
-//		$license->setDomains( $domains );
-//		$license->setLicenseKey($subscription->getExtra( 'license$licenseKey' ));
-//		$license->setStatus($subscription->getExtra( 'license$status' ));
 		$subscription->setLicense( $license );
 	}
 }
@@ -458,18 +454,13 @@ function fn_adls_adlss_get_subscriptions( &$fields, $table, &$joins, $condition,
 		$joins[] = db_quote('
 			LEFT JOIN ?:adls_licenses AS license 
 				ON license.orderId = subscription.orderId 
-				AND license.orderItemId = subscription.itemId
 				AND license.userId = subscription.userId
 				AND license.productId = subscription.productId
 				');
+		// @TODO: should have condition to join by `AND license.orderItemId = subscription.itemId`, but the item IDs get desync'ed for some reason (same item ends up with different IDs)
 		$fields[] = 'license.licenseKey AS license$licenseKey';
 		$fields[] = 'license.status AS license$status';
 		$fields[] = 'license.id AS license$id';
-//		$fields[] = 'license.orderId AS license$orderId';
-//		$fields[] = 'license.productId AS license$productId';
-//		$fields[] = 'license.orderItemId AS license$orderItemId';
-//		$fields[] = 'license.createdAt AS license$createdAt';
-
 		// Grab license domains details
 		$joins[] = db_quote('
 			LEFT JOIN ?:adls_license_domains AS domains 
