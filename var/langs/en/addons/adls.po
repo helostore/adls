@@ -63,9 +63,13 @@ msgctxt "Languages::adls.license.status."
 msgid "Unknown"
 msgstr "Unknown"
 
+msgctxt "Languages::adls.license.status"
+msgid "Status"
+msgstr "License status"
+
 msgctxt "Languages::adls.license.key"
 msgid "key"
-msgstr "License Key"
+msgstr "License key"
 
 msgctxt "Languages::adls.license.updatedAt"
 msgid "updatedAt"
