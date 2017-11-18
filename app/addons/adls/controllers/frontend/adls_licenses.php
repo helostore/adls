@@ -13,8 +13,13 @@
  */
 
 use HeloStore\ADLS\LicenseRepository;
+use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+if (empty($auth['user_id'])) {
+	return array(CONTROLLER_STATUS_REDIRECT, 'auth.login_form?return_url=' . urlencode(Registry::get('config.current_url')));
+}
 
 if ( $mode === 'manage' ) {
 	$userId = $auth['user_id'];
@@ -27,4 +32,5 @@ if ( $mode === 'manage' ) {
 	));
 	Tygh::$app['view']->assign('licenses', $licenses);
 	Tygh::$app['view']->assign('search', $search);
+	fn_add_breadcrumb(__('adls.licenses'));
 }

@@ -12,8 +12,10 @@
  * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  ****************************************************************************/
 
-use Tygh\Registry;
-use Tygh\Storage;
+use HeloStore\ADLS\ReleaseManager;
+use HeloStore\ADLS\ReleaseRepository;
+use HeloStore\ADLSS\Subscribable\SubscribableRepository;
+use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
@@ -22,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 if ($mode == 'download' && !empty($_REQUEST['orderId']) && !empty($_REQUEST['id'])) {
-    $releaseRepository = \HeloStore\ADLS\ReleaseRepository::instance();
-    $subscriptionRepository = \HeloStore\ADLS\Subscription\SubscriptionRepository::instance();
+    $releaseRepository = ReleaseRepository::instance();
+    $subscriptionRepository = SubscriptionRepository::instance();
 
     $requestReleaseId = intval($_REQUEST['id']);
     $orderId = intval($_REQUEST['orderId']);
@@ -49,7 +51,7 @@ if ($mode == 'download' && !empty($_REQUEST['orderId']) && !empty($_REQUEST['id'
 
 
     // Check if this product requires a subscription
-    $isSubscribable = \HeloStore\ADLS\Subscription\SubscribableRepository::instance()->isProductSubscribable($productId);
+    $isSubscribable = SubscribableRepository::instance()->isProductSubscribable($productId);
 
     if ($isSubscribable) {
         $subscription = $subscriptionRepository->findOneByOrderItem($orderId, $orderItemId);
@@ -69,6 +71,6 @@ if ($mode == 'download' && !empty($_REQUEST['orderId']) && !empty($_REQUEST['id'
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
 
-    \HeloStore\ADLS\ReleaseManager::instance()->download($release);
+    ReleaseManager::instance()->download($release);
     exit;
 }

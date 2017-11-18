@@ -7,10 +7,10 @@
     <div class="ty-control-group clearfix">
         <label class="ty-product-options__title">{__('adls.license')}</label>
         <span class="adls-highlight clearfix">
-            {$htmlId = "license_`$product.license.id`"}
-            <input value="{$product.license.licenseKey}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
+            {$htmlId = "license_`$product.license->getId()`"}
+            <input value="{$product.license->getLicenseKey()}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36" />
 
-            &mdash; {$product.license.status|fn_adls_get_license_status_label}
+            &mdash; {$product.license->getStatus()|fn_adls_get_license_status_label}
 
             <button class="ty-btn ty-btn__secondary adls-clipboard" data-clipboard-target="#{$htmlId}" title="{__('adls.copy_to_clipboard')}">
                 <i class="fa fa-clipboard"></i>
@@ -26,7 +26,7 @@
         </span>
         {*<div class="adls-license-status status-{$product.license.status|strtolower}">{$product.license.status|fn_adls_get_license_status_label}</div>*}
     </div>
-    {if !empty($product.license.domains)}
+    {if $product.license->hasDomains()}
         <div class="ty-control-group clearfix">
             <label class="ty-product-options__title">{__('adls.domains')}</label>
             <div class="adls-license-domains" id="adls_license_domains_{$product.product_id}">
@@ -34,9 +34,9 @@
                     <input type="hidden" name="redirect_url" value="{$config.current_url}" />
                     <input type="hidden" name="result_ids" value="adls_license_domains_*" />
                     <input type="hidden" name="order_id" value="{$order_info.order_id}" />
-                    {foreach from=$product.license.domains item=domain}
+                    {foreach from=$product.license->getDomains() item=domain}
                         <div class="adls-license-status status-{$domain.status|strtolower}">
-                            <input name="licenses[{$product.license.id}][domains][{$domain.id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
+                            <input name="licenses[{$product.license->getId()}][domains][{$domain.id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
                             &mdash; {$domain.status|fn_adls_get_license_status_label}
                         </div>
                     {/foreach}
