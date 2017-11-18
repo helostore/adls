@@ -164,9 +164,7 @@ class LicenseRepository extends EntityRepository
             $licenseManager = LicenseManager::instance();
             /** @var License $item */
             foreach ($items as &$item) {
-                if (!empty($item)) {
-                    $item->setDomains($licenseManager->getLicenseDomains($item->getId()));
-                }
+                $item->setDomains($licenseManager->getLicenseDomains($item->getId()));
 
                 if ($item->hasDomains()) {
                     $disabled = 0;

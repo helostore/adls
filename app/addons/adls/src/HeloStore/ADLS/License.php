@@ -328,7 +328,7 @@ class License extends Entity
     /**
      * @return boolean
      */
-    public function areAllDomainsDisabled()
+    public function hasAllDomainsDisabled()
     {
         return $this->allDomainsDisabled;
     }

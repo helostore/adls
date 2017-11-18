@@ -205,6 +205,7 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
     }
 
     $manager = LicenseManager::instance();
+	$licenseRepository = LicenseRepository::instance();
     $orderId = $orderInfo['order_id'];
     $userId = $orderInfo['user_id'];
     $errors = array();
@@ -220,7 +221,13 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
             continue;
         }
 
-        $licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
+	    if ( ! empty( $product['subscription'] ) ) {
+		    $license = $licenseRepository->findOneBySubscription($product['subscription']);
+		    $licenseId = $license->getId();
+	    } else {
+		    $licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
+	    }
+
         $notificationState = (AREA == 'A' ? 'I' : 'K');
 
         if ($isPaidStatus) {
@@ -389,14 +396,9 @@ function fn_adls_get_options_ids()
 
 function fn_adls_adls_subscriptions_post_fail(Subscription $subscription, $product, $orderInfo)
 {
-    $statusFrom = $orderInfo['prev_status'];
-    $statusTo = $orderInfo['status'];
 }
 function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $product, $orderInfo)
 {
-    $statusFrom = $orderInfo['prev_status'];
-    $statusTo = $orderInfo['status'];
-
     // Assign most recent product release to subscription, to be used when querying for subscription's releases because the latest release might be out of subscriptions start/end range.
     if (!$subscription->getProductId()) {
         return;
@@ -415,17 +417,66 @@ function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $prod
 }
 function fn_adls_adls_subscriptions_post_resume(Subscription $subscription, $product, $orderInfo)
 {
-    $statusFrom = $orderInfo['prev_status'];
-    $statusTo = $orderInfo['status'];
 }
 function fn_adls_adls_subscriptions_post_suspend(Subscription $subscription)
 {
-
 	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
 	if ( ! empty( $license ) ) {
 		LicenseManager::instance()->doDisableLicense( $license->getId() );
 	}
-//    $statusFrom = $orderInfo['prev_status'];
-//    $statusTo = $orderInfo['status'];
+}
+
+
+function fn_adls_adlss_get_subscriptions_post($items , $params ) {
+	/** @var Subscription $subscription */
+	foreach ( $items as $subscription ) {
+		$domains = $subscription->getExtra( 'license$domains' );
+		if ( ! empty( $domains ) ) {
+			$domains = explode(',', $domains);
+		} else {
+			$domains = array();
+		}
+		$data = array(
+			'id' => $subscription->getExtra( 'license$id' ),
+			'domains' => $domains,
+			'licenseKey' => $subscription->getExtra( 'license$licenseKey' ),
+			'status' => $subscription->getExtra( 'license$status' )
+		);
+
+		$license = new License($data);
+//		aa( $license, 1 );
+//		$license->setDomains( $domains );
+//		$license->setLicenseKey($subscription->getExtra( 'license$licenseKey' ));
+//		$license->setStatus($subscription->getExtra( 'license$status' ));
+		$subscription->setLicense( $license );
+	}
+}
+function fn_adls_adlss_get_subscriptions( &$fields, $table, &$joins, $condition, $sorting, $limit, $params ) {
+
+	if (isset($params['extended'])) {
+		// Grab license details
+		$joins[] = db_quote('
+			LEFT JOIN ?:adls_licenses AS license 
+				ON license.orderId = subscription.orderId 
+				AND license.orderItemId = subscription.itemId
+				AND license.userId = subscription.userId
+				AND license.productId = subscription.productId
+				');
+		$fields[] = 'license.licenseKey AS license$licenseKey';
+		$fields[] = 'license.status AS license$status';
+		$fields[] = 'license.id AS license$id';
+//		$fields[] = 'license.orderId AS license$orderId';
+//		$fields[] = 'license.productId AS license$productId';
+//		$fields[] = 'license.orderItemId AS license$orderItemId';
+//		$fields[] = 'license.createdAt AS license$createdAt';
+
+		// Grab license domains details
+		$joins[] = db_quote('
+			LEFT JOIN ?:adls_license_domains AS domains 
+				ON domains.licenseId = license.id
+				AND domains.name <> ""
+				');
+		$fields[] = 'GROUP_CONCAT(domains.name) AS license$domains';
+	}
 }
 

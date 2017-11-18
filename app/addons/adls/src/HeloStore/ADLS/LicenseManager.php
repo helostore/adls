@@ -217,19 +217,20 @@ class LicenseManager extends Manager
 
 		if (!empty($items)) {
 			foreach ($items as &$item) {
+				$item = new License( $item );
 				if (!empty($item)) {
-					$item['domains'] = $this->getLicenseDomains($item['id']);
+					$item->setDomains($this->getLicenseDomains($item->getId()));
 				}
 
-				if (!empty($item['domains'])) {
+				if (!empty($item->hasDomains())) {
 					$disabled = 0;
-					foreach ($item['domains'] as $domain) {
+					foreach ($item->getDomains() as $domain) {
 						if ($domain['status'] == License::STATUS_DISABLED) {
 							$disabled++;
 						}
 					}
-					if ($disabled == count($item['domains'])) {
-						$item['domains_disabled'] = true;
+					if ($disabled == count($item->getDomains())) {
+						$item->setAllDomainsDisabled(true);
 					}
 				}
 			}
@@ -310,23 +311,17 @@ class LicenseManager extends Manager
 	 *
 	 * @return bool
 	 */
-	public function changeLicenseStatus($licenseId, $status, $domain = '')
+	public function changeLicenseStatus($licenseId, $status, $domain = null)
 	{
-		$update = array(
-			'status' => $status
-		);
-		$domainId = null;
-		if (!empty($domain)) {
-			$domainId = db_get_field('SELECT id FROM ?:adls_license_domains WHERE licenseId = ?i AND name = ?s', $licenseId, $domain);
-
-			if (!empty($domainId)) {
-                if (!$this->updateLicenseDomainStatus($domainId, $status)) {
-                    return false;
-                }
-			} else {
-
-                // else wildcard license (for any domain)
-            }
+		if ($domain !== null) {
+			$domainIds = db_get_fields('SELECT id FROM ?:adls_license_domains WHERE licenseId = ?i AND name = ?s', $licenseId, $domain);
+			if ( ! empty( $domainIds ) ) {
+				foreach ( $domainIds as $domainId ) {
+					if (!$this->updateLicenseDomainStatus($domainId, $status)) {
+						return false;
+					}
+				}
+			}
 		}
 
         return $this->updateLicenseStatus($licenseId, $status);

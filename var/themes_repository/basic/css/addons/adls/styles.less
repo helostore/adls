@@ -6,14 +6,15 @@
     vertical-align: top;
     border: 1px dashed #c3c3c3;
     height: auto;
+    width: 220px;
   }
   input[type="text"]:hover,
   input[type="text"]:focus {
     border-color: #ea3556;
   }
   .ty-btn {
-    position: relative;
-    right: 60px;
+    position: absolute;
+    right: 5px;
     top: 0;
     border: medium none;
     display: inline-block;
@@ -44,6 +45,19 @@
 
 .adls-license-domains {
   margin-top: 10px;
+}
+
+.adls-domains-view {
+  &.list {
+    margin-left: 0;
+    li {
+      list-style-type: circle;
+      max-width: 110px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
 }
 
 .ty-product-notification__body {

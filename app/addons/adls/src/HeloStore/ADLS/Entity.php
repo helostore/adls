@@ -9,7 +9,7 @@
 namespace HeloStore\ADLS;
 
 
-class Entity
+abstract class Entity
 {
     /**
      * Keep here the entity$prop variables for now
@@ -30,6 +30,34 @@ class Entity
             $this->fromArray($data);
         }
     }
+
+	/**
+	 * @param $key
+	 *
+	 * @return mixed|null
+	 */
+	public function getExtra( $key ) {
+		if ( isset( $this->extra[ $key ] ) ) {
+			return $this->extra[ $key ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @return mixed|null
+	 */
+	public function setExtra( $key, $value ) {
+		if (! isset( $this->extra[ $key ] ) ) {
+			return false;
+		}
+		$this->extra[ $key ] = $value;
+
+		return null;
+	}
 
     /**
      * @return array
