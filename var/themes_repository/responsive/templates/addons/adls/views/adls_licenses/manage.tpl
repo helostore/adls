@@ -28,6 +28,7 @@
         {tableRowHeader key="order_id" label="order" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="createdAt" label="adls.license.createdAt" sort_sign=$sort_sign search=$search}
         {*{tableRowHeader key="updatedAt" label="adls.license.updatedAt" sort_sign=$sort_sign search=$search}*}
+        <th>Download</th>
     </tr>
     </thead>
     {foreach from=$licenses item="license"}
@@ -43,10 +44,20 @@
             <td class="ty-licenses-search__item"><a href="{"orders.details?order_id=`$license->getOrderId()`"|fn_url}">#{$license->getOrderId()}</a></td>
             <td class="ty-licenses-search__item">{$license->getCreatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>
             {*<td class="ty-licenses-search__item">{$license->getUpdatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>*}
+            <td>
+                {$hasLatest = false}
+                {if !empty($license->latestRelease)}{$hasLatest = true}{/if}
+
+                {$hasOther = false}
+                {if !empty($license->otherReleases)}{$hasOther = true}{/if}
+
+                <a class="ty-btn ty-btn__primary ty-btn {if $hasLatest}_cm-post _cm-ajax{else}ui-state-disabled{/if}" {if $hasLatest}href="{"adls_releases.download?hash={$license->latestRelease->getHash()}"|fn_url}"{/if}>Latest</a>
+                <a class="ty-btn ty-btn__primary ty-btn {if $hasOther}_cm-post _cm-ajax{else}ui-state-disabled{/if}" {if $hasOther}href="{"adls_releases.view?product_id={$license->getProductId()}"|fn_url}"{/if}>Other</a>
+            </td>
         </tr>
     {foreachelse}
         <tr class="ty-table__no-items">
-            <td colspan="6"><p class="ty-no-items">{__("no_items")}</p></td>
+            <td colspan="7"><p class="ty-no-items">{__("no_items")}</p></td>
         </tr>
     {/foreach}
 </table>
