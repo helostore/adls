@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.10",
+        "releaseDate": "2017-11-19 02:17:24",
+        "releaseTimestamp": "1511101044",
+        "hash": "455905506bf43596c77d2330c1ea29fe715eafab",
+        "commits": [
+            "[2017-11-19] Bumped version to 0.2.10",
+            "[2017-11-19]\tBumped version to 0.2.9"
+        ]
+    },
+    {
         "version": "0.2.8",
         "releaseDate": "2017-11-19 01:49:34",
         "releaseTimestamp": "1511099374",
@@ -27,27 +37,6 @@
         "commits": [
             "[2017-11-19] Bumped version to 0.2.4",
             "[2017-11-18]\tBumped version to 0.2.3"
-        ]
-    },
-    {
-        "version": "0.2.2",
-        "releaseDate": "2017-11-16 04:03:01",
-        "releaseTimestamp": "1510848181",
-        "hash": "07046ca8eb5dd238dd822592ebc4ee877571d2ac",
-        "commits": [
-            "[2017-11-18] Bumped version to 0.2.2",
-            "[2017-11-16]\tStructural clean up",
-            "[2017-11-16]\tBackward compatibility fix",
-            "[2017-10-08]\tMinor fix in queries",
-            "[2017-07-12]\tAdd access for subscription to latest product release when subscription's range doesn't cover any release",
-            "[2017-07-07]\tMajor commit",
-            "[2017-05-09]\tReplace hostname validation on frontend",
-            "[2017-02-25]\tAdded version to release",
-            "[2017-02-25]\tAdded licenses view",
-            "[2017-02-25]\tMerge branch 'feature-naming-update-1'",
-            "[2017-02-25]\tNaming convention updated",
-            "[2017-02-21]\tAdded hook for ADLSS",
-            "[2017-02-21]\tLicense generator fix"
         ]
     }
 ]

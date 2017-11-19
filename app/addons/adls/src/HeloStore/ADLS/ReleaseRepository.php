@@ -129,7 +129,7 @@ class ReleaseRepository extends EntityRepository
         }
 		if ( ! empty( $params['subscriptionId'] ) || ! empty( $params['userId'] ) ) {
 			$joins[] = db_quote('
-				RIGHT JOIN ?:adls_release_links AS releaseLink 
+				INNER JOIN ?:adls_release_links AS releaseLink 
                     ON releaseLink.releaseId = releases.id' .
                     (! empty( $params['subscriptionId'] ) ?
 	                    db_quote(' AND releaseLink.subscriptionId = ?i', $params['subscriptionId']) : '') .

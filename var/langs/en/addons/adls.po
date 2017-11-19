@@ -44,7 +44,9 @@ msgctxt "Languages::adls.subscription_type"
 msgid "subscription_type"
 msgstr "Subscription type"
 
-
+msgctxt "Languages::adls.downloads"
+msgid ""
+msgstr "Downloads"
 
 
 msgctxt "Languages::adls.license.status.i"
