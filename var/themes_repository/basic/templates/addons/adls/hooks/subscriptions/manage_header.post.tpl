@@ -6,3 +6,4 @@
 
 {tableRowHeader key="licenseKey" label="adls.license" sort_sign=$sort_sign search=$search}
 {tableRowHeader key="licenseDomains" label="adls.domains" sort_sign=$sort_sign search=$search}
+{capture name="columnsNumber"}{$smarty.capture.columnsNumber+2}{/capture}

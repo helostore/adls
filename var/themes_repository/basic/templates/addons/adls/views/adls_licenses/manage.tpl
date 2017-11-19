@@ -33,11 +33,11 @@
     {foreach from=$licenses item="license"}
         <tr>
             {*<td class="ty-licenses-search__item"><strong>#{$license->getId()}</strong></td>*}
-            <td class="ty-licenses-search__item">{$license->extra['product$name']}</td>
+            <td class="ty-licenses-search__item"><strong>{$license->extra['product$name']}</strong></td>
+            <td class="ty-subscriptions-search__item">{include file="addons/adls/views/adls_licenses/components/key.tpl" license=$license}</td>
             <td class="ty-subscriptions-search__item">
                 {include file="addons/adls/views/adls_licenses/components/domains_view_list.tpl" domains=$license->getDomains()}
             </td>
-            <td class="ty-subscriptions-search__item">{include file="addons/adls/views/adls_licenses/components/key.tpl" license=$license}</td>
             <td class="ty-subscriptions-search__item">{$license->getStatus()|fn_adls_get_license_status_label}</td>
             {hook name="licenses:manage_data"}{/hook}
             <td class="ty-licenses-search__item"><a href="{"orders.details?order_id=`$license->getOrderId()`"|fn_url}">#{$license->getOrderId()}</a></td>
@@ -46,7 +46,7 @@
         </tr>
     {foreachelse}
         <tr class="ty-table__no-items">
-            <td colspan="5"><p class="ty-no-items">{__("no_items")}</p></td>
+            <td colspan="6"><p class="ty-no-items">{__("no_items")}</p></td>
         </tr>
     {/foreach}
 </table>
