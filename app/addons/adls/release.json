@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.6",
+        "releaseDate": "2017-11-19 11:59:18",
+        "releaseTimestamp": "1511092758",
+        "hash": "6e11c1b78b541352ee173c32265581a3dd9fb55e",
+        "commits": [
+            "[2017-11-19] Bumped version to 0.2.6",
+            "[2017-11-19]\tBumped version to 0.2.5"
+        ]
+    },
+    {
         "version": "0.2.4",
         "releaseDate": "2017-11-18 07:57:33",
         "releaseTimestamp": "1511035053",
@@ -46,16 +56,6 @@
             "[2017-02-01] Added magic password, useful to activate keys on behalf of customers",
             "[2017-01-29] Feature: subscriptions",
             "[2017-01-17] Removed adls licenses tab in orders"
-        ]
-    },
-    {
-        "version": "0.1.73",
-        "releaseDate": "2017-01-17 02:53:44",
-        "releaseTimestamp": "1484664824",
-        "hash": "5aa62460ac3240491bbf6f310b725ea9ae26cbfe",
-        "commits": [
-            "[2017-01-17] Bumped version to 0.1.73",
-            "[2017-01-17] Bugfix: disable\/enable licenses according to order status"
         ]
     }
 ]

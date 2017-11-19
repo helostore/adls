@@ -136,6 +136,8 @@ class ReleaseRepository extends EntityRepository
                     (! empty( $params['userId'] ) ?
 	                    db_quote(' AND releaseLink.userId = ?i', $params['userId']) : '')
 			);
+			$fields[] = 'releaseLink.licenseId AS link$licenseId';
+			$fields[] = 'releaseLink.subscriptionId AS link$subscriptionId';
 		}
         if (!empty($params['fromReleaseId'])) {
             $orCondition[] = db_quote('releases.id = ?i', $params['fromReleaseId']);
@@ -149,6 +151,10 @@ class ReleaseRepository extends EntityRepository
             );
             $fields[] = 'productDesc.product_id AS product$id';
             $fields[] = 'productDesc.product AS product$name';
+
+			if ( ! empty( $params['userId'] ) ) {
+
+			}
 		}
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'releases.*' : implode(', ', $fields);
@@ -350,14 +356,15 @@ class ReleaseRepository extends EntityRepository
 
 	/**
 	 * @param $hash
+	 * @param $userId
 	 *
 	 * @return Release|null
-	 *
 	 */
-	public function findOneByHash($hash)
+	public function findOneByHashUser($hash, $userId)
 	{
 		return $this->findOne(array(
-			'hash' => $hash
+			'hash' => $hash,
+			'userId' => $userId
 		));
 	}
 }

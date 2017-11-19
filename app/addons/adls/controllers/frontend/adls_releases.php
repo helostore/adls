@@ -14,64 +14,90 @@
 
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
-use HeloStore\ADLSS\Subscribable\SubscribableRepository;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
+use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
+
+
+if (empty($auth['user_id'])) {
+	return array(CONTROLLER_STATUS_REDIRECT, 'auth.login_form?return_url=' . urlencode(Registry::get('config.current_url')));
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 
+if ($mode == 'view') {
+    $productId = !empty($_REQUEST['product_id']) ? intval($_REQUEST['product_id']) : 0;
+	$product = array();
+	if ( ! empty( $productId ) ) {
+		$product = fn_get_product_data($productId, $auth);
+		fn_add_breadcrumb(__('adls.releases'), 'adls_releases');
+		fn_add_breadcrumb($product['product']);
+	} else {
+		fn_add_breadcrumb(__('adls.releases'));
+	}
+	list($releases, $search) = ReleaseRepository::instance()->find(array(
+		'userId' => $auth['user_id'],
+		'productId' => $productId,
+		'extended' => true,
+		'sort_by' => 'product',
+		'sort_order' => 'asc',
+	));
+
+	Tygh::$app['view']->assign('releases', $releases);
+	Tygh::$app['view']->assign('search', $search);
+	Tygh::$app['view']->assign('product', $product);
+}
 if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     $releaseRepository = ReleaseRepository::instance();
     $subscriptionRepository = SubscriptionRepository::instance();
 
     $hash = strval($_REQUEST['hash']);
-	$release = ReleaseRepository::instance()->findOneByHash( $hash );
-	aa( $release, 1 );
+	$release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'] );
 //    $orderId = intval($_REQUEST['orderId']);
 //    $orderItemId = strval($_REQUEST['orderItemId']);
 //    $userId = $_SERVER['auth']['user_id'];
 //    $userId = !empty($auth['user_id']) ? $auth['user_id'] : 0;
 //
 //    $orderId = db_get_field("SELECT order_id FROM ?:orders WHERE user_id = ?i AND order_id = ?i", $userId, $orderId);
-    if (empty($orderId)) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
-
-    $order = fn_get_order_info($orderId);
-    if (empty($order)) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
-
-    if (empty($order['products']) || empty($order['products'][$orderItemId])) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
-    $orderItem = $order['products'][$orderItemId];
-    $productId = $orderItem['product_id'];
-
-
-    // Check if this product requires a subscription
-    $isSubscribable = SubscribableRepository::instance()->isProductSubscribable($productId);
-
-    if ($isSubscribable) {
-        $subscription = $subscriptionRepository->findOneByOrderItem($orderId, $orderItemId);
-        if (empty($subscription)) {
-            return array(CONTROLLER_STATUS_NO_PAGE);
-        }
-        if ($requestReleaseId == $subscription->getReleaseId()) {
-            $release = $releaseRepository->findOneById($subscription->getReleaseId());
-        } else {
-            $release = $releaseRepository->findOneBySubscriptionAndId($subscription, $requestReleaseId);
-        }
-    } else {
-        $release = $releaseRepository->findOneById($requestReleaseId);
-    }
-
     if (empty($release)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+//
+//    $order = fn_get_order_info($orderId);
+//    if (empty($order)) {
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+//    }
+//
+//    if (empty($order['products']) || empty($order['products'][$orderItemId])) {
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+//    }
+//    $orderItem = $order['products'][$orderItemId];
+//    $productId = $orderItem['product_id'];
+//
+//
+//    // Check if this product requires a subscription
+//    $isSubscribable = SubscribableRepository::instance()->isProductSubscribable($productId);
+//
+//    if ($isSubscribable) {
+//        $subscription = $subscriptionRepository->findOneByOrderItem($orderId, $orderItemId);
+//        if (empty($subscription)) {
+//            return array(CONTROLLER_STATUS_NO_PAGE);
+//        }
+//        if ($requestReleaseId == $subscription->getReleaseId()) {
+//            $release = $releaseRepository->findOneById($subscription->getReleaseId());
+//        } else {
+//            $release = $releaseRepository->findOneBySubscriptionAndId($subscription, $requestReleaseId);
+//        }
+//    } else {
+//        $release = $releaseRepository->findOneById($requestReleaseId);
+//    }
+//
+//    if (empty($release)) {
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+//    }
 
     ReleaseManager::instance()->download($release);
     exit;

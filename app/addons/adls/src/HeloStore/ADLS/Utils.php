@@ -148,4 +148,20 @@ class Utils extends Singleton
         global $_timeTravelDate;
 		return (empty($_timeTravelDate)) ? new \DateTime() : clone $_timeTravelDate;
 	}
+
+	/**
+	 * Returns the formatted size
+	 *
+	 * @param  int $size
+	 * @return string
+	 */
+	public function toByteString($size, $precision = 2)
+	{
+		$sizes = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		for ($i=0; $size >= 1024 && $i < 9; $i++) {
+			$size /= 1024;
+		}
+
+		return round($size, $precision) . $sizes[$i];
+	}
 } 

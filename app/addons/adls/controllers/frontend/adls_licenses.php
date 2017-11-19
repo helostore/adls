@@ -13,6 +13,7 @@
  */
 
 use HeloStore\ADLS\LicenseRepository;
+use HeloStore\ADLS\ReleaseRepository;
 use Tygh\Registry;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
@@ -33,4 +34,36 @@ if ( $mode === 'manage' ) {
 	Tygh::$app['view']->assign('licenses', $licenses);
 	Tygh::$app['view']->assign('search', $search);
 	fn_add_breadcrumb(__('adls.licenses'));
+
+
+	$releaseRepository = ReleaseRepository::instance();
+	list ($releases, ) = $releaseRepository->find(array(
+		'extended' => true,
+		'userId' => $userId
+	));
+	$tmp = array();
+	foreach ( $releases as $release ) {
+		$pid = $release->getProductId();
+		if ( ! isset( $tmp[ $pid ] ) ) {
+			$tmp[ $pid ] = array();
+		}
+		$tmp[ $pid ][] = $release;
+	}
+	$releases = $tmp;
+	Tygh::$app['view']->assign('releases', $releases);
+
+	if ( ! empty( $licenses ) ) {
+		foreach ( $licenses as $license ) {
+			$pid = $license->getProductId();
+			$license->latestRelease = null;
+			$license->otherReleases = array();
+			if ( ! empty( $releases[ $pid ] ) ) {
+				$license->latestRelease = $releases[ $pid ][0];
+				if ( count( $releases[ $pid ] ) > 1 ) {
+					$license->otherReleases = $releases[ $pid ];
+				}
+			}
+		}
+	}
+
 }
