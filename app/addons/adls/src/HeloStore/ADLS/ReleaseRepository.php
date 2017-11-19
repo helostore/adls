@@ -88,7 +88,7 @@ class ReleaseRepository extends EntityRepository
             'createdAt' => "releases.createdAt",
             'fileId' => "releases.fileId",
             'version' => "releases.version",
-            'product' => "productDesc.product",
+            'product' => array("productDesc.product", "releases.createdAt"),
         );
         $sorting = db_sort($params, $sortingFields, 'createdAt', 'desc');
 

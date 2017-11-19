@@ -86,7 +86,19 @@ function fn_adls_delete_order($orderId)
     $manager = LicenseManager::instance();
     $licenseRepository = LicenseRepository::instance();
     $licenses = $manager->getOrderLicenses($orderId);
-    foreach ($licenses as $license) {
+	$releaseLinkRepository = ReleaseLinkRepository::instance();
+	/** @var License $license */
+	foreach ($licenses as $license) {
+		if ( ! empty( $license->getUserId() ) && ! empty( $license->getId() ) ) {
+			list ($links, ) = $releaseLinkRepository->find( array(
+				'userId' => $license->getUserId(),
+				'licenseId' => $license->getId(),
+			));
+			foreach ( $links as $link ) {
+				$releaseLinkRepository->removeLink( $link );
+			}
+		}
+
         $licenseRepository->delete($license->getId());
     }
 }
