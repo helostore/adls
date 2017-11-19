@@ -23,7 +23,7 @@ class ReleaseLinkRepository extends EntityRepository
 {
 	protected $table = '?:adls_release_links';
 
-	public function addLink($userId, $releaseId, $licenseId, $subscriptionId) {
+	public function addLink($userId, $releaseId, $licenseId, $subscriptionId = null) {
 		$query = db_quote( 'REPLACE INTO ?p ?e',
 			$this->table,
 			array(

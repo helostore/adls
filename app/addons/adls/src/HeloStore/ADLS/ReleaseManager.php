@@ -92,7 +92,7 @@ class ReleaseManager extends Manager
 //            throw new ReleaseException('Specified version already released!');
         }
 
-		$hash = hash('sha256',uniqid($productId.$version.$fileName.$fileSize, true));
+		$hash = hash('md5',uniqid($productId.$version.$fileName.$fileSize, true));
 
 		$release = new Release();
 		$release
@@ -245,13 +245,18 @@ class ReleaseManager extends Manager
 //		}
 //	}
 
-    public function addUserLinks($userId, $productId, $licenseId, $subscriptionId, $startDate = null, $endDate = null) {
-	    if ( empty( $startDate ) && empty( $endDate ) ) {
-		    return;
-	    }
-	    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
-	    if ( empty( $releases ) ) {
-		    list($releases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
+    public function addUserLinks($userId, $productId, $licenseId, $subscriptionId = null, $startDate = null, $endDate = null) {
+	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
+		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
+		    if ( empty( $releases ) ) {
+			    list($releases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
+		    }
+	    } else if ($subscriptionId === null) {
+		    // This is a free product.
+		    list($releases, ) = ReleaseRepository::instance()->find(array(
+			    'productId' => $productId
+		    ));
+
 	    }
 
 	    if ( empty( $releases ) ) {

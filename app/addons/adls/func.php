@@ -264,6 +264,15 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                     $errors += $manager->getErrors();
                 }
             }
+
+
+	        ReleaseManager::instance()->addUserLinks(
+		        $userId,
+		        $productId,
+		        $licenseId
+	        );
+
+
         } else {
             if (!defined('ORDER_MANAGEMENT')) {
 	            $manager->doDisableLicense( $licenseId );
@@ -422,14 +431,14 @@ function fn_adls_adls_subscriptions_post_suspend(Subscription $subscription)
 {
 	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
 	if ( ! empty( $license ) ) {
-		list ($links, ) = ReleaseLinkRepository::instance()->find( array(
-			'userId' => $subscription->getUserId(),
-			'licenseId' => $license->getId(),
-			'subscriptionId' => $subscription->getId(),
-		));
-		foreach ( $links as $link ) {
-			ReleaseLinkRepository::instance()->removeLink( $link );
-		}
+//		list ($links, ) = ReleaseLinkRepository::instance()->find( array(
+//			'userId' => $subscription->getUserId(),
+//			'licenseId' => $license->getId(),
+//			'subscriptionId' => $subscription->getId(),
+//		));
+//		foreach ( $links as $link ) {
+//			ReleaseLinkRepository::instance()->removeLink( $link );
+//		}
 		LicenseManager::instance()->doDisableLicense( $license->getId() );
 	}
 }
@@ -493,3 +502,6 @@ function fn_adls_adlss_get_subscriptions( &$fields, $table, &$joins, $condition,
 	}
 }
 
+function fn_adls_format_size($bytes, $precision = 2) {
+	return Utils::instance()->toByteString($bytes, $precision);
+}
