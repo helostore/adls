@@ -55,7 +55,6 @@ if ($mode == 'view') {
 	}
 
 	list($releases, $search) = ReleaseRepository::instance()->find($params);
-
 	Tygh::$app['view']->assign('releases', $releases);
 	Tygh::$app['view']->assign('search', $search);
 	Tygh::$app['view']->assign('product', $product);
