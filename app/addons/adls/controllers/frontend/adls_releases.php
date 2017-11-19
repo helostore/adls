@@ -33,18 +33,28 @@ if ($mode == 'view') {
 	$product = array();
 	if ( ! empty( $productId ) ) {
 		$product = fn_get_product_data($productId, $auth);
-		fn_add_breadcrumb(__('adls.releases'), 'adls_releases');
+		fn_add_breadcrumb(__('adls.releases'), 'adls_releases.view');
 		fn_add_breadcrumb($product['product']);
 	} else {
 		fn_add_breadcrumb(__('adls.releases'));
 	}
-	list($releases, $search) = ReleaseRepository::instance()->find(array(
-		'userId' => $auth['user_id'],
-		'productId' => $productId,
-		'extended' => true,
-		'sort_by' => 'product',
+
+	$params = array(
+		'userId'     => $auth['user_id'],
+		'productId'  => $productId,
+		'extended'   => true,
+		'sort_by'    => 'product',
+//		'sort_order' => 'ascdesc',
 		'sort_order' => 'asc',
-	));
+	);
+	if ( ! empty( $_REQUEST['sort_order'] ) ) {
+		$params['sort_order'] = $_REQUEST['sort_order'];
+	}
+	if ( ! empty( $_REQUEST['sort_by'] ) ) {
+		$params['sort_by'] = $_REQUEST['sort_by'];
+	}
+
+	list($releases, $search) = ReleaseRepository::instance()->find($params);
 
 	Tygh::$app['view']->assign('releases', $releases);
 	Tygh::$app['view']->assign('search', $search);
@@ -65,6 +75,11 @@ if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     if (empty($release)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+
+	if ( ! ReleaseManager::instance()->download( $release ) ) {
+		return array(CONTROLLER_STATUS_NO_PAGE);
+	}
+	exit;
 //
 //    $order = fn_get_order_info($orderId);
 //    if (empty($order)) {
@@ -99,6 +114,5 @@ if ($mode == 'download' && !empty($_REQUEST['hash'])) {
 //        return array(CONTROLLER_STATUS_NO_PAGE);
 //    }
 
-    ReleaseManager::instance()->download($release);
-    exit;
+
 }

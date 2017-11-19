@@ -21,6 +21,7 @@
     <tr>
         {tableRowHeader key="product" label="product" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="version" label="version" sort_sign=$sort_sign search=$search}
+        {tableRowHeader key="createdAt" label="date" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="fileName" label="fileName" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="fileSize" label="fileSize" sort_sign=$sort_sign search=$search}
         {hook name="releases:manage_header"}{/hook}
@@ -32,6 +33,7 @@
         <tr>
             <td><strong>{$release->getExtra('product$name')}</strong></td>
             <td>{$release->getVersion()}</td>
+            <td>{$release->getCreatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>

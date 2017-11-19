@@ -219,9 +219,11 @@ class ReleaseManager extends Manager
         return $releases;
     }
 
-    /**
-     * @param Release $release
-     */
+	/**
+	 * @param Release $release
+	 *
+	 * @return bool
+	 */
     public function download(Release $release)
     {
         $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
@@ -229,7 +231,7 @@ class ReleaseManager extends Manager
         $release->download();
         $this->repository->update($release);
         
-        fn_get_file($filePath);
+        return fn_get_file($filePath);
     }
 
 
