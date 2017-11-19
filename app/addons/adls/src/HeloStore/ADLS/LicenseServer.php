@@ -14,8 +14,8 @@
 
 namespace HeloStore\ADLS;
 
-use HeloStore\ADLS\Subscription\Subscription;
-use HeloStore\ADLS\Subscription\SubscriptionRepository;
+use HeloStore\ADLSS\Subscription;
+use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 use Tygh\Storage;
 
 /**
@@ -141,7 +141,7 @@ class LicenseServer
 
                 $orderId = $license['orderId'];
                 $orderItemId = $license['orderItemId'];
-                if (class_exists('HeloStore\\ADLS\\Subscription\\SubscriptionRepository')) {
+                if (class_exists('HeloStore\\ADLSS\\Subscription\\SubscriptionRepository')) {
 
                     /** @var Subscription $subscription */
                     $subscription = SubscriptionRepository::instance()->findOneByOrderItem($orderId, $orderItemId);

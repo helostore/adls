@@ -16,6 +16,8 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\ReleaseLinkRepository;
+use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use HeloStore\ADLS\Utils;
 use HeloStore\ADLSS\Subscription;
@@ -85,7 +87,7 @@ function fn_adls_delete_order($orderId)
     $licenseRepository = LicenseRepository::instance();
     $licenses = $manager->getOrderLicenses($orderId);
     foreach ($licenses as $license) {
-        $licenseRepository->delete($license['id']);
+        $licenseRepository->delete($license->getId());
     }
 }
 function fn_adls_get_order_info(&$order, $additional_data)
@@ -394,39 +396,59 @@ function fn_adls_get_options_ids()
     return $optionIds;
 }
 
-function fn_adls_adls_subscriptions_post_fail(Subscription $subscription, $product, $orderInfo)
-{
-}
+
 function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $product, $orderInfo)
 {
     // Assign most recent product release to subscription, to be used when querying for subscription's releases because the latest release might be out of subscriptions start/end range.
     if (!$subscription->getProductId()) {
         return;
     }
-    list($releases, ) = ReleaseRepository::instance()->findBySubscription($subscription);
-    if (empty($releases) && $subscription->hasEndDate()) {
-        list($releases, ) = ReleaseRepository::instance()->findLatestByProduct($subscription->getProductId(), $subscription->getEndDate());
-    }
-    if (empty($releases)) {
-        return;
-    }
-    /** @var \HeloStore\ADLS\Release $latest */
-    $latest = reset($releases);
-    $subscription->setReleaseId($latest->getId());
-    SubscriptionRepository::instance()->update($subscription);
+	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
+	ReleaseManager::instance()->addUserLinks(
+		$subscription->getUserId(),
+		$subscription->getProductId(),
+		$license->getId(),
+		$subscription->getId(),
+		$subscription->getStartDate(),
+		$subscription->getEndDate()
+	);
 }
 function fn_adls_adls_subscriptions_post_resume(Subscription $subscription, $product, $orderInfo)
 {
+	fn_adls_adls_subscriptions_post_begin( $subscription, $product, $orderInfo );
 }
+
 function fn_adls_adls_subscriptions_post_suspend(Subscription $subscription)
 {
 	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
 	if ( ! empty( $license ) ) {
+		list ($links, ) = ReleaseLinkRepository::instance()->find( array(
+			'userId' => $subscription->getUserId(),
+			'licenseId' => $license->getId(),
+			'subscriptionId' => $subscription->getId(),
+		));
+		foreach ( $links as $link ) {
+			ReleaseLinkRepository::instance()->removeLink( $link );
+		}
 		LicenseManager::instance()->doDisableLicense( $license->getId() );
 	}
 }
 
+function fn_adls_adls_subscriptions_post_fail(Subscription $subscription, $product, $orderInfo)
+{
+	fn_adls_adls_subscriptions_post_suspend($subscription);
+}
 
+function fn_adls_adlss_delete_subscription(Subscription $subscription ) {
+	list ($links, ) = ReleaseLinkRepository::instance()->find( array(
+		'userId' => $subscription->getUserId(),
+		'subscriptionId' => $subscription->getId(),
+	));
+
+	foreach ( $links as $link ) {
+		ReleaseLinkRepository::instance()->removeLink( $link );
+	}
+}
 function fn_adls_adlss_get_subscriptions_post($items , $params ) {
 	/** @var Subscription $subscription */
 	foreach ( $items as $subscription ) {

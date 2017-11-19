@@ -36,4 +36,5 @@ fn_register_hooks(
 	, 'adls_subscriptions_post_resume'
 	, 'adlss_get_subscriptions'
 	, 'adlss_get_subscriptions_post'
+	, 'adlss_delete_subscription'
 );

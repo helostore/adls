@@ -105,9 +105,12 @@ class ReleaseRepository extends EntityRepository
         if (!empty($params['fileId'])) {
             $condition[] = db_quote('releases.fileId = ?n', $params['fileId']);
         }
-        if (!empty($params['version'])) {
-            $condition[] = db_quote('releases.version = ?s', $params['version']);
-        }
+		if (!empty($params['version'])) {
+			$condition[] = db_quote('releases.version = ?s', $params['version']);
+		}
+		if (!empty($params['hash'])) {
+			$condition[] = db_quote('releases.hash = ?s', $params['hash']);
+		}
         if (!empty($params['productId'])) {
             $condition[] = db_quote('releases.productId = ?n', $params['productId']);
         }
@@ -124,6 +127,16 @@ class ReleaseRepository extends EntityRepository
                 $condition[] = db_quote('releases.createdAt <= ?s', $endDate);
             }
         }
+		if ( ! empty( $params['subscriptionId'] ) || ! empty( $params['userId'] ) ) {
+			$joins[] = db_quote('
+				RIGHT JOIN ?:adls_release_links AS releaseLink 
+                    ON releaseLink.releaseId = releases.id' .
+                    (! empty( $params['subscriptionId'] ) ?
+	                    db_quote(' AND releaseLink.subscriptionId = ?i', $params['subscriptionId']) : '') .
+                    (! empty( $params['userId'] ) ?
+	                    db_quote(' AND releaseLink.userId = ?i', $params['userId']) : '')
+			);
+		}
         if (!empty($params['fromReleaseId'])) {
             $orCondition[] = db_quote('releases.id = ?i', $params['fromReleaseId']);
         }
@@ -155,7 +168,6 @@ class ReleaseRepository extends EntityRepository
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
         $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY releases.id ?p ?p', $fields, $this->table, $joins, $conditions, $sorting, $limit);
-
         $items = db_get_array($query);
 
         if (!empty($items)) {
@@ -230,28 +242,34 @@ class ReleaseRepository extends EntityRepository
      */
     public function findBySubscription(Subscription $subscription, $params = array())
     {
-        $params['status'] = Release::STATUS_ACTIVE;
+	    $params['status'] = Release::STATUS_ACTIVE;
+        $params['productId'] = $subscription->getProductId();
+        $params['userId'] = $subscription->getUserId();
+        $params['subscriptionId'] = $subscription->getId();
 
-        $x = null;
-        if ($subscription->hasStartDate()) {
-            $x = clone $subscription->getStartDate();
-            $x->modify('-1 day');
-        }
-        $y = null;
-        if ($subscription->hasEndDate()) {
-            $y = clone $subscription->getEndDate();
-        }
-
-        if ($subscription->getReleaseId() && !isset($params['one'])) {
-            $params['fromReleaseId'] = $subscription->getReleaseId();
-        }
-
-        return $this->findByProductInRange(
-            $subscription->getProductId()
-            , $x
-            , $y
-            , $params
-        );
+        return $this->find($params);
+//        $params['status'] = Release::STATUS_ACTIVE;
+//
+//        $x = null;
+//        if ($subscription->hasStartDate()) {
+//            $x = clone $subscription->getStartDate();
+//            $x->modify('-1 day');
+//        }
+//        $y = null;
+//        if ($subscription->hasEndDate()) {
+//            $y = clone $subscription->getEndDate();
+//        }
+//
+//        if ($subscription->getReleaseId() && !isset($params['one'])) {
+//            $params['fromReleaseId'] = $subscription->getReleaseId();
+//        }
+//
+//        return $this->findByProductInRange(
+//            $subscription->getProductId()
+//            , $x
+//            , $y
+//            , $params
+//        );
     }
 
     /**
@@ -327,6 +345,19 @@ class ReleaseRepository extends EntityRepository
 		return $this->findOne(array(
 			'productId' => $productId,
 			'version' => $version
+		));
+	}
+
+	/**
+	 * @param $hash
+	 *
+	 * @return Release|null
+	 *
+	 */
+	public function findOneByHash($hash)
+	{
+		return $this->findOne(array(
+			'hash' => $hash
 		));
 	}
 }
