@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -9,7 +9,7 @@
     <default_language>en</default_language>
     <queries>
         <item for="install">
-            CREATE IF NOT EXISTS `?:adls_licenses` (
+            CREATE  IF NOT EXISTS `?:adls_licenses` (
                 `id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `orderId`  mediumint(8) NOT NULL ,
                 `productId`  mediumint(8) UNSIGNED NOT NULL ,
@@ -52,6 +52,15 @@
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
+            CREATE TABLE `?:adls_release_links` (
+            `userId`  mediumint(8) UNSIGNED NOT NULL ,
+            `releaseId`  mediumint(8) UNSIGNED NOT NULL ,
+            `licenseId`  mediumint(8) UNSIGNED NULL,
+            `subscriptionId`  mediumint(8) UNSIGNED NULL,
+            PRIMARY KEY (`userId`, `releaseId`)
+            )
+        </item>
+        <item for="install">
             CREATE TABLE IF NOT EXISTS `?:adls_releases` (
                 `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
                 `productId` mediumint(8) unsigned NOT NULL,
@@ -59,6 +68,7 @@
                 `version` varchar(16) NOT NULL,
                 `fileName` varchar(255) NOT NULL,
                 `fileSize` int(11) unsigned NOT NULL,
+                `hash` varchar(32) NOT NULL,
                 PRIMARY KEY (`id`)
             )
         </item>

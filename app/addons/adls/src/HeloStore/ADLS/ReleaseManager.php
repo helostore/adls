@@ -92,6 +92,8 @@ class ReleaseManager extends Manager
 //            throw new ReleaseException('Specified version already released!');
         }
 
+		$hash = hash('sha256',uniqid($productId.$version.$fileName.$fileSize, true));
+
 		$release = new Release();
 		$release
 			->setProductId($productId)
@@ -99,6 +101,7 @@ class ReleaseManager extends Manager
             ->setFileName($fileName)
             ->setFileSize($fileSize)
             ->setDownloads(0)
+			->setHash($hash)
             ->setStatus(Release::STATUS_ACTIVE);
 
         $result = $this->repository->create($release);
@@ -228,4 +231,35 @@ class ReleaseManager extends Manager
         
         fn_get_file($filePath);
     }
+
+
+//	public function removeUserLinks($userId, $productId, $startDate = null, $endDate = null) {
+//		if ( empty( $startDate ) && empty( $endDate ) ) {
+//			return;
+//		}
+//		list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
+//		list($latestReleases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
+//		$releases += $latestReleases;
+//		foreach ( $releases as $release ) {
+//			ReleaseLinkRepository::instance()->removeLink($userId, $release->getId());
+//		}
+//	}
+
+    public function addUserLinks($userId, $productId, $licenseId, $subscriptionId, $startDate = null, $endDate = null) {
+	    if ( empty( $startDate ) && empty( $endDate ) ) {
+		    return;
+	    }
+	    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
+	    if ( empty( $releases ) ) {
+		    list($releases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
+	    }
+
+	    if ( empty( $releases ) ) {
+		    throw new \Exception('Unable to find releases for given params');
+	    }
+	    foreach ( $releases as $release ) {
+		    ReleaseLinkRepository::instance()->addLink($userId, $release->getId(), $licenseId, $subscriptionId);
+	    }
+	}
+
 }

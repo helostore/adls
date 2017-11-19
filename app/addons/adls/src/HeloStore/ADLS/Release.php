@@ -71,6 +71,11 @@ class Release extends Entity
      */
     protected $status;
 
+    /**
+     * @var string
+     */
+    protected $hash;
+
 
 
     /**
@@ -260,6 +265,24 @@ class Release extends Entity
 	public function download()
 	{
 		$this->downloads++;
+
+		return $this;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHash() {
+		return $this->hash;
+	}
+
+	/**
+	 * @param string $hash
+	 *
+	 * @return $this
+	 */
+	public function setHash( $hash ) {
+		$this->hash = $hash;
 
 		return $this;
 	}

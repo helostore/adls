@@ -23,17 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 
-if ($mode == 'download' && !empty($_REQUEST['orderId']) && !empty($_REQUEST['id'])) {
+if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     $releaseRepository = ReleaseRepository::instance();
     $subscriptionRepository = SubscriptionRepository::instance();
 
-    $requestReleaseId = intval($_REQUEST['id']);
-    $orderId = intval($_REQUEST['orderId']);
-    $orderItemId = strval($_REQUEST['orderItemId']);
-    $userId = $_SERVER['auth']['user_id'];
-    $userId = !empty($auth['user_id']) ? $auth['user_id'] : 0;
-
-    $orderId = db_get_field("SELECT order_id FROM ?:orders WHERE user_id = ?i AND order_id = ?i", $userId, $orderId);
+    $hash = strval($_REQUEST['hash']);
+	$release = ReleaseRepository::instance()->findOneByHash( $hash );
+	aa( $release, 1 );
+//    $orderId = intval($_REQUEST['orderId']);
+//    $orderItemId = strval($_REQUEST['orderItemId']);
+//    $userId = $_SERVER['auth']['user_id'];
+//    $userId = !empty($auth['user_id']) ? $auth['user_id'] : 0;
+//
+//    $orderId = db_get_field("SELECT order_id FROM ?:orders WHERE user_id = ?i AND order_id = ?i", $userId, $orderId);
     if (empty($orderId)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
