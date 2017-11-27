@@ -9,7 +9,7 @@
     <default_language>en</default_language>
     <queries>
         <item for="install">
-            CREATE  IF NOT EXISTS `?:adls_licenses` (
+            CREATE TABLE IF NOT EXISTS `?:adls_licenses` (
                 `id`  mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
                 `orderId`  mediumint(8) NOT NULL ,
                 `productId`  mediumint(8) UNSIGNED NOT NULL ,
