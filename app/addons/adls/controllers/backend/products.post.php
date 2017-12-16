@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 if ($mode == 'update') {
 	$view = &Tygh::$app['view'];
 
-    Registry::set('navigation.tabs.adls', array (
-        'title' => __('adls'),
-        'js' => true
-    ));
+	Registry::set('navigation.tabs.adls', array (
+		'title' => __('adls'),
+		'js' => true
+	));
 
 	$manager = ProductManager::instance();
 	$products = $manager->getStoreProducts();
@@ -46,4 +46,15 @@ if ($mode == 'update') {
 	$view->assign('adls_addons', $products);
 	$view->assign('adls_product_types', $types);
 	$view->assign('adls_subscriptions', $subscriptions);
+
+
+
+
+	Registry::set('navigation.tabs.adls_releases', array (
+		'title' => __('adls.releases'),
+		'js' => true
+	));
+	$productId = ! empty( $_REQUEST['product_id'] ) ? $_REQUEST['product_id'] : 0;
+	list ( $releases, $search ) = \HeloStore\ADLS\ReleaseRepository::instance()->findByProductId($productId, array('getUserCount' => true));
+	$view->assign('adls_releases', $releases);
 }

@@ -101,7 +101,15 @@
 						but_role="action"
 						but_text=__("adls.release_now")
 						but_href=fn_url("addons.pack?addon=`$productCode`")
-						but_meta="cm-ajax"}
+						but_meta=""}
+                        {if !empty($product.latestRelease2)}
+                            {include
+                            file="buttons/button.tpl"
+                            but_role="action"
+                            but_text=__("adls.release.publish")
+                            but_href=fn_url("releases.publish?release_id=`$product.latestRelease2->getId()`")
+                            but_meta=""}
+						{/if}
 					</td>
 					<td>
 						{if $product.has_unreleased_version}

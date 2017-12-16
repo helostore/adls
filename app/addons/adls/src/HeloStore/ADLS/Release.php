@@ -286,4 +286,41 @@ class Release extends Entity
 
 		return $this;
 	}
+
+	public function compare(Release $release) {
+		return version_compare( $this->getVersion(), $release->getVersion() );
+	}
+
+	/**
+	 * Test if current release is newer than given release
+	 *
+	 * @param Release $release
+	 *
+	 * @return bool
+	 */
+	public function isNewerThan( Release $release ) {
+		return ( $this->compare( $release ) === 1 );
+	}
+
+	/**
+	 * Test if current release is older than given release
+	 *
+	 * @param Release $release
+	 *
+	 * @return bool
+	 */
+	public function isOlderThan( Release $release ) {
+		return ( $this->compare( $release ) === -1 );
+	}
+
+	/**
+	 * Test if current release is the same as given release
+	 *
+	 * @param Release $release
+	 *
+	 * @return bool
+	 */
+	public function isSameAs( Release $release ) {
+		return ( $this->compare( $release ) === 0 );
+	}
 }

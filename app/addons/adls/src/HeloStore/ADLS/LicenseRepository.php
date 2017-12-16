@@ -233,4 +233,22 @@ class LicenseRepository extends EntityRepository
 
 		return $this->findOne($params);
 	}
+
+	/**
+	 * @param $licenseKey
+	 *
+	 * @param array $params
+	 *
+	 * @return License|null
+	 */
+	public function findOneByKey($licenseKey, $params = array()) {
+
+		$params = array_merge(array(
+			'licenseKey' => $licenseKey,
+			'getDomains' => true
+
+		), $params);
+
+		return $this->findOne($params);
+	}
 }

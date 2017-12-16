@@ -13,6 +13,8 @@
  */
 namespace HeloStore\ADLS;
 
+use HeloStore\Developer\ReleaseManager AS DeveloperReleaseManager;
+
 
 class MigrationManager extends Manager
 {
@@ -30,6 +32,7 @@ class MigrationManager extends Manager
                 continue;
             }
             $productId = $storeProduct['product_id'];
+            $addonId = $storeProduct['adls_addon_id'];
 
             list($releases, ) = $releaseRepository->findByProductId($productId);
 
@@ -41,32 +44,62 @@ class MigrationManager extends Manager
             list($files, ) = fn_get_product_files(array(
                 'product_id' => $productId
             ));
-            if (empty($files)) {
-                fn_print_r('Skipping `' . $storeProduct['name'] . '`: no release files found');
-                continue;
+	        $releaseId = null;
+            if (!empty($files)) {
+	            $latestFile = array_pop($files);
+	            $fileSize = $latestFile['file_size'];
+	            $fileName = $latestFile['file_name'];
+
+
+	            $releaseId = $releaseManager->createRelease(
+		            $productId
+		            , $storeProduct['version']
+		            , $fileName
+		            , $fileSize
+	            );
+	            if ( ! empty( $releaseId ) ) {
+		            if (fn_delete_product_files($latestFile['file_id']) == false) {
+			            fn_print_r(' - OK `' . $storeProduct['name'] . '`, deleted edp file');
+		            }
+	            }
+            } else {
+	            $developerReleaseManager = DeveloperReleaseManager::instance();
+	            $output = array();
+	            if ($developerReleaseManager->pack($addonId, $output)) {
+
+		            // attempt to release the newly packed add-on
+		            $result = null;
+		            try {
+			            $releaseId = $developerReleaseManager->release($addonId, $output);
+		            } catch (\Exception $e) {
+			            fn_print_r( 'Release error: ' . $e->getMessage() );
+		            }
+		            if ($result !== null) {
+			            if ($result) {
+				            fn_print_r( 'Attached release to product: ' . $output['archivePath'] );
+			            } else {
+				            fn_print_r( 'Release error: Attached release to product: ' . 'Failed attaching release to product: ' . $output['archivePath'] );
+			            }
+		            }
+	            } else if ($developerReleaseManager->hasErrors()) {
+		            foreach ($developerReleaseManager->getErrors() as $error) {
+			            fn_print_r( 'Packing error: ' . $error );
+		            }
+	            }
             }
 
-            $latestFile = array_pop($files);
-            $fileSize = $latestFile['file_size'];
-            $fileName = $latestFile['file_name'];
+
+	        if ( $releaseId == null ) {
+		        fn_print_r('Skipping `' . $storeProduct['name'] . '`, failed to release: no release files found OR packing failed');
+		        continue;
+	        }
 
 
-            $releaseId = $releaseManager->createRelease(
-                $productId
-                , $storeProduct['version']
-                , $fileName
-                , $fileSize
-            );
-            if ($releaseId === null) {
-                fn_print_r('Skipping existing release for `' . $storeProduct['name'] . '`');
-            } else if (!empty($releaseId)) {
+
+			if (!empty($releaseId)) {
                 fn_print_r('OK `' . $storeProduct['name'] . '`');
             } else {
                 throw new \Exception('Failed creating release for `' . $storeProduct['name'] . '`');
-            }
-
-            if (fn_delete_product_files($latestFile['file_id']) == false) {
-                fn_print_r(' - OK `' . $storeProduct['name'] . '`, deleted edp file');
             }
 
         }

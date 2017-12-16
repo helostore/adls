@@ -60,11 +60,24 @@ class ReleaseRepository extends EntityRepository
 
     /**
      * @param Release $release
+     *
      * @return mixed
      */
     public function delete(Release $release)
     {
-        return db_query('DELETE FROM ?p WHERE id = ?i', $this->table, $release->getId());
+	    return $this->deleteById($release->getId());
+    }
+
+	/**
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
+    public function deleteById($id)
+    {
+	    ReleaseLinkRepository::instance()->deleteByReleaseId( $id );
+
+        return db_query('DELETE FROM ?p WHERE id = ?i', $this->table, $id);
     }
 
 	/**
@@ -95,8 +108,18 @@ class ReleaseRepository extends EntityRepository
 		$condition = array();
         $orCondition = array();
         $joins = array();
+		$group = 'releases.id';
         $fields = array();
         $fields[] = 'releases.*';
+//        $fields[] = "INET_ATON(
+//					  CONCAT(
+//					    releases.version,
+//					    REPEAT(
+//					      '.0',
+//					      3 - CHAR_LENGTH(releases.version) + CHAR_LENGTH(REPLACE(releases.version, '.', ''))
+//					    )
+//					  )
+//					) AS versionInt";
         $langCode = !empty($params['langCode']) ? $params['langCode'] : CART_LANGUAGE;
 
         if (!empty($params['id'])) {
@@ -139,6 +162,12 @@ class ReleaseRepository extends EntityRepository
 			$fields[] = 'releaseLink.licenseId AS link$licenseId';
 			$fields[] = 'releaseLink.subscriptionId AS link$subscriptionId';
 		}
+		if ( ! empty($params['getUserCount']) ) {
+			$joins[] = db_quote('
+				LEFT JOIN ?:adls_release_links AS releaseLinkUserCount
+                    ON releaseLinkUserCount.releaseId = releases.id');
+			$fields[] = 'COUNT(DISTINCT releaseLinkUserCount.userId) AS releaseLink$userCount';
+		}
         if (!empty($params['fromReleaseId'])) {
             $orCondition[] = db_quote('releases.id = ?i', $params['fromReleaseId']);
         }
@@ -152,10 +181,37 @@ class ReleaseRepository extends EntityRepository
             $fields[] = 'productDesc.product_id AS product$id';
             $fields[] = 'productDesc.product AS product$name';
 
-			if ( ! empty( $params['userId'] ) ) {
+			$joins[] = db_quote('LEFT JOIN ?:products AS product
+                ON product.product_id = releases.productId'
+				, $langCode
+			);
+			$fields[] = 'product.adls_subscription_id AS product$adls_subscription_id';
 
+			if ( isset( $params['product$adls_subscription_id'] ) ) {
+				$condition[] = db_quote( 'product.adls_subscription_id = ?i', $params['product$adls_subscription_id'] );
 			}
 		}
+
+		if ( ! empty( $params['latest'] ) ) {
+        	$subJoin = '';
+			if ( ! empty( $params['userId'] ) ) {
+				$subJoin = db_quote('
+					INNER JOIN ?:adls_release_links
+					    ON ?:adls_release_links.releaseId = ?:adls_releases.id 
+					    AND ?:adls_release_links.userId = ?i', $params['userId']);
+			}
+			$joins[] = db_quote('
+				INNER JOIN (
+					SELECT ?:adls_releases.productId, MAX(createdAt) AS maxCreatedAt 
+					FROM ?:adls_releases
+					' . $subJoin . ' 
+					GROUP BY ?:adls_releases.productId
+				) AS latestRelease ON releases.productId = latestRelease.productId AND releases.createdAt = latestRelease.maxCreatedAt
+			');
+
+			$group = 'releases.productId';
+		}
+
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'releases.*' : implode(', ', $fields);
 		$condition = implode(' AND ', $condition);
@@ -169,11 +225,11 @@ class ReleaseRepository extends EntityRepository
         if (isset($params['one'])) {
             $limit = 'LIMIT 0,1';
         } else if (!empty($params['items_per_page'])) {
-            $query = db_quote('SELECT COUNT(DISTINCT releases.id) FROM ?p AS releases ?p ?p GROUP BY releases.id ?p', $this->table, $joins, $conditions, $limit);
+            $query = db_quote('SELECT COUNT(DISTINCT releases.id) FROM ?p AS releases ?p ?p GROUP BY ?p ?p', $this->table, $joins, $conditions, $group, $limit);
             $params['total_items'] = db_get_field($query);
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
-        $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY releases.id ?p ?p', $fields, $this->table, $joins, $conditions, $sorting, $limit);
+        $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
         $items = db_get_array($query);
 
         if (!empty($items)) {
@@ -189,6 +245,22 @@ class ReleaseRepository extends EntityRepository
 		}
 
 		return array($items, $params);
+	}
+
+	/**
+	 * Find latest releases of all products
+	 *
+	 * @param array $params
+	 *
+	 * @return array|null
+	 */
+	public function findLatest($params = array())
+	{
+		$params['latest'] = true;
+
+		return $this->find(
+			$params
+		);
 	}
 
     /**
@@ -229,10 +301,11 @@ class ReleaseRepository extends EntityRepository
      * @param array $params
      * @return array|null
      */
-    public function findLatestByProduct($productId, \DateTime $endDate, $params = array())
+    public function findOneLatestByProduct($productId, \DateTime $endDate = null, $params = array())
     {
         $params['productId'] = $productId;
         $params['items_per_page'] = 1;
+        $params['one'] = true;
 
         return $this->findInRange(
             null
@@ -366,5 +439,14 @@ class ReleaseRepository extends EntityRepository
 			'hash' => $hash,
 			'userId' => $userId
 		));
+	}
+
+	/**
+	 * @param $productId
+	 *
+	 * @return array
+	 */
+	public function countByProductId($productId) {
+		return db_get_field( 'SELECT COUNT(*) FROM ' . $this->table . ' WHERE productId = ?i', $productId );
 	}
 }

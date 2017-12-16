@@ -23,20 +23,43 @@ class ReleaseLinkRepository extends EntityRepository
 {
 	protected $table = '?:adls_release_links';
 
-	public function addLink($userId, $releaseId, $licenseId, $subscriptionId = null) {
+	/**
+	 * @param $userId
+	 * @param $productId
+	 * @param $releaseId
+	 * @param null $licenseId
+	 * @param null $subscriptionId
+	 *
+	 * @return mixed
+	 */
+	public function addLink($userId, $productId, $releaseId, $licenseId = null, $subscriptionId = null) {
+		$licenseId = empty( $licenseId ) ? 0 : $licenseId;
+		$subscriptionId = empty( $subscriptionId ) ? 0 : $subscriptionId;
 		$query = db_quote( 'REPLACE INTO ?p ?e',
 			$this->table,
 			array(
 				'userId'         => $userId,
+				'productId'      => $productId,
 				'releaseId'      => $releaseId,
 				'subscriptionId' => $subscriptionId,
 				'licenseId'      => $licenseId
 			) );
-		db_query($query);
+		return db_query($query);
 	}
 
+	/**
+	 * @param $releaseId
+	 *
+	 * @return mixed
+	 */
+	public function deleteByReleaseId($releaseId) {
+		return db_query('DELETE FROM ?p WHERE releaseId = ?i',
+			$this->table,
+			$releaseId
+		);
+	}
 	public function removeLink($link) {
-		db_query('DELETE FROM ?p WHERE userId = ?i AND releaseId = ?i  AND subscriptionId = ?i  AND licenseId = ?i ',
+		return db_query('DELETE FROM ?p WHERE userId = ?i AND releaseId = ?i  AND subscriptionId = ?i  AND licenseId = ?i ',
 			$this->table,
 			$link['userId'],
 			$link['releaseId'],
@@ -70,16 +93,25 @@ class ReleaseLinkRepository extends EntityRepository
 		$joins = array();
 		$fields = array();
 		$fields[] = 'releaseLinks.*';
-
-		if (!empty($params['releaseId'])) {
-			$condition[] = db_quote('releaseLinks.releaseId = ?n', $params['releaseId']);
+		$group = 'releaseLinks.releaseId, releaseLinks.userId';
+		if (isset($params['distinctUserId'])) {
+			$group = 'releaseLinks.userId';
 		}
 
-		if (!empty($params['userId'])) {
-			$condition[] = db_quote('releaseLinks.userId = ?n', $params['userId']);
+		if (isset($params['releaseId'])) {
+			$condition[] = db_quote('releaseLinks.releaseId = ?i', $params['releaseId']);
 		}
-		if (!empty($params['subscriptionId'])) {
-			$condition[] = db_quote('releaseLinks.subscriptionId = ?n', $params['subscriptionId']);
+		if (isset($params['productId'])) {
+			$condition[] = db_quote('releaseLinks.productId = ?i', $params['productId']);
+		}
+		if (isset($params['userId'])) {
+			$condition[] = db_quote('releaseLinks.userId = ?i', $params['userId']);
+		}
+		if (isset($params['subscriptionId'])) {
+			$condition[] = db_quote('releaseLinks.subscriptionId = ?i', $params['subscriptionId']);
+		}
+		if (isset($params['licenseId'])) {
+			$condition[] = db_quote('releaseLinks.licenseId = ?i', $params['licenseId']);
 		}
 
 		$joins = empty($joins) ? '' : implode(' ', $joins);
@@ -99,8 +131,7 @@ class ReleaseLinkRepository extends EntityRepository
 			$params['total_items'] = db_get_field($query);
 			$limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
 		}
-		$query = db_quote('SELECT ?p FROM ?p AS releaseLinks ?p ?p GROUP BY releaseLinks.releaseId, releaseLinks.userId ?p ?p', $fields, $this->table, $joins, $conditions, $sorting, $limit);
-
+		$query = db_quote('SELECT ?p FROM ?p AS releaseLinks ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
 		$items = db_get_array($query);
 
 		if (isset($params['one'])) {
@@ -110,5 +141,16 @@ class ReleaseLinkRepository extends EntityRepository
 		}
 
 		return array($items, $params);
+	}
+
+	/**
+	 * @param Release $release
+	 *
+	 * @return array|null
+	 */
+	public function findByRelease( Release $release ) {
+		return $this->find(array(
+			'releaseId' => $release->getId()
+		));
 	}
 }
