@@ -160,7 +160,8 @@ if ($mode == 'details') {
             if (!fn_is_adls_product($product)) {
                 continue;
             }
-            $product['releases'] = $releaseManager->getOrderItemReleases($product);
+            $product['releases'] = $releaseManager->getOrderItemReleases($order['user_id'], $product);
+
             $changed = true;
         }
         unset($product);
@@ -169,6 +170,7 @@ if ($mode == 'details') {
         }
     }
 }
+
 if ($mode == 'order_downloads') {
 //    $orderId = $_REQUEST['order_id'];
 //    if (empty($orderId)) {

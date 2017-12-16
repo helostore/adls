@@ -28,6 +28,7 @@ fn_register_hooks(
 	, 'place_order'
 	, 'get_orders_post'
 	, 'delete_order'
+	, 'delete_product_post'
 	, 'get_additional_information'
 	, 'required_products_pre_add_to_cart'
 	, 'adls_subscriptions_post_suspend'
@@ -37,4 +38,5 @@ fn_register_hooks(
 	, 'adlss_get_subscriptions'
 	, 'adlss_get_subscriptions_post'
 	, 'adlss_delete_subscription'
+	, 'gather_additional_product_data_post'
 );

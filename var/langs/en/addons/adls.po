@@ -158,7 +158,15 @@ msgstr "Version"
 
 msgctxt "Languages::adls.release_now"
 msgid "adls.release_now"
-msgstr "Release!"
+msgstr "Release"
+
+msgctxt "Languages::adls.release.publish"
+msgid ""
+msgstr "Publish"
+
+msgctxt "Languages::adls.release.unpublish"
+msgid ""
+msgstr "Unpublish"
 
 msgctxt "Languages::adls.commits"
 msgid "adls.commits"
@@ -167,3 +175,17 @@ msgstr "Commits"
 msgctxt "Languages::adls.view_commits"
 msgid "adls.view_commits"
 msgstr "View ([count])"
+
+msgctxt "Languages::adls.api.update.message"
+msgid ""
+msgstr "An update is available for <b>[addon]</b> add-on from version [currentVersion] to [nextVersion]. <a href='[updateUrl]' class='cm-ajax cm-comet cm-notification-close' onclick=\"$.ceNotification('closeAll');\">Click here to update</a>."
+
+
+msgctxt "Languages::adls.api.update.title"
+msgid ""
+msgstr "Fresh code"
+
+
+msgctxt "Languages::adls.api.update.upsell.message"
+msgid ""
+msgstr "There is a new version of <b>[addon]</b> add-on, but you first need to renew your subscription in order to upgrade. <a href='[updateUrl]' target='_bl'>Click here to renew</a> (your version: [currentVersion], latest version: [nextVersion])"

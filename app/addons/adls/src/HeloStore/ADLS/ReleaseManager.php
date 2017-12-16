@@ -14,6 +14,7 @@
 namespace HeloStore\ADLS;
 
 use HeloStore\ADLSS\Subscription;
+use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 use Tygh\Registry;
 
 /**
@@ -70,7 +71,9 @@ class ReleaseManager extends Manager
             $fileSize = filesize($params['archivePath']);
         }
 
-        return $this->createRelease($productId, $version, $fileName, $fileSize);
+        $releaseId = $this->createRelease($productId, $version, $fileName, $fileSize);
+
+		return $releaseId;
 	}
 
     /**
@@ -190,16 +193,55 @@ class ReleaseManager extends Manager
         return (!empty($releases));
     }
 
-    public function getOrderItemReleases($product)
+	/**
+	 * @param Release $release
+	 *
+	 * @param $userId
+	 *
+	 * @return bool
+	 */
+	public function isReleaseAvailableToUser(Release $release, $userId)
+	{
+
+		$release = $this->repository->findOneById( $release->getId() );
+		if ( empty( $release ) ) {
+			return false;
+		}
+		$product = ProductManager::instance()->getProductById( $release->getProductId() );
+		if ( empty( $product ) ) {
+			return false;
+		}
+		if ( ProductManager::instance()->isFreeSubscription($product['adls_subscription_id']) ) {
+			return true;
+		}
+
+		$release = $this->repository->findOneByHashUser( $release->getHash(), $userId );
+
+		return (!empty($release));
+	}
+
+	/**
+	 * @param $userId
+	 * @param $product
+	 *
+	 * @return mixed
+	 */
+    public function getOrderItemReleases($userId, $product, $itemsPerPage = 1)
     {
         if (!empty($product['subscription'])) {
             /** @var Subscription $subscription */
             $subscription = $product['subscription'];
-            list($releases, ) = $this->repository->findBySubscription($subscription);
+            list($releases, ) = $this->repository->findBySubscription($subscription, array(
+	            'items_per_page' => $itemsPerPage
+            ));
         } else {
             $productId = $product['product_id'];
-            list($releases, ) = $this->repository->findByProductId($productId);
+            list($releases, ) = $this->repository->findByProductId($productId, array(
+            	'userId' => $userId,
+	            'items_per_page' => $itemsPerPage
+            ));
         }
+
         if (!empty($releases)) {
             $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
             /**
@@ -224,14 +266,25 @@ class ReleaseManager extends Manager
 	 *
 	 * @return bool
 	 */
+	public function prepareForDownload(Release $release)
+	{
+		$developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
+		$filePath = $developerReleaseManager->getOutputPath($release->getFileName());
+
+		$release->download();
+		$this->repository->update($release);
+
+		return $filePath;
+	}
+
+	/**
+	 * @param Release $release
+	 *
+	 * @return bool
+	 */
     public function download(Release $release)
     {
-        $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
-        $filePath = $developerReleaseManager->getOutputPath($release->getFileName());
-        $release->download();
-        $this->repository->update($release);
-        
-        return fn_get_file($filePath);
+        return fn_get_file($this->prepareForDownload($release));
     }
 
 
@@ -247,11 +300,12 @@ class ReleaseManager extends Manager
 //		}
 //	}
 
-    public function addUserLinks($userId, $productId, $licenseId, $subscriptionId = null, $startDate = null, $endDate = null) {
+    public function addUserLinks($userId, $productId, $licenseId = null, $subscriptionId = null, $startDate = null, $endDate = null) {
 	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
 		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
 		    if ( empty( $releases ) ) {
-			    list($releases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
+			    $release = ReleaseRepository::instance()->findOneLatestByProduct($productId, $endDate);
+			    $releases = array( $release );
 		    }
 	    } else if ($subscriptionId === null) {
 		    // This is a free product.
@@ -265,8 +319,97 @@ class ReleaseManager extends Manager
 		    throw new \Exception('Unable to find releases for given params');
 	    }
 	    foreach ( $releases as $release ) {
-		    ReleaseLinkRepository::instance()->addLink($userId, $release->getId(), $licenseId, $subscriptionId);
+		    ReleaseLinkRepository::instance()->addLink($userId, $productId, $release->getId(), $licenseId, $subscriptionId);
 	    }
 	}
 
+	public function unpublish(Release $release) {
+		list ($links, ) = ReleaseLinkRepository::instance()->findByRelease($release);
+		$premium = 0;
+		$free = 0;
+		foreach ( $links as $link ) {
+			if ( !empty( $link['licenseId'] ) && ! empty( $link['subscriptionId'] ) ) {
+				$premium++;
+			} else {
+				$free++;
+			}
+		}
+		ReleaseLinkRepository::instance()->deleteByReleaseId($release->getId());
+
+		return array($premium, $free);
+	}
+
+	public function publish(Release $release) {
+		$a = $this->publishPremium( $release );
+		$b = $this->publishFree( $release );
+
+		return array($a, $b);
+	}
+
+	/**
+	 * Give customers access to release
+	 *
+	 * @param Release $release
+	 *
+	 * @return int
+	 */
+	public function publishPremium(Release $release) {
+
+		list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
+			'extended' => true,
+			'status' => Subscription::STATUS_ACTIVE,
+			'productId' => $release->getProductId()
+		));
+
+		$count = 0;
+		if ( ! empty( $subscriptions ) ) {
+			/** @var Subscription $subscription */
+			foreach ( $subscriptions as $subscription ) {
+				$license = $subscription->getLicense();
+				$licenseId = !empty($license) ? $license->getId() : null;
+				$result = ReleaseLinkRepository::instance()->addLink(
+					$subscription->getUserId(),
+					$release->getProductId(),
+					$release->getId(),
+					$licenseId,
+					$subscription->getId()
+				);
+				if ( $result ) {
+					$count++;
+				}
+			}
+		}
+		return $count;
+	}
+
+	/**
+	 * @param Release $release
+	 *
+	 * @return int
+	 */
+	public function publishFree(Release $release) {
+
+		list ($links, ) = ReleaseLinkRepository::instance()->find(array(
+			'productId' => $release->getProductId(),
+			'licenseId' => 0,
+			'subscriptionId' => 0,
+			'distinctUserId' => true
+		));
+
+		$count = 0;
+		if ( ! empty( $links ) ) {
+			foreach ( $links as $link ) {
+				$result = ReleaseLinkRepository::instance()->addLink(
+					$link['userId'],
+					$release->getProductId(),
+					$release->getId()
+				);
+				if ( $result ) {
+					$count++;
+				}
+			}
+		}
+
+		return $count;
+	}
 }

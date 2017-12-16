@@ -20,6 +20,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 }
 
+if (($mode == 'publish' || $mode == 'unpublish') && !empty($_REQUEST['release_id'])) {
+	$releaseId = $_REQUEST['release_id'];
+	$release = \HeloStore\ADLS\ReleaseRepository::instance()->findOneById( $releaseId );
+
+	if ( empty( $release ) ) {
+		throw new \Exception('Release not found');
+	}
+
+	if ($mode == 'unpublish' ) {
+		list ($premiumCount, $freeCount) = \HeloStore\ADLS\ReleaseManager::instance()->unpublish($release);
+		fn_set_notification('N', __('notice'), 'Un-published from: ' . $premiumCount . ' premium, ' . $freeCount . ' free');
+	}
+
+	if ($mode == 'publish') {
+		list ($premiumCount, $freeCount) = \HeloStore\ADLS\ReleaseManager::instance()->publish($release);
+		fn_set_notification('N', __('notice'), 'Published to: ' . $premiumCount . ' premium, ' . $freeCount . ' free');
+	}
+
+	if (!empty($_SERVER['HTTP_REFERER'])) {
+		return array( CONTROLLER_STATUS_REDIRECT, $_SERVER['HTTP_REFERER'] );
+	}
+
+	return array(CONTROLLER_STATUS_OK, 'releases.manage');
+}
+
 if ($mode == 'manage') {
 
 	$manager = ProductManager::instance();

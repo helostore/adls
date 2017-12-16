@@ -78,7 +78,7 @@ function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
 }
 function fn_adls_change_order_status($status_to, $status_from, $orderInfo, $force_notification, $order_statuses, $place_order)
 {
-    fn_adls_process_order($orderInfo, $status_to, $status_from);
+	fn_adls_process_order($orderInfo, $status_to, $status_from);
 }
 
 function fn_adls_delete_order($orderId)
@@ -235,17 +235,17 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
             continue;
         }
 
-	    if ( ! empty( $product['subscription'] ) ) {
+	    if ( ! empty( $product['subscription'] ) && !$product['subscription']->isNew()) {
 		    $license = $licenseRepository->findOneBySubscription($product['subscription']);
 		    $licenseId = $license->getId();
 	    } else {
 		    $licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
 	    }
 
+
         $notificationState = (AREA == 'A' ? 'I' : 'K');
 
         if ($isPaidStatus) {
-
             $domainOptions = Utils::filterDomainProductOptions($product['product_options']);
 
             if (!empty($licenseId)) {
@@ -264,33 +264,33 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                         fn_set_notification('N', __('notice'), __('adls.order_licenses_inactivated'), $notificationState);
                     }
                 }
-
             } else {
-                $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
-                if ($licenseId) {
-                    fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
+	            if ( ! empty( $product['subscription'] ) || ! empty( $orderInfo['adls_subscription_setup_pending'])) {
+		            $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
+		            if ($licenseId) {
+			            fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
 
-                    Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
-                } else {
-                    $success = false;
-                    $errors += $manager->getErrors();
-                }
+			            Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
+		            } else {
+			            $success = false;
+			            $errors += $manager->getErrors();
+		            }
+	            }
             }
-
-
-	        ReleaseManager::instance()->addUserLinks(
-		        $userId,
-		        $productId,
-		        $licenseId
-	        );
-
+            // If it's not a subscription-based product, but license-based
+	        if ( empty( $product['subscription'] ) ) {
+		        ReleaseManager::instance()->addUserLinks(
+			        $userId,
+			        $productId,
+			        $licenseId
+		        );
+	        }
 
         } else {
             if (!defined('ORDER_MANAGEMENT')) {
 	            $manager->doDisableLicense( $licenseId );
             }
         }
-
     }
 
     if (!empty($errors)) {
@@ -424,7 +424,26 @@ function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $prod
     if (!$subscription->getProductId()) {
         return;
     }
-	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
+	$subscriptionLicenseId = $subscription->getLicenseId();
+
+	$license = $subscription->getLicense();
+	if ( empty( $license ) ) {
+		$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
+	}
+	// On migration, the license already exists, but it's not yet assigned to the newly created subscription
+	if ( empty( $license ) && !empty($product['license'])) {
+		$license = $product['license'];
+	}
+
+	if ( !empty( $license ) && empty( $subscriptionLicenseId ) ) {
+		$subscription->setLicense( $license );
+		SubscriptionRepository::instance()->update( $subscription );
+	}
+
+	if ( empty( $license ) ) {
+		throw new \Exception( 'Could not find license for subscription #' . $subscription->getId() );
+	}
+
 	ReleaseManager::instance()->addUserLinks(
 		$subscription->getUserId(),
 		$subscription->getProductId(),
@@ -470,23 +489,38 @@ function fn_adls_adlss_delete_subscription(Subscription $subscription ) {
 		ReleaseLinkRepository::instance()->removeLink( $link );
 	}
 }
-function fn_adls_adlss_get_subscriptions_post($items , $params ) {
+function fn_adls_adlss_get_subscriptions_post(&$items , $params ) {
+
+	if ( empty( $params['extended'] ) ) {
+		return;
+	}
+
 	/** @var Subscription $subscription */
 	foreach ( $items as $subscription ) {
 		$domains = $subscription->getExtra( 'license$domains' );
 		if ( ! empty( $domains ) ) {
-			$domains = explode(',', $domains);
+			$domains = explode( ',', $domains );
 		} else {
 			$domains = array();
 		}
+		$licenseId = $subscription->getLicenseId();
+//		if ( empty( $subscription->getExtra( 'license$id' ) ) ) {
+		if ( empty( $licenseId ) ) {
+			// This is a newly created subscription, so it's normal to not have a license attached to it yet
+			if ( $subscription->isNew() ) {
+				continue;
+			}
+			throw new \Exception( 'Subscription has no license ID (subscription #' . $subscription->getId() . ')' );
+		}
+
 		$data = array(
-			'id' => $subscription->getExtra( 'license$id' ),
-			'domains' => $domains,
+			'id'         => $licenseId,
+			'domains'    => $domains,
 			'licenseKey' => $subscription->getExtra( 'license$licenseKey' ),
-			'status' => $subscription->getExtra( 'license$status' )
+			'status'     => $subscription->getExtra( 'license$status' )
 		);
 
-		$license = new License($data);
+		$license = new License( $data );
 		$subscription->setLicense( $license );
 	}
 }
@@ -516,4 +550,43 @@ function fn_adls_adlss_get_subscriptions( &$fields, $table, &$joins, $condition,
 
 function fn_adls_format_size($bytes, $precision = 2) {
 	return Utils::instance()->toByteString($bytes, $precision);
+}
+
+/**
+ * @param $productId
+ * @param $wasDeleted
+ */
+function fn_adls_delete_product_post($productId, $wasDeleted) {
+	if ( ! empty( $productId ) && true == $wasDeleted ) {
+		list ( $releases, ) = ReleaseRepository::instance()->findByProductId($productId);
+		if ( ! empty( $releases ) ) {
+			foreach ( $releases as $release ) {
+				ReleaseRepository::instance()->deleteById($release->getId());
+			}
+			// @TODO disable licenses, subscriptions, and everything else linked to this product
+		}
+	}
+
+}
+
+/**
+ * @param $product
+ * @param $auth
+ * @param $params
+ */
+function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) {
+
+	if ( AREA != 'C' ) {
+		return;
+	}
+	$releaseCount = ReleaseRepository::instance()->countByProductId($product['product_id']);
+	if ( empty( $releaseCount ) ) {
+
+//		$product['out_of_stock_actions'] = 'S';
+//		$product['tracking'] = 'B';
+//		$product['amount'] = 0;
+		$product['price'] = 0;
+		$product['zero_price_action'] = 'R';
+		$product['full_description'] .= '<h2>This product has not been released yet.</h2>';
+	}
 }

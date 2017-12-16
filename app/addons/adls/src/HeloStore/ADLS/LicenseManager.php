@@ -70,18 +70,18 @@ class LicenseManager extends Manager
 		return $result;
 	}
 
-
-
-	public function getLicenseByKey($key) {
-		return db_get_row('SELECT * FROM ?:adls_licenses WHERE licenseKey = ?s', $key);
-	}
+	/**
+	 * Create unique license key
+	 *
+	 * @return bool|string
+	 */
 	public function generateUniqueKey() {
 		$tries = 0;
 		$maxTries = 10;
 		while ($tries < $maxTries) {
 			$tries++;
 			$candidate = Utils::generateKey();
-			$exists = $this->getLicenseByKey($candidate);
+			$exists = $this->repository->findOneByKey($candidate);
 			if (empty($exists)) {
 				return $candidate;
 			}
