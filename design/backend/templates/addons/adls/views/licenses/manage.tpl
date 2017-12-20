@@ -24,4 +24,4 @@
 	{dropdown content=$smarty.capture.tools_list}
 {/capture}
 
-{include file="common/mainbox.tpl" title=$page_title sidebar=$smarty.capture.sidebar content=$smarty.capture.mainbox buttons=$smarty.capture.buttons adv_buttons=$smarty.capture.adv_buttons content_id="manage_licenses"}
+{include file="common/mainbox.tpl" title=__('adls.licenses') sidebar=$smarty.capture.sidebar content=$smarty.capture.mainbox buttons=$smarty.capture.buttons adv_buttons=$smarty.capture.adv_buttons content_id="manage_licenses"}
