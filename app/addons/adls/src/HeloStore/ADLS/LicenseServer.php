@@ -457,7 +457,7 @@ class LicenseServer
 //			'product_id' => $storeProduct['product_id'],
 //		));
 
-		$updateData = $productManager->getProductUpdate($productCode, $requestProduct, $storeProduct['product_id'], $request['auth']['user_id']);
+		$updateData = $productManager->getProductUpdate($productCode, $requestProduct, $storeProduct, $request['auth']['user_id']);
 		if ( empty( $updateData ) || empty($updateData['releaseId']) ) {
 			$response['code'] = LicenseClient::CODE_ERROR_UPDATE_FAILED_RELEASE_NOT_FOUND;
 			return $response;

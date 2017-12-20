@@ -143,13 +143,12 @@ class LicenseRepository extends EntityRepository
         if (isset($params['one'])) {
             $limit = 'LIMIT 0,1';
         } else if (!empty($params['items_per_page'])) {
-            $query = db_quote('SELECT COUNT(DISTINCT license.id) FROM ?p AS license ?p ?p GROUP BY license.id ?p', $this->table, $joins, $condition, $limit);
+            $query = db_quote('SELECT COUNT(DISTINCT license.id) FROM ?p AS license ?p ?p ?p', $this->table, $joins, $condition, $limit);
             $params['total_items'] = db_get_field($query);
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
 
 		$query = db_quote('SELECT ?p FROM ?p AS license ?p ?p GROUP BY license.id ?p ?p', $fields, $this->table, $joins, $condition, $sorting, $limit);
-
 		$items = db_get_array($query);
 
 		if (empty($items)) {
