@@ -44,6 +44,10 @@ class MigrationManager extends Manager
             list($files, ) = fn_get_product_files(array(
                 'product_id' => $productId
             ));
+	        $version = $storeProduct['version'];
+	        if ( ! empty( $storeProduct['adls_release_version'] ) ) {
+		        $version = $storeProduct['adls_release_version'];
+	        }
 	        $releaseId = null;
             if (!empty($files)) {
 	            $latestFile = array_pop($files);
@@ -53,7 +57,7 @@ class MigrationManager extends Manager
 
 	            $releaseId = $releaseManager->createRelease(
 		            $productId
-		            , $storeProduct['version']
+		            , $version
 		            , $fileName
 		            , $fileSize
 	            );

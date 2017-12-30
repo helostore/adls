@@ -55,24 +55,32 @@ function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
         if (!fn_is_adls_product($item)) {
             continue;
         }
+	    $prevItemId = null;
+	    if (!empty($item['prev_cart_id'])) {
+		    $oldItemId = $item['prev_cart_id'];
+	    }
+	    if (!empty($item['original_product_data']) && !empty($item['original_product_data']['cart_id'])) {
+		    $oldItemId = $item['original_product_data']['cart_id'];
+	    }
+	    if ( empty( $oldItemId ) ) {
+		    continue;
+	    }
 
         // The cart/order item id changed (probably because domain changed), we should update it in our tables as well
-        if (!empty($item['prev_cart_id'])) {
-            $oldItemId = $item['prev_cart_id'];
-            if ($oldItemId != $itemId) {
-                $query = db_quote('
+	    if ($oldItemId != $itemId) {
+		    $query = db_quote('
 					UPDATE ?:adls_licenses SET orderItemId = ?s WHERE
 					orderId = ?i
 					AND orderItemId = ?i
 					',
-                    $itemId
-                    , $orderId
-                    , $oldItemId
-                );
-                db_query($query);
-            }
-        }
+			    $itemId
+			    , $orderId
+			    , $oldItemId
+		    );
+		    db_query($query);
+	    }
     }
+
     return false;
 
 }
@@ -242,8 +250,11 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 		    $licenseId = $manager->existsLicense($productId, $itemId, $orderId, $userId);
 	    }
 
+//	    $freeSubscription = \HeloStore\ADLS\ProductManager::instance()->isFreeSubscription($storeProduct['adls_subscription_id']);
+//	    $paidSubscription = \HeloStore\ADLS\ProductManager::instance()->isPaidSubscription($storeProduct['adls_subscription_id']);
+	    // @TODO if it's a free product, don't create license
 
-        $notificationState = (AREA == 'A' ? 'I' : 'K');
+	    $notificationState = (AREA == 'A' ? 'I' : 'K');
 
         if ($isPaidStatus) {
             $domainOptions = Utils::filterDomainProductOptions($product['product_options']);

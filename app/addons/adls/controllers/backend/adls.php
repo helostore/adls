@@ -26,12 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if ($mode == 'usage') {
+    $usage = \HeloStore\ADLS\Usage::general();
+    \Tygh\Registry::get('view')->assign('usage', $usage);
+}
 if ($mode == 'logs') {
 	$logger = \HeloStore\ADLS\Logger::instance();
 	$params = $_REQUEST;
 
 	if (!empty($params['self_exclude'])) {
-		$params['exclude_ips'] = array(
+		$params['excludeIps'] = array(
 			'188.166.76.129'
 		);
 	}
@@ -46,8 +50,6 @@ if ($mode == 'logs') {
 
 	\Tygh\Registry::get('view')->assign('result', $result);
 	\Tygh\Registry::get('view')->assign('logs', $logs);
-
-
 }
 
 if ($mode == 'update_logs_info') {
