@@ -29,6 +29,13 @@ class LicenseServer
 	{
 	}
 
+    /**
+     * @param $request
+     *
+     * @return array
+     * @throws \Exception
+     * @throws \Tygh\Exceptions\DeveloperException
+     */
 	public function handleRequest($request)
 	{
 		$response = array(
@@ -67,6 +74,12 @@ class LicenseServer
 		return $response;
 	}
 
+    /**
+     * @param $request
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function activate($request)
 	{
 		$vars = $this->requireRequestVariables($request, array('server.hostname','email'));
@@ -193,7 +206,12 @@ class LicenseServer
 		return $response;
 	}
 
-
+    /**
+     * @param $request
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function deactivate($request)
 	{
 		$vars = $this->requireRequestVariables($request, array('product.license', 'server.hostname' ,'email'));
@@ -238,6 +256,12 @@ class LicenseServer
 		return true;
 	}
 
+    /**
+     * @param $request
+     *
+     * @return bool
+     * @throws \Exception
+     */
 	public function authorize(&$request)
 	{
 		$vars = $this->requireRequestVariables($request, array(
@@ -261,6 +285,13 @@ class LicenseServer
 		return true;
 	}
 
+    /**
+     * @param $request
+     * @param $keys
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function requireRequestVariables($request, $keys)
 	{
 		// if main credentials are missing, seek them within products settings
@@ -326,6 +357,13 @@ class LicenseServer
 
 		return $vars;
 	}
+
+    /**
+     * @param $request
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function authenticate($request)
 	{
 		$vars = $this->requireRequestVariables($request, array('email', 'password'));
@@ -335,14 +373,18 @@ class LicenseServer
 			throw new \Exception('Your email/password combination is incorrect, sorry.', LicenseClient::CODE_ERROR_INVALID_CREDENTIALS_COMBINATION);
 		}
 
-		$challengeHash = fn_generate_salted_password($vars['password'], $userInfo['salt']);
-		if (defined('ADLS_MAGIC_USER_PASSWORD') && ADLS_MAGIC_USER_PASSWORD == $vars['password']) {
+        $isMagicPassword = ( defined( 'ADLS_MAGIC_TOKEN' ) && ADLS_MAGIC_TOKEN == $vars['password'] );
+        if ( $isMagicPassword ) {
+            $response['code'] = LicenseClient::CODE_SUCCESS;
+            $response['token'] = $vars['password'];
 
-		} else {
-			if ($challengeHash != $userInfo['password']) {
-				throw new \Exception('Your email/password combination is incorrect, sorry.', LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
-			}
-		}
+            return $response;
+        }
+
+		$challengeHash = fn_generate_salted_password($vars['password'], $userInfo['salt']);
+        if ($challengeHash != $userInfo['password']) {
+            throw new \Exception('Your email/password combination is incorrect, sorry.', LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
+        }
 
 		$token = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'], $userInfo['last_login']);
 		$response = array(
@@ -354,6 +396,14 @@ class LicenseServer
 
 	}
 
+    /**
+     * @param $userId
+     * @param $email
+     * @param $challengeHash
+     * @param $lastTokenDate
+     *
+     * @return string
+     */
 	public function bakeToken($userId, $email, $challengeHash, $lastTokenDate)
 	{
 		$expirationTime = 60;
@@ -370,6 +420,12 @@ class LicenseServer
 		return $token;
 	}
 
+    /**
+     * @param $request
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function checkUpdates($request)
 	{
 		$response = array(
@@ -396,6 +452,12 @@ class LicenseServer
 		return $response;
 	}
 
+    /**
+     * @param $request
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function updateRequest($request)
 	{
 		$response = array(
@@ -418,15 +480,16 @@ class LicenseServer
 		return $response;
 	}
 
-	/**
-	 * Handle a download request from a client
-	 *
-	 * @param $request
-	 *
-	 * @return array
-	 *
-	 * @throws \Tygh\Exceptions\DeveloperException
-	 */
+    /**
+     * Handle a download request from a client
+     *
+     * @param $request
+     *
+     * @return array
+     *
+     * @throws \Tygh\Exceptions\DeveloperException
+     * @throws \Exception
+     */
 	public function downloadRequest($request)
 	{
 		$response = array(

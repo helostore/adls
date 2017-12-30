@@ -46,6 +46,9 @@
                 </select>
             </div>
         </div>
+
+
+        {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
     </div>
 
     <!--content_adls--></div>

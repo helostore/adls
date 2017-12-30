@@ -103,9 +103,12 @@ class Logger extends Singleton
 		if (!empty($params['type'])) {
 			$conditions[] = db_quote('al.type = ?s', $params['type']);
 		}
-		if (!empty($params['objectType'])) {
-			$conditions[] = db_quote('al.objectType = ?s', $params['objectType']);
-		}
+        if (!empty($params['objectType'])) {
+            $conditions[] = db_quote('al.objectType = ?s', $params['objectType']);
+        }
+        if (!empty($params['objectAction'])) {
+            $conditions[] = db_quote('al.objectAction = ?s', $params['objectAction']);
+        }
 		if (!empty($params['ip'])) {
 			$conditions[] = db_quote('al.ip = ?s', $params['ip']);
 		}
@@ -118,7 +121,9 @@ class Logger extends Singleton
         if (!empty($params['limit'])) {
             $limit = ' LIMIT 0,' . $params['limit'];
 		}
-
+        if (!empty($params['productCode'])) {
+            $conditions[] = db_quote('al.request LIKE ?l', '%"code":"' . $params['productCode'] . '"%');
+        }
 		$joins[] = db_quote('LEFT JOIN ?:country_descriptions AS cd ON cd.code = al.country AND cd.lang_code = ?s', CART_LANGUAGE);
 
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
