@@ -73,6 +73,42 @@
             PRIMARY KEY (`id`)
             )
         </item>
+        <item for="install">
+            CREATE TABLE IF NOT EXISTS `?:adls_platforms` (
+            `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            PRIMARY KEY (`id`)
+            )
+        </item>
+        <item for="install">
+            CREATE TABLE IF NOT EXISTS `?:adls_platform_editions` (
+            `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `platformId` tinyint(3) UNSIGNED NOT NULL,
+            `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            PRIMARY KEY (`id`)
+            )
+        </item>
+        <item for="install">
+            CREATE TABLE IF NOT EXISTS `?:adls_platform_versions` (
+            `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `platformId` tinyint(3) UNSIGNED NOT NULL,
+            `editionId` tinyint(3) UNSIGNED NOT NULL,
+            `version` varchar(16) NOT NULL,
+            `releaseDate` datetime NULL ,
+            `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            PRIMARY KEY (`id`)
+            )
+        </item>
+        <item for="install">
+            CREATE TABLE IF NOT EXISTS `?:adls_compatibility` (
+            `releaseId` mediumint(8) UNSIGNED NOT NULL,
+            `platformVersionId` mediumint(8) UNSIGNED NOT NULL,
+            `platformId` tinyint(3) UNSIGNED NOT NULL,
+            `editionId` tinyint(3) UNSIGNED NOT NULL,
+            `productId` mediumint(8) UNSIGNED NOT NULL,
+            PRIMARY KEY (`releaseId`, `platformVersionId`)
+            )
+        </item>
 
         <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64);</item>

@@ -193,7 +193,11 @@ class ProductManager extends Singleton
 					}
 				}
 			}
+            if (empty($products[$k]['releases2']) && ! empty($products[$k]['releases'])) {
+                $products[$k]['has_unreleased_version'] = true;
+            }
 		}
+
 
 		return $products;
 	}

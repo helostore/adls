@@ -19,7 +19,7 @@
 						<td>{$version}</td>
 						<td>{$entry.requests}</td>
 						<td>
-							{if is_array($entry.hostname)}
+							{if is_array($entry.hostname.0)}
                                 {foreach from=$entry.hostname key="hostname" item="productVersions"}
 									{$hostname} ({", "|implode:$productVersions})
 								{/foreach}
