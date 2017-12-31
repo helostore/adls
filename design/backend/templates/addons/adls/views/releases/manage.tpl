@@ -110,6 +110,12 @@
                             but_href=fn_url("releases.publish?release_id=`$product.latestRelease2->getId()`")
                             but_meta=""}
 						{/if}
+                        {include
+							file="buttons/button.tpl"
+							but_role="action"
+							but_text="Manage"
+							but_href=fn_url("releases.update?id=`$productCode`")
+							but_meta=""}
 					</td>
 					<td>
 						{if $product.has_unreleased_version}

@@ -13,10 +13,84 @@
  */
 
 use HeloStore\ADLS\ProductManager;
+use HeloStore\Developer\ReleaseManager;
+
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($mode == 'update') {
+        $addonId = $_REQUEST['id'];
+
+        // app/addons/developer/controllers/backend/addons.post.php:106
+
+        $manager = ReleaseManager::instance();
+        if ($manager->pack($addonId, $output)) {
+            fn_set_notification('N', __('notice'), 'Packed to ' . $output['archivePath']);
+
+            // attempt to release the newly packed add-on
+            $releaseId = null;
+            try {
+                $releaseId = $manager->release($addonId, $output);
+            } catch (\Exception $e) {
+                fn_set_notification('W', __('warning'), $e->getMessage(), 'I');
+            }
+            if ($releaseId !== null) {
+                if ($releaseId) {
+                    fn_set_notification('N', __('notice'), 'Attached release to product: ' . $output['archivePath']);
+                } else {
+                    fn_set_notification('E', __('error'), 'Failed attaching release to product: ' . $output['archivePath']);
+                }
+            }
+        } else if ($manager->hasErrors()) {
+            foreach ($manager->getErrors() as $error) {
+                fn_set_notification('E', __('error'), $error);
+            }
+        }
+
+        if ( empty($releaseId)) {
+            return array( CONTROLLER_STATUS_REDIRECT, $_SERVER['HTTP_REFERER'] );
+        }
+
+        $release = \HeloStore\ADLS\ReleaseRepository::instance()->findOneById($releaseId);
+        if (empty($release)) {
+            throw new \Exception('Unable to find release');
+        }
+
+        $productId = $release->getProductId();
+
+        if ( ! empty($_POST['compatibility'])) {
+            $compatiblePlatformVersions = $_POST['compatibility'];
+            $entry = new \HeloStore\ADLS\Compatibility\Compatibility();
+            $platformVersionRepository = \HeloStore\ADLS\Platform\PlatformVersionRepository::instance();
+            foreach ($compatiblePlatformVersions as $id) {
+                $platformVersion = $platformVersionRepository->findOneById($id);
+                \HeloStore\ADLS\Compatibility\CompatibilityManager::instance()->assign($productId, $releaseId, $platformVersion);
+            }
+        }
+
+        return array( CONTROLLER_STATUS_REDIRECT, $_SERVER['HTTP_REFERER'] );
+    }
+}
+
+
+if ($mode == 'update' && !empty($_REQUEST['id'])) {
+    $addonId = $_REQUEST['id'];
+    $manager = ProductManager::instance();
+    $products = $manager->getStoreProductsData();
+    $product = $products[$addonId];
+
+    if ( ! isset($products[$addonId])) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    \Tygh\Registry::get('view')->assign('product', $product);
+    \Tygh\Registry::get('view')->assign('addonId', $addonId);
+
+    $platform = \HeloStore\ADLS\Platform\PlatformRepository::instance()->findDefault();
+    list($availableVersions, ) = \HeloStore\ADLS\Platform\PlatformVersionRepository::instance()->findByPlatformId($platform->getId(), [
+        'items_per_page' => 35
+    ]);
+    \Tygh\Registry::get('view')->assign('availableVersions', $availableVersions);
 
 }
 
@@ -47,7 +121,8 @@ if (($mode == 'publish' || $mode == 'unpublish') && !empty($_REQUEST['release_id
 
 if ($mode == 'manage') {
 
-	$manager = ProductManager::instance();
-	$products = $manager->getStoreProductsData();
-	\Tygh\Registry::get('view')->assign('products', $products);
+    $manager = ProductManager::instance();
+    $products = $manager->getStoreProductsData();
+    \Tygh\Registry::get('view')->assign('products', $products);
 }
+

@@ -1,0 +1,362 @@
+[
+  {
+    "version": "1.3.0",
+    "date": "2005-12-01 12:00:00",
+    "description": "Upgrade center added, Site news and emails\/newsletter add-on, New 'Customers who bought this product also bought', Integrated JavaScript-based template editor, MySQL 5 compatibility, Advanced inventory tracking options, Product features, Ads addon, Improved checkout process"
+  },
+  {
+    "version": "1.3.2",
+    "date": "2006-02-06 12:00:00",
+    "description": "Discounts\/coupons, Customizable Form Builder, Product options forbidden combinations, New payment gateways, New template set, New shippings features, Drop-down manufacturers, Title setting, Installation improvements, Flash animation support, Extended product search, HTML 4.0 Transitional complied code, Drop-down menu in the administrator back-end"
+  },
+  {
+    "version": "1.3.3",
+    "date": "2006-05-17 12:00:00",
+    "description": "Order management, Reporting tool, Multicurrency, Images for product options New template set, 4 new professional skin themes, Privileges system, Ability to use email as login; Ability to create thumbnails for products and categories automatically, New payment gateways"
+  },
+  {
+    "version": "1.3.4",
+    "date": "2006-11-11 12:00:00",
+    "description": "Affiliate module, Product configurator, Feature comparison, Gift Registry, QuickBooks export, MaxMind antifraud integration, SEO URLs(uses Apache mod_rewrite module), New set of extra skins, New payment gateways"
+  },
+  {
+    "version": "1.3.5-RC1",
+    "date": "2007-09-07 12:00:00",
+    "description": "Maintenance release"
+  },
+  {
+    "version": "1.3.5-SP1",
+    "date": "2007-10-22 12:00:00",
+    "description": "Maintenance release"
+  },
+  {
+    "version": "1.3.5-SP2",
+    "date": "2007-12-25 12:00:00",
+    "description": "Maintenance release"
+  },
+  {
+    "version": "1.3.5-SP3",
+    "date": "2008-04-08 12:00:00",
+    "description": "Reduces the number of database queries"
+  },
+  {
+    "version": "1.3.5-SP4",
+    "date": "2008-10-07 12:00:00",
+    "description": "Certified with Google Checkout"
+  },
+  {
+    "version": "2.0.1",
+    "date": "2009-05-07 12:00:00",
+    "description": "Major Release, brand new design and a set of extra skins, ayout block manager, design mode, web-based upgrade center, product filters"
+  },
+  {
+    "version": "2.0.2",
+    "date": "2009-03-07 12:00:00",
+    "description": "Styles in customer area were splitted to 2 file, Top menu in customer area is configurable, Pages: search added, Ability to display products from subcategories"
+  },
+  {
+    "version": "2.0.3",
+    "date": "2009-05-07 12:00:00",
+    "description": "4 new skins"
+  },
+  {
+    "version": "2.0.4",
+    "date": "2009-05-25 12:00:00",
+    "description": "Database restore, Number of news to display"
+  },
+  {
+    "version": "2.0.5",
+    "date": "2009-07-01 12:00:00",
+    "description": "Updated Google Base addon and new skins"
+  },
+  {
+    "version": "2.0.6",
+    "date": "2009-07-15 12:00:00",
+    "description": "Three new skins, print packing slips, integration of the Camtech XML online payment gateway"
+  },
+  {
+    "version": "2.0.7",
+    "date": "2009-08-24 12:00:00",
+    "description": "Improvements to product options and bestsellers, performance optimization, extended category layout option"
+  },
+  {
+    "version": "2.0.8",
+    "date": "2009-09-15 12:00:00",
+    "description": "Maintenance release, upgrade from 1.3.5 is supported."
+  },
+  {
+    "version": "2.0.9",
+    "date": "2009-11-12 12:00:00",
+    "description": "Recurring billing, Google Sitemap, File upload for products, Data feeds Price List, User groups, new HTML block, change the order of product tabs"
+  },
+  {
+    "version": "2.0.10",
+    "date": "2009-11-24 12:00:00",
+    "description": "Store credit card data in profile, SEO addon page indexing was improved"
+  },
+  {
+    "version": "2.0.11",
+    "date": "2009-12-21 12:00:00",
+    "description": "Order shipments, \u201cBuy together\u201d add-on, enhanced features for SEO-friendly URLs and Moneybookers payment"
+  },
+  {
+    "version": "2.0.12",
+    "date": "2010-01-20 12:00:00",
+    "description": "Security for admin accounts, support of PayPal 3D Secure, 1 new free skin, 40 ready-made layouts"
+  },
+  {
+    "version": "2.0.13",
+    "date": "2010-03-16 12:00:00",
+    "description": "Support for 5 new payment services, 2 new free skins"
+  },
+  {
+    "version": "2.0.14",
+    "date": "2010-03-23 12:00:00",
+    "description": "Product thumbnails as gallery, position of buttons on the product details"
+  },
+  {
+    "version": "2.0.15",
+    "date": "2010-06-03 12:00:00",
+    "description": "Improved import\/export, clear the cache, Separate storage of products info (catalog, ordered), Paypal Express Checkout authentication by API, remove phone number validation"
+  },
+  {
+    "version": "2.1",
+    "date": "2010-08-08 12:00:00",
+    "description": "Major Release, Checkout process, Block manager, better SEO, Order management, export\/import product combinations, Abandoned carts"
+  },
+  {
+    "version": "2.1.1",
+    "date": "2010-09-06 12:00:00",
+    "description": "Cache back-end"
+  },
+  {
+    "version": "2.1.2",
+    "date": "2010-11-09 12:00:00",
+    "description": "Block Caching to Enhance Storefront Performance, Catalog Mode, Instant Product Search"
+  },
+  {
+    "version": "2.1.3",
+    "date": "2011-02-01 12:00:00",
+    "description": "Precise shipping rate estimation, reduced storefront load time, 3 new skins"
+  },
+  {
+    "version": "2.1.4",
+    "date": "2011-03-02 12:00:00",
+    "description": "Moneybookers eWallet, Sales reports available to vendors"
+  },
+  {
+    "version": "2.2.1",
+    "date": "2011-07-01 12:00:00",
+    "description": "Major Release, new admin panel look and feel, customer notifications, Janrain social login feature, Twigmo"
+  },
+  {
+    "version": "2.2.2",
+    "date": "2011-08-17 12:00:00",
+    "description": "Product configurator add-on refactored, speed of Product Features page increased, visual editor can now be disabled"
+  },
+  {
+    "version": "2.2.3",
+    "date": "2011-09-18 12:00:00",
+    "description": "Google Export add-on, Sort by field in the products search in admin"
+  },
+  {
+    "version": "2.2.4",
+    "date": "2011-11-16 12:00:00",
+    "description": "Maintenance release, Searchanise"
+  },
+  {
+    "version": "2.2.5",
+    "date": "2012-06-21 12:00:00",
+    "description": "Maintenance release"
+  },
+  {
+    "version": "3.0.1",
+    "date": "2012-05-22 12:00:00",
+    "description": "Major Release- new edition \u2014 CS-Cart Ultimate, 960.gs grid system"
+  },
+  {
+    "version": "3.0.2",
+    "date": "2012-07-26 12:00:00",
+    "description": "Store Import add-on"
+  },
+  {
+    "version": "3.0.3",
+    "date": "2012-09-05 12:00:00",
+    "description": "Store Import add-on add-on functionality has been extended, Community Edition Discontinued"
+  },
+  {
+    "version": "3.0.4",
+    "date": "2012-11-07 12:00:00",
+    "description": "Maintenance release, reinstated ability to store credit card information"
+  },
+  {
+    "version": "3.0.5",
+    "date": "2013-01-16 12:00:00",
+    "description": "Maintenance release"
+  },
+  {
+    "version": "3.0.6",
+    "date": "2013-02-14 12:00:00",
+    "description": "Paypal Security improved, SEo issue fixed"
+  },
+  {
+    "version": "4.0.1",
+    "date": "2013-06-26 12:00:00",
+    "description": "Major Release, Change of Prices"
+  },
+  {
+    "version": "4.0.2",
+    "date": "2013-09-26 12:00:00",
+    "description": "Store Import tool, CDN Tool, EU Cookie Law support"
+  },
+  {
+    "version": "4.0.3",
+    "date": "2013-11-06 12:00:00",
+    "description": "Category Images are Back, On sale Block, 1 new theme"
+  },
+  {
+    "version": "4.1.1",
+    "date": "2014-01-15 12:00:00",
+    "description": "Major Release, Add-ons and themes can be installed from stand-alone archives"
+  },
+  {
+    "version": "4.1.2",
+    "date": "2014-01-28 12:00:00",
+    "description": "4.0.x theme compatibility & Google Chrome compatibility issue fix"
+  },
+  {
+    "version": "4.1.3",
+    "date": "2014-03-18 12:00:00",
+    "description": "Import of translations from PO"
+  },
+  {
+    "version": "4.1.4",
+    "date": "2014-04-23 12:00:00",
+    "description": "Responsive Design"
+  },
+  {
+    "version": "4.1.5",
+    "date": "2014-05-20 12:00:00",
+    "description": "3 New responsive Styles"
+  },
+  {
+    "version": "4.2.1",
+    "date": "2014-07-22 12:00:00",
+    "description": "Major Release, Admin panel changes- Seo improvments, Mailchimp Addon"
+  },
+  {
+    "version": "4.2.2",
+    "date": "2014-08-28 12:00:00",
+    "description": "Minor Fixes,"
+  },
+  {
+    "version": "4.2.3",
+    "date": "2014-10-16 12:00:00",
+    "description": "Drag n Drop Grids, Edit Content on Site, Buy now with 1 Click, 2 new themes"
+  },
+  {
+    "version": "4.2.4",
+    "date": "2014-11-27 12:00:00",
+    "description": "PayPal IPN (its an Addon now) & Realex Payments Support, IPv6 support, fixes"
+  },
+  {
+    "version": "4.3.1",
+    "date": "2015-04-29 12:00:00",
+    "description": "Major Release, Speed Boost, Blog Addon, Option Variants export-import"
+  },
+  {
+    "version": "4.3.2",
+    "date": "2015-06-09 12:00:00",
+    "description": "Bug Fixes, product filters on the home page"
+  },
+  {
+    "version": "4.3.3",
+    "date": "2015-06-25 12:00:00",
+    "description": "Maintenance release, Upgrade Center Improvment"
+  },
+  {
+    "version": "4.3.4",
+    "date": "2015-09-09 12:00:00",
+    "description": "Assign payment methods to shipping methods, adds birthday promotions, and improves the Upgrade Center."
+  },
+  {
+    "version": "4.3.5",
+    "date": "2015-12-15 12:00:00",
+    "description": "Trash Category in Admin, Currency conversion for PayPal payments, PayPal in-context checkout, Free shipping methods."
+  },
+  {
+    "version": "4.3.6",
+    "date": "2016-03-02 12:00:00",
+    "description": "Performance Release, PHP7, MV Features, store import"
+  },
+  {
+    "version": "4.3.7",
+    "date": "2016-05-10 12:00:00",
+    "description": "No more Free version, \"Subcategories tree\" category filling, Canonical URLs for the blog posts."
+  },
+  {
+    "version": "4.3.8",
+    "date": "2016-06-08 12:00:00",
+    "description": "This version is a patch\u2014it only fixes issues and updates integration with payment and shipping services"
+  },
+  {
+    "version": "4.3.9",
+    "date": "2016-07-15 12:00:00",
+    "description": "This version is a patch\u2014important security fix, PayPal partial refund fix, Tracking number fix, and The HiDPI displays support add-on fix."
+  },
+  {
+    "version": "4.3.10",
+    "date": "2016-10-18 12:00:00",
+    "description": "The upgrade fixes eBay Synchronization, PayPal Express Checkout, admin privileges, and the Store Locator add-on."
+  },
+  {
+    "version": "4.4.1",
+    "date": "2016-11-14 12:00:00",
+    "description": "Major Release. New email Tempalte\/Documents editor, Files change detector, Vendor subscritpion plans, New Theme logic, Fontawesome fonts in admin"
+  },
+  {
+    "version": "4.4.2",
+    "date": "2016-11-29 12:00:00",
+    "description": "This Upgrade presents CS-Cart Ultimate with unlimited Storefronts, Mobile Admin App, and new Bright theme."
+  },
+  {
+    "version": "4.4.3",
+    "date": "2017-01-26 12:00:00",
+    "description": "This Upgrade presents Google reCAPTCHA and Store upgrade via console, Besides bug fixes (correct fonts are displayed in email notifications, order notifications for 2Checkout payments)."
+  },
+  {
+    "version": "4.5.1",
+    "date": "2017-02-28 12:00:00",
+    "description": "Major Multi-Vendor changes: automatic vendor payout system, new demo data. CS-Cart changes :promotions aren't reapplied on order editing"
+  },
+  {
+    "version": "4.5.1-SP1",
+    "date": "2017-03-06 12:00:00",
+    "description": "Solves a problem with block caching"
+  },
+  {
+    "version": "4.5.2",
+    "date": "2017-04-06 12:00:00",
+    "description": "This Upgrade pres solves problems with Facebook API, sales reports, Authoirize.net and supports PHP7.1"
+  },
+  {
+    "version": "4.5.2-SP1",
+    "date": "2017-04-08 12:00:00",
+    "description": "Solves a problem with checkout"
+  },
+  {
+    "version": "4.5.2-SP2",
+    "date": "2017-04-11 12:00:00",
+    "description": "Solves a problem with authorization"
+  },
+  {
+    "version": "4.6.1",
+    "date": "2017-06-27 12:00:00",
+    "description": "Product Variations, search suggestions in orders, Phone field to search for orders, Creating the PayPal merchant account in the CS-Cart admin, edit robots.txt & SMTP for each storefront, Fast Service pack installation -MV new features : Theme and Layout editors for Vendors"
+  },
+  {
+    "version": "4.6.2",
+    "date": "2017-08-09 12:00:00",
+    "description": "Fixes in Product Variations, Fedex, Paypal, reward points and performance Optimization up to 14%"
+  }
+]

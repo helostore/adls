@@ -23,6 +23,8 @@ abstract class Entity
      * Entity constructor.
      *
      * @param array $data
+     *
+     * @throws \Exception
      */
     public function __construct($data = array())
     {
@@ -75,6 +77,7 @@ abstract class Entity
                 'endDate',
                 'updatedAt',
                 'createdAt',
+                'releaseDate',
                 'date'))) {
                 $value = ($value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value);
             }
@@ -115,6 +118,7 @@ abstract class Entity
                 'startDate',
                 'endDate',
                 'updatedAt',
+                'releaseDate',
                 'createdAt',
                 'date'))) {
 
