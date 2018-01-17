@@ -211,6 +211,7 @@ class ProductManager extends Singleton
 				// our store version is newer
 				$updates[$productCode] = array(
 					'version' => $storeVersion,
+					'userVersion' => $customerVersion,
 					'code' => $productCode,
 					'reviewMessage' => $this->getReviewMessage($productCode)
 				);
