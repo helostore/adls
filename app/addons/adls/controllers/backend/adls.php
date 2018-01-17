@@ -35,7 +35,8 @@ if ($mode == 'logs') {
 			'***REMOVED***'
 		);
 	}
-    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : 20;
+//    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUESST['limit']) : 20;
+    $params['items_per_page'] = isset($_REQUEST['items_per_page']) ? intval($_REQUESST['items_per_page']) : 20;
 	list($logs, $result) = $logger->get($params);
 
 	if (!empty($params['id'])) {
@@ -44,10 +45,8 @@ if ($mode == 'logs') {
 		exit;
 	}
 
-	\Tygh\Registry::get('view')->assign('result', $result);
+	\Tygh\Registry::get('view')->assign('search', $result);
 	\Tygh\Registry::get('view')->assign('logs', $logs);
-
-
 }
 
 if ($mode == 'update_logs_info') {
