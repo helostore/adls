@@ -113,14 +113,20 @@ class Logger extends Singleton
         if (!empty($params['userId'])) {
             $conditions[] = db_quote('al.userId = ?s', $params['userId']);
 		}
-        if (!empty($params['limit'])) {
-            $limit = ' LIMIT 0,' . $params['limit'];
-		}
+//        if (!empty($params['limit'])) {
+//            $limit = ' LIMIT 0,' . $params['limit'];
+//		}
 
 		$joins[] = db_quote('LEFT JOIN ?:country_descriptions AS cd ON cd.code = al.country AND cd.lang_code = ?s', CART_LANGUAGE);
 
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
 		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+
+        if (!empty($params['items_per_page'])) {
+            $params['total_items'] = db_get_field("SELECT COUNT(DISTINCT(al.id)) FROM ?:adls_logs AS al ?p ?p ?p ?p", $joins, $conditions);
+            $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
+        }
+
 
 		$query = db_quote('
 			SELECT
@@ -133,12 +139,10 @@ class Logger extends Singleton
 			' . $limit . '
 		');
 
-        $result = array();
 		if (!empty($params['single'])) {
 			$items = db_get_row($query);
         } else {
             $items = db_get_array($query);
-            $result['total'] = count($items);
 		}
 
         foreach ($items as $i => $item) {
@@ -161,7 +165,7 @@ class Logger extends Singleton
             }
         }
 
-		return array($items, $result);
+		return array($items, $params);
 	}
 
 	public function getCountryCodeByIp($ip)

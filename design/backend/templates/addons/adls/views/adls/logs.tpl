@@ -6,7 +6,7 @@
 	{/capture}
 
 	{include file="common/pagination.tpl"}
-    Total entries: {$result.total}
+    {*Total entries: {$result.total}*}
 
 	{if $logs}
 		<table class="table">
