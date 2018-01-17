@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $addonId = $_REQUEST['id'];
 
         // app/addons/developer/controllers/backend/addons.post.php:106
-
         $manager = ReleaseManager::instance();
         if ($manager->pack($addonId, $output)) {
             fn_set_notification('N', __('notice'), 'Packed to ' . $output['archivePath']);
@@ -120,7 +119,6 @@ if (($mode == 'publish' || $mode == 'unpublish') && !empty($_REQUEST['release_id
 }
 
 if ($mode == 'manage') {
-
     $manager = ProductManager::instance();
     $products = $manager->getStoreProductsData();
     \Tygh\Registry::get('view')->assign('products', $products);
