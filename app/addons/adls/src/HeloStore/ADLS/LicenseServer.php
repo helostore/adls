@@ -233,11 +233,20 @@ class LicenseServer
 			throw new \Exception('Your email/password combination is incorrect, sorry mate.', LicenseClient::CODE_ERROR_INVALID_CREDENTIALS_COMBINATION);
 		}
 
-		$challengeHash = fn_generate_salted_password($vars['password'], $userInfo['salt']);
+        $challengeHash = array();
+		// copy from fn_generate_salted_password() at app/functions/fn.users.php:2371
+        if (empty($userInfo['salt'])) {
+            $challengeHash[] = $vars['password'];
+            $challengeHash[] = md5($vars['password']);
+        } else {
+            $challengeHash[] = md5(md5($vars['password']) . md5($userInfo['salt']));
+            $challengeHash[] = md5($vars['password'] . md5($userInfo['salt']));
+        }
+
 		if (defined('ADLS_MAGIC_USER_PASSWORD') && ADLS_MAGIC_USER_PASSWORD == $vars['password']) {
 			
 		} else {
-			if ($challengeHash != $userInfo['password']) {
+			if (!in_array($userInfo['password'], $challengeHash)) {
 				throw new \Exception('Your email/password combination is incorrect, sorry matey.', LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
 			}
 		}
