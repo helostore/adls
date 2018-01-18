@@ -112,7 +112,10 @@ class Logger extends Singleton
         }
         if (!empty($params['userId'])) {
             $conditions[] = db_quote('al.userId = ?s', $params['userId']);
-		}
+        }
+        if (!empty($params['requestPattern'])) {
+            $conditions[] = db_quote('al.request LIKE ?l', '%' . $params['requestPattern'] . '%');
+        }
 //        if (!empty($params['limit'])) {
 //            $limit = ' LIMIT 0,' . $params['limit'];
 //		}
