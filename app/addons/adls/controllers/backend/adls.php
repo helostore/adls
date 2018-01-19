@@ -40,8 +40,9 @@ if ($mode == 'logs') {
 	list($logs, $result) = $logger->get($params);
 
 	if (!empty($params['id'])) {
-
-		echo '<pre>' . var_export($logs, 1) . '</pre>';
+        $output = stripcslashes(var_export($logs, 1));
+        $output = stripcslashes($output);
+		echo '<pre>' . $output . '</pre>';
 		exit;
 	}
 
