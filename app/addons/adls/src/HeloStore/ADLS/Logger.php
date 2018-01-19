@@ -49,6 +49,18 @@ class Logger extends Singleton
 	{
 		return $this->add(Logger::TYPE_LOG, $request, $server, $objectType, $objectAction, $content);
 	}
+
+    public function update($id, $entry)
+    {
+        array_walk($entry, function (&$value, $key) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+        });
+
+        return db_query('UPDATE ?:adls_logs SET ?u WHERE id = ?i', $entry, $id);
+
+    }
 	public function add($type, $request, $server, $objectType = '', $objectAction = '', $content = '', $backtrace = '')
 	{
 		$entry = array();
