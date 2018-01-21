@@ -1,5 +1,28 @@
 [
     {
+        "version": "0.2.16",
+        "releaseDate": "2018-01-21 12:07:35",
+        "releaseTimestamp": "1516536455",
+        "hash": "3028ff2f02c4e9bb99dd3be79164c6cd3806eb6b",
+        "commits": [
+            "[2018-01-21] Bumped version to 0.2.16",
+            "[2018-01-21]\tAbility to update\/add releases with compatibility",
+            "[2018-01-21]\tMerge branch 'feature\/subscription' into feature\/compatibility-versions",
+            "[2018-01-21]\tMerge",
+            "[2018-01-19]\tBumped version to 0.1.80",
+            "[2018-01-18]\tAdd filter",
+            "[2018-01-17]\tBumped to version 0.1.77",
+            "[2018-01-17]\tAdd pagination to logs",
+            "[2018-01-17]\tUpdated authentication mechanism to work with hashes instead of plain-text password",
+            "[2018-01-17]\tA",
+            "[2017-12-31]\tAdd basic components",
+            "[2017-12-30]\tBumped version to 0.2.15",
+            "[2017-12-20]\tBumped version to 0.2.14",
+            "[2017-10-19]\tFix bug when an already active license was unable to reactivate again",
+            "[2017-07-07]\tBumped version to 0.1.76"
+        ]
+    },
+    {
         "version": "0.2.14",
         "releaseDate": "2017-12-16 02:47:37",
         "releaseTimestamp": "1513435657",
@@ -30,16 +53,6 @@
         "commits": [
             "[2017-11-19] Bumped version to 0.2.10",
             "[2017-11-19]\tBumped version to 0.2.9"
-        ]
-    },
-    {
-        "version": "0.2.8",
-        "releaseDate": "2017-11-19 01:49:34",
-        "releaseTimestamp": "1511099374",
-        "hash": "8d6731dc054fb4d6a283eb34829eb23c072345c5",
-        "commits": [
-            "[2017-11-19] Bumped version to 0.2.8",
-            "[2017-11-19]\tBumped version to 0.2.7"
         ]
     }
 ]
