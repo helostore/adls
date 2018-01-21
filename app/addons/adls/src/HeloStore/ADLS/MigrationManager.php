@@ -94,7 +94,7 @@ class MigrationManager extends Manager
         $addonId = $storeProduct['adls_addon_id'];
         $developerReleaseManager = DeveloperReleaseManager::instance();
 
-        $releaseRepositoryPath = $developerReleaseManager->getOutputPath();
+        $releaseRepositoryPath = $developerReleaseManager->getOutputPath($addonId);
 
         $files = glob($releaseRepositoryPath . '/' . $addonId . '*');
         $releaseIds = [];
