@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.18",
+        "releaseDate": "2018-01-21 07:08:58",
+        "releaseTimestamp": "1516561738",
+        "hash": "7f243881b60dd4806d31aceac762373880cd8b6e",
+        "commits": [
+            "[2018-01-21] Bumped version to 0.2.18",
+            "[2018-01-21]\tAdd auxiliary 'number' bigint field for better version sorting"
+        ]
+    },
+    {
         "version": "0.2.17",
         "releaseDate": "2018-01-21 04:30:15",
         "releaseTimestamp": "1516552215",
@@ -43,17 +53,6 @@
             "[2017-12-16]\tBumped version to 0.2.13",
             "[2017-12-16]\tBumped version to 0.2.12",
             "[2017-11-27]\tAdd licenses tab to orders, backend"
-        ]
-    },
-    {
-        "version": "0.2.12",
-        "releaseDate": "2017-12-16 02:45:44",
-        "releaseTimestamp": "1513435544",
-        "hash": "1afb1445b01bbec385f5ff9a1600834484b52c76",
-        "commits": [
-            "[2017-12-16] Bumped version to 0.2.12",
-            "[2017-12-16]\tImprove release and publish procedure",
-            "[2017-11-19]\tBumped version to 0.2.11"
         ]
     }
 ]
