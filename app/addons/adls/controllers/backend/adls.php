@@ -39,16 +39,18 @@ if ($mode == 'logs') {
 			'188.166.76.129'
 		);
 	}
-    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : 20;
+//    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUESST['limit']) : 20;
+    $params['items_per_page'] = isset($_REQUEST['items_per_page']) ? intval($_REQUESST['items_per_page']) : 20;
 	list($logs, $result) = $logger->get($params);
 
 	if (!empty($params['id'])) {
-
-		echo '<pre>' . var_export($logs, 1) . '</pre>';
+        $output = stripcslashes(var_export($logs, 1));
+        $output = stripcslashes($output);
+		echo '<pre>' . $output . '</pre>';
 		exit;
 	}
 
-	\Tygh\Registry::get('view')->assign('result', $result);
+	\Tygh\Registry::get('view')->assign('search', $result);
 	\Tygh\Registry::get('view')->assign('logs', $logs);
 }
 
