@@ -76,6 +76,12 @@ class Release extends Entity
      */
     protected $hash;
 
+    /**
+     * @internal
+     * @var array
+     */
+    private $compatibility;
+
 
 
     /**
@@ -323,4 +329,24 @@ class Release extends Entity
 	public function isSameAs( Release $release ) {
 		return ( $this->compare( $release ) === 0 );
 	}
+
+    /**
+     * @return array
+     */
+    public function getCompatibility()
+    {
+        return $this->compatibility;
+    }
+
+    /**
+     * @param array $compatibility
+     *
+     * @return Release
+     */
+    public function setCompatibility($compatibility)
+    {
+        $this->compatibility = $compatibility;
+
+        return $this;
+    }
 }

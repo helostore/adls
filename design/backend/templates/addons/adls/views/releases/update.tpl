@@ -1,19 +1,15 @@
 <style>
     .compatibility {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         max-width: 800px;
-        flex-wrap: wrap;
-        max-height: 300px;
-        overflow: auto;
+        flex-wrap: ;
     }
     .compatibility-version {
         display: inline-block;
         margin-bottom: 5px;
         white-space: nowrap;
         flex-grow: 1;
-        flex-shrink: 1;
-        flex-basis: 0;
     }
 </style>
 {if !empty($release)}
@@ -34,7 +30,7 @@
         <div class="control-group">
             <label class="control-label">Add-on ID:</label>
             <div class="controls">
-                <input type="text" name="addon_id" readonly value="{$product.adls_addon_id}" />
+                <input type="text" readonly value="{$product.adls_addon_id}" />
             </div>
         </div>
 

@@ -79,7 +79,6 @@ class ReleaseRepository extends EntityRepository
 	    ReleaseLinkRepository::instance()->deleteByReleaseId( $id );
 	    CompatibilityRepository::instance()->deleteByReleaseId( $id );
 
-
         return db_query('DELETE FROM ?p WHERE id = ?i', $this->table, $id);
     }
 
@@ -140,6 +139,32 @@ class ReleaseRepository extends EntityRepository
         if (!empty($params['productId'])) {
             $condition[] = db_quote('releases.productId = ?n', $params['productId']);
         }
+
+        if ( ! empty($params['compatibilityPlatformId'])
+             || ! empty($params['compatibilityPlatformVersionId'])
+             || ! empty($params['compatibilityPlatformEditionId'])
+        ) {
+            $joins[] = db_quote('
+				INNER JOIN ?:adls_compatibility AS compatibility 
+                    ON compatibility.releaseId = releases.id
+                    ' .
+                    (! empty( $params['productId'] ) ?
+                        db_quote(' AND compatibility.productId = ?i', $params['productId']) : '') .
+
+                    (! empty( $params['compatibilityPlatformId'] ) ?
+                        db_quote(' AND compatibility.platformId = ?i', $params['compatibilityPlatformId']) : '') .
+
+                    (! empty( $params['compatibilityPlatformVersionId'] ) ?
+                        db_quote(' AND compatibility.platformVersionId = ?i', $params['compatibilityPlatformVersionId']) : '') .
+
+                    (! empty( $params['compatibilityPlatformEditionId'] ) ?
+                        db_quote(' AND compatibility.editionId = ?i', $params['compatibilityPlatformEditionId']) : '')
+            );
+        }
+//        if ( ! empty($params['compatibilityPlatformVersion'])) {
+//
+//        }
+
 
         $hasStartDate = !empty($params['startDate']);
         $hasEndDate = !empty($params['endDate']);
@@ -234,7 +259,6 @@ class ReleaseRepository extends EntityRepository
         }
         $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
         $items = db_get_array($query);
-
         if (!empty($items)) {
             foreach ($items as $k => $v) {
                 $items[$k] = new Release($v);

@@ -67,7 +67,7 @@ class CompatibilityRepository extends EntityRepository
     /**
      * @param array $params
      *
-     * @return array
+     * @return array|Compatibility|null
      */
     public function find($params = array())
     {
@@ -85,6 +85,7 @@ class CompatibilityRepository extends EntityRepository
             'platformId' => "compatibility.platformId",
             'editionId' => "compatibility.editionId",
             'productId' => "compatibility.productId",
+            'platformVersionReleaseDate' => "version.releaseDate",
         );
         $sorting = db_sort($params, $sortingFields, 'platformVersionId', 'asc');
 
@@ -93,6 +94,15 @@ class CompatibilityRepository extends EntityRepository
         $fields = array();
         $fields[] = 'compatibility.*';
         $group = '';
+
+        $joins[] = db_quote('LEFT JOIN ?:adls_platforms AS platform ON platform.id = compatibility.platformId');
+        $fields[] = 'platform.name AS platform$name';
+
+        $joins[] = db_quote('LEFT JOIN ?:adls_platform_editions AS edition ON edition.id = compatibility.editionId');
+        $fields[] = 'edition.name AS edition$name';
+
+        $joins[] = db_quote('LEFT JOIN ?:adls_platform_versions AS version ON version.id = compatibility.platformVersionId');
+        $fields[] = 'version.version AS platform$version';
 
         if (isset($params['releaseId'])) {
             $condition[] = db_quote('compatibility.releaseId = ?i', $params['releaseId']);
@@ -126,6 +136,7 @@ class CompatibilityRepository extends EntityRepository
         }
 
         $query = db_quote('SELECT ?p FROM ?p AS compatibility ?p ?p ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
+
         $items = db_get_array($query);
 
         if (!empty($items)) {
@@ -153,5 +164,26 @@ class CompatibilityRepository extends EntityRepository
         $params['one'] = true;
 
         return $this->find($params);
+    }
+
+    /**
+     * @param $productId
+     * @param array $params
+     *
+     * @return array
+     */
+    public function findMinMax($productId, $params = array()) {
+        $min = $this->findOne([
+            'productId' => $productId,
+            'sort_by' => 'platformVersionReleaseDate',
+            'sort_order' => 'asc'
+        ]);
+        $max = $this->findOne([
+            'productId' => $productId,
+            'sort_by' => 'platformVersionId',
+            'sort_order' => 'desc'
+        ]);
+
+        return ['min' => $min, 'max' => $max];
     }
 }

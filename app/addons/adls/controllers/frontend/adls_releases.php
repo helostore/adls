@@ -12,6 +12,7 @@
  * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  ****************************************************************************/
 
+use HeloStore\ADLS\Platform\PlatformRepository;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
@@ -49,6 +50,7 @@ if ($mode == 'view') {
 		'userId'     => $auth['user_id'],
 		'productId'  => $productId,
 		'extended'   => true,
+		'compatibilities'   => true,
 		'sort_by'    => 'product',
 		'sort_order' => 'ascdesc',
 //		'sort_order' => 'asc',
@@ -64,6 +66,21 @@ if ($mode == 'view') {
 	} else {
 		list( $releases, $search ) = ReleaseRepository::instance()->findLatest( $params );
 	}
+
+    $platform = PlatformRepository::instance()->findDefault();
+
+	/** @var \HeloStore\ADLS\Release $release */
+    foreach ($releases as $release) {
+
+        $compatibilities = [];
+        if ( ! empty($release)) {
+            list($compatibilities, ) = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->find(array(
+                'releaseId' => $release->getId(),
+                'platformId' => $platform->getId()
+            ));
+            $release->setCompatibility($compatibilities);
+        }
+    }
 
 //	$params['product$adls_subscription_id'] = 1;
 //	unset( $params['userId'] );

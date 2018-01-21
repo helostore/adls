@@ -601,3 +601,14 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 		$product['full_description'] .= '<h2>This product has not been released yet.</h2>';
 	}
 }
+
+/**
+ * @param $product
+ * @param $auth
+ * @param $preview
+ * @param $lang_code
+ */
+function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
+    $productId = $product['product_id'];
+    $product['compatibility'] = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId);
+}

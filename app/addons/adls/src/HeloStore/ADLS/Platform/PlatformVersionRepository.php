@@ -153,13 +153,13 @@ class PlatformVersionRepository extends EntityRepository
 
     /**
      *
-     * @param $name
+     * @param $version
      *
      * @return PlatformVersion|null
      */
-    public function findOneByName( $name ) {
+    public function findOneByVersion($version) {
         return $this->findOne(array(
-            'name' => $name
+            'version' => $version
         ));
     }
 
