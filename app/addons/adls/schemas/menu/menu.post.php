@@ -19,14 +19,14 @@ $schema['central']['adls'] = array(
 			'position' => 20
 		),
 		'adls.releases' => array(
-			'href' => 'releases.manage',
+			'href' => 'releases.overview',
 			'position' => 50
 		),
         'logs' => array(
             'href' => 'adls.logs',
             'position' => 100
         ),
-        'usage' => array(
+        'adls.usage' => array(
             'href' => 'adls.usage',
             'position' => 100
         )

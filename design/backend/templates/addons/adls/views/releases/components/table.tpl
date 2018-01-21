@@ -54,6 +54,20 @@
                 but_text=__("adls.release.unpublish")
                 but_href=fn_url("releases.unpublish?release_id=`$release->getId()`")
                 but_meta="cm-ajax"}
+
+                {include
+                file="buttons/button.tpl"
+                but_role="action"
+                but_text=__("delete")
+                but_href=fn_url("releases.delete?release_id=`$release->getId()`")
+                but_meta="cm-confirm"}
+
+                {include
+                file="buttons/button.tpl"
+                but_role="action"
+                but_text=__("edit")
+                but_href=fn_url("releases.update?release_id=`$release->getId()`")
+                but_meta=""}
             </td>
         </tr>
     {foreachelse}

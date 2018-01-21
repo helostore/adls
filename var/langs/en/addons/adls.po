@@ -104,6 +104,10 @@ msgctxt "Languages::adls.licenses"
 msgid "licenses"
 msgstr "Licenses"
 
+msgctxt "Languages::adls.usage"
+msgid "usage"
+msgstr "Usage"
+
 msgctxt "Languages::adls.order_licenses_created"
 msgid "order_licenses_created"
 msgstr "Your license(s) have been created!"
@@ -156,6 +160,9 @@ msgctxt "Languages::adls.version"
 msgid "adls.version"
 msgstr "Version"
 
+
+
+
 msgctxt "Languages::adls.release_now"
 msgid "adls.release_now"
 msgstr "Release"
@@ -167,6 +174,47 @@ msgstr "Publish"
 msgctxt "Languages::adls.release.unpublish"
 msgid ""
 msgstr "Unpublish"
+
+msgctxt "Languages::adls.release.new.title"
+msgid ""
+msgstr "New release"
+
+msgctxt "Languages::adls.release.new.submit"
+msgid "Add"
+msgstr "Add"
+
+msgctxt "Languages::adls.release.edit.title"
+msgid ""
+msgstr "Edit release #%id%"
+
+msgctxt "Languages::adls.release.edit.submit"
+msgid "Update"
+msgstr "Update"
+
+msgctxt "Languages::adls.release.version"
+msgid ""
+msgstr "Release version"
+
+msgctxt "Languages::adls.release.created_at"
+msgid ""
+msgstr "Created at"
+
+msgctxt "Languages::adls.release.hash"
+msgid ""
+msgstr "Hash"
+
+msgctxt "Languages::adls.release.file.name"
+msgid ""
+msgstr "File name"
+
+
+
+
+
+
+msgctxt "Languages::adls.compatibility"
+msgid ""
+msgstr "Compatibility"
 
 msgctxt "Languages::adls.commits"
 msgid "adls.commits"
