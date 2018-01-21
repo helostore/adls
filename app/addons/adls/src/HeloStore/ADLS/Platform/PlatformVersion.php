@@ -34,6 +34,11 @@ class PlatformVersion extends Entity
     protected $version;
 
     /**
+     * @var integer
+     */
+    protected $number;
+
+    /**
      * @var string
      */
 
@@ -123,6 +128,26 @@ class PlatformVersion extends Entity
         $this->version = $version;
 
         return $this;
+    }
+
+    /**
+     * @param int $number
+     *
+     * @return PlatformVersion
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumber()
+    {
+        return $this->number;
     }
 
     /**

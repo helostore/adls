@@ -35,6 +35,8 @@ class ReleaseRepository extends EntityRepository
         $date = Utils::instance()->getCurrentDate();
 
         $release->setCreatedAt($date);
+        $release->setNumber(Utils::versionToInteger($release->getVersion()));
+
         $data = $release->toArray();
 
 		$id = db_query('INSERT INTO ' . $this->table . ' ?e', $data);
@@ -102,10 +104,10 @@ class ReleaseRepository extends EntityRepository
             'productId' => "releases.productId",
             'createdAt' => "releases.createdAt",
             'fileId' => "releases.fileId",
-            'version' => "releases.version",
+            'version' => "releases.number",
             'product' => array("productDesc.product", "releases.createdAt"),
         );
-        $sorting = db_sort($params, $sortingFields, 'createdAt', 'desc');
+        $sorting = db_sort($params, $sortingFields, 'version', 'desc');
 
 		$condition = array();
         $orCondition = array();
@@ -113,15 +115,6 @@ class ReleaseRepository extends EntityRepository
 		$group = 'releases.id';
         $fields = array();
         $fields[] = 'releases.*';
-//        $fields[] = "INET_ATON(
-//					  CONCAT(
-//					    releases.version,
-//					    REPEAT(
-//					      '.0',
-//					      3 - CHAR_LENGTH(releases.version) + CHAR_LENGTH(REPLACE(releases.version, '.', ''))
-//					    )
-//					  )
-//					) AS versionInt";
         $langCode = !empty($params['langCode']) ? $params['langCode'] : CART_LANGUAGE;
 
         if (!empty($params['id'])) {

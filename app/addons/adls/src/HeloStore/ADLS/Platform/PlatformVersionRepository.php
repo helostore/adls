@@ -14,6 +14,7 @@
 namespace HeloStore\ADLS\Platform;
 
 use HeloStore\ADLS\EntityRepository;
+use HeloStore\ADLS\Utils;
 
 /**
  * Class PlatformVersionRepository
@@ -38,6 +39,7 @@ class PlatformVersionRepository extends EntityRepository
         $query = db_quote('INSERT INTO ?p ?e',
             $this->table,
             array(
+                'number' => Utils::versionToInteger($version),
                 'version' => $version,
                 'platformId' => $platformId,
                 'editionId' => $editionId,
@@ -79,7 +81,7 @@ class PlatformVersionRepository extends EntityRepository
 
         $sortingFields = array (
             'id' => "version.id",
-            'version' => "version.version",
+            'version' => "version.versionNumber",
         );
         $sorting = db_sort($params, $sortingFields, 'version', 'desc');
 

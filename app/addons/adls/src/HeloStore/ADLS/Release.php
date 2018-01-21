@@ -40,6 +40,11 @@ class Release extends Entity
 	 */
 	protected $version;
 
+    /**
+     * @var integer
+     */
+	protected $number;
+
 	/**
 	 * @var integer
 	 */
@@ -161,6 +166,27 @@ class Release extends Entity
 
 		return $this;
 	}
+
+
+    /**
+     * @return int
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param int $number
+     *
+     * @return Release
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+
+        return $this;
+    }
 
     /**
      * @return int
@@ -349,4 +375,5 @@ class Release extends Entity
 
         return $this;
     }
+
 }
