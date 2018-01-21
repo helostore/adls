@@ -51,21 +51,28 @@ if ($mode == 'view') {
 		'productId'  => $productId,
 		'extended'   => true,
 		'compatibilities'   => true,
-		'sort_by'    => 'product',
-		'sort_order' => 'ascdesc',
-//		'sort_order' => 'asc',
 	);
-	if ( ! empty( $_REQUEST['sort_order'] ) ) {
-		$params['sort_order'] = $_REQUEST['sort_order'];
-	}
-	if ( ! empty( $_REQUEST['sort_by'] ) ) {
-		$params['sort_by'] = $_REQUEST['sort_by'];
-	}
+
 	if ( ! empty( $productId ) ) {
-		list( $releases, $search ) = ReleaseRepository::instance()->find( $params );
+        $params['sort_by'] = 'version';
+        $params['sort_order'] = 'desc';
 	} else {
-		list( $releases, $search ) = ReleaseRepository::instance()->findLatest( $params );
+        $params['sort_by'] = 'product';
+        $params['sort_order'] = 'ascdesc';
 	}
+
+    if ( ! empty( $_REQUEST['sort_order'] ) ) {
+        $params['sort_order'] = $_REQUEST['sort_order'];
+    }
+    if ( ! empty( $_REQUEST['sort_by'] ) ) {
+        $params['sort_by'] = $_REQUEST['sort_by'];
+    }
+
+    if ( ! empty( $productId ) ) {
+        list( $releases, $search ) = ReleaseRepository::instance()->find( $params );
+    } else {
+        list( $releases, $search ) = ReleaseRepository::instance()->findLatest( $params );
+    }
 
     $platform = PlatformRepository::instance()->findDefault();
 

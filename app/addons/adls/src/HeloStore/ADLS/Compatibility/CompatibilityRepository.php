@@ -175,12 +175,12 @@ class CompatibilityRepository extends EntityRepository
     public function findMinMax($productId, $params = array()) {
         $min = $this->findOne([
             'productId' => $productId,
-            'sort_by' => 'platformVersionNumber',
+            'sort_by' => 'platformVersion',
             'sort_order' => 'asc'
         ]);
         $max = $this->findOne([
             'productId' => $productId,
-            'sort_by' => 'platformVersionNumber',
+            'sort_by' => 'platformVersion',
             'sort_order' => 'desc'
         ]);
 
