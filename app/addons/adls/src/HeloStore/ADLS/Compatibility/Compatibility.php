@@ -31,7 +31,7 @@ class Compatibility extends Entity
     /**
      * @var integer
      */
-    protected $platformEditionId;
+    protected $editionId;
     /**
      * @var integer
      */
@@ -100,19 +100,19 @@ class Compatibility extends Entity
     /**
      * @return int
      */
-    public function getPlatformEditionId()
+    public function getEditionId()
     {
-        return $this->platformEditionId;
+        return $this->editionId;
     }
 
     /**
-     * @param int $platformEditionId
+     * @param int $editionId
      *
      * @return Compatibility
      */
-    public function setPlatformEditionId($platformEditionId)
+    public function setEditionId($editionId)
     {
-        $this->platformEditionId = $platformEditionId;
+        $this->editionId = $editionId;
 
         return $this;
     }

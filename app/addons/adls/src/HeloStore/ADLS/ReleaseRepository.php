@@ -12,6 +12,7 @@
  * @version    $Id$
  */
 namespace HeloStore\ADLS;
+use HeloStore\ADLS\Compatibility\CompatibilityRepository;
 use HeloStore\ADLSS\Subscription;
 
 /**
@@ -76,6 +77,8 @@ class ReleaseRepository extends EntityRepository
     public function deleteById($id)
     {
 	    ReleaseLinkRepository::instance()->deleteByReleaseId( $id );
+	    CompatibilityRepository::instance()->deleteByReleaseId( $id );
+
 
         return db_query('DELETE FROM ?p WHERE id = ?i', $this->table, $id);
     }

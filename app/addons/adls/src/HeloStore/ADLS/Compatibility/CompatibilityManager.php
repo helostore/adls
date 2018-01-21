@@ -25,17 +25,4 @@ use HeloStore\ADLS\Singleton;
  */
 class CompatibilityManager extends Singleton
 {
-    public function assign($productId, $releaseId, PlatformVersion $platformVersion)
-    {
-        $data = [
-            'releaseId' => $releaseId,
-            'platformVersionId' => $platformVersion->getId(),
-            'platformId' => $platformVersion->getPlatformId(),
-            'editionId' => $platformVersion->getEditionId(),
-            'productId' => $productId,
-        ];
-        $query = db_quote('REPLACE INTO ?:adls_compatibility ?e', $data);
-        db_query($query);
-    }
-
 }

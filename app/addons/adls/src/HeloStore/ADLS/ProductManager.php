@@ -379,7 +379,7 @@ class ProductManager extends Singleton
 			));
 			return array(
 				'version' => $latestUserRelease->getVersion(),
-'userVersion' => $customerVersion,
+                'userVersion' => $customerVersion,
 				'releaseId' => $latestUserRelease->getId(),
 				'code' => $productCode,
 				'reviewMessage' => $this->getReviewMessage($productCode),
@@ -413,7 +413,7 @@ class ProductManager extends Singleton
 			// Suggest subscription renewal
 			return array(
 //				'version' => $latestRelease->getVersion(),
-'userVersion' => $customerVersion,
+//                'userVersion' => $customerVersion,
 //				'releaseId' => $latestRelease->getId(),
 				'code' => $productCode,
 //				'reviewMessage' => $this->getReviewMessage($productCode),
