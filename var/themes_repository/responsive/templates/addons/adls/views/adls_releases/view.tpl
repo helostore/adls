@@ -21,9 +21,11 @@
     <tr>
         {tableRowHeader key="product" label="product" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="version" label="version" sort_sign=$sort_sign search=$search}
+        {tableRowHeader key="" label="adls.compatibility" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="createdAt" label="date" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="fileName" label="fileName" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="fileSize" label="fileSize" sort_sign=$sort_sign search=$search}
+
         {hook name="releases:manage_header"}{/hook}
 
         <th>Download</th>
@@ -33,11 +35,19 @@
         <tr>
             <td><strong>{$release->getExtra('product$name')}</strong></td>
             <td>{$release->getVersion()}</td>
+            <td>
+                {if !empty($release->getCompatibility())}
+                    {implode('<br />', $release->getCompatibility()) nofilter}
+                {/if}
+            </td>
             <td>{$release->getCreatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>
                 <a class="ty-btn ty-btn__primary ty-btn" href="{"adls_releases.download?hash={$release->getHash()}"|fn_url}">Download</a>
+                {if !isset($smarty.request.product_id)}
+                    <a class="ty-btn ty-btn__primary ty-btn" href="{"adls_releases.view?product_id={$release->getProductId()}"|fn_url}">View all</a>
+                {/if}
             </td>
         </tr>
     {foreachelse}
