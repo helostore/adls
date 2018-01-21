@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.15</version>
+    <version>0.1.75</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -19,12 +19,12 @@
             `updatedAt` datetime NOT NULL ,
             `licenseKey` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
             `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-            PRIMARY KEY (`id`)
+                PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
             CREATE TABLE IF NOT EXISTS `?:adls_license_domains` (
-            `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
             `licenseId` mediumint(8) UNSIGNED NOT NULL ,
             `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
             `type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -48,7 +48,7 @@
             `country` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `backtrace` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
-            PRIMARY KEY (`id`)
+                PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
@@ -70,7 +70,7 @@
             `fileName` varchar(255) NOT NULL,
             `fileSize` int(11) unsigned NOT NULL,
             `hash` varchar(32) NOT NULL,
-            PRIMARY KEY (`id`)
+                PRIMARY KEY (`id`)
             )
         </item>
 

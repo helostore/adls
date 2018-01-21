@@ -1,12 +1,12 @@
 {capture name="mainbox"}
 
 	{capture name="sidebar"}
-{*		{include file="common/saved_search.tpl" dispatch="logs.manage" view_type="logs"}
-		{include file="views/logs/components/logs_search_form.tpl"}*}
+		{include file="common/saved_search.tpl" dispatch="logs.manage" view_type="logs"}
+		{include file="addons/adls/views/adls/search.tpl"}
 	{/capture}
 
 	{include file="common/pagination.tpl"}
-    Total entries: {$result.total}
+    {*Total entries: {$result.total}*}
 
 	{if $logs}
 		<table class="table">
