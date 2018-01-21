@@ -51,6 +51,18 @@ class Logger extends Singleton
 	{
 		return $this->add(Logger::TYPE_LOG, $request, $server, $objectType, $objectAction, $content);
 	}
+
+    public function update($id, $entry)
+    {
+        array_walk($entry, function (&$value, $key) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+        });
+
+        return db_query('UPDATE ?:adls_logs SET ?u WHERE id = ?i', $entry, $id);
+
+	}
 	public function add($type, $request, $server, $objectType = '', $objectAction = '', $content = '', $backtrace = '')
 	{
 		$entry = array();
@@ -103,12 +115,12 @@ class Logger extends Singleton
 		if (!empty($params['type'])) {
 			$conditions[] = db_quote('al.type = ?s', $params['type']);
 		}
-        if (!empty($params['objectType'])) {
-            $conditions[] = db_quote('al.objectType = ?s', $params['objectType']);
+		if (!empty($params['objectType'])) {
+			$conditions[] = db_quote('al.objectType = ?s', $params['objectType']);
         }
         if (!empty($params['objectAction'])) {
             $conditions[] = db_quote('al.objectAction = ?s', $params['objectAction']);
-        }
+		}
 		if (!empty($params['ip'])) {
 			$conditions[] = db_quote('al.ip = ?s', $params['ip']);
 		}
@@ -118,6 +130,9 @@ class Logger extends Singleton
         if (!empty($params['userId'])) {
             $conditions[] = db_quote('al.userId = ?s', $params['userId']);
 		}
+        if (!empty($params['requestPattern'])) {
+            $conditions[] = db_quote('al.request LIKE ?l', '%' . $params['requestPattern'] . '%');
+        }
         if (!empty($params['limit'])) {
             $limit = ' LIMIT 0,' . $params['limit'];
 		}
@@ -128,6 +143,12 @@ class Logger extends Singleton
 
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
 		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+
+        if (!empty($params['items_per_page'])) {
+            $params['total_items'] = db_get_field("SELECT COUNT(DISTINCT(al.id)) FROM ?:adls_logs AS al ?p ?p ?p ?p", $joins, $conditions);
+            $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
+        }
+
 
 		$query = db_quote('
 			SELECT
@@ -140,12 +161,10 @@ class Logger extends Singleton
 			' . $limit . '
 		');
 
-        $result = array();
 		if (!empty($params['single'])) {
 			$items = db_get_row($query);
         } else {
             $items = db_get_array($query);
-            $result['total'] = count($items);
 		}
 
         foreach ($items as $i => $item) {
@@ -168,7 +187,7 @@ class Logger extends Singleton
             }
         }
 
-		return array($items, $result);
+		return array($items, $params);
 	}
 
 	public function getCountryCodeByIp($ip)
