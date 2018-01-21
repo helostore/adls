@@ -244,12 +244,13 @@ class ReleaseManager extends Manager
 
         if (!empty($releases)) {
             $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
+            $addonId = $product['adls_addon_id'];
             /**
              * @var integer $k
              * @var Release $release
              */
             foreach ($releases as $k => $release) {
-                $filePath = $developerReleaseManager->getOutputPath($release->getFileName());
+                $filePath = $developerReleaseManager->getOutputPath($addonId, $release->getFileName());
                 if (!file_exists($filePath)) {
                     error_log("Release file not found: " . $filePath);
                     unset($releases[$k]);
@@ -269,7 +270,9 @@ class ReleaseManager extends Manager
 	public function prepareForDownload(Release $release)
 	{
 		$developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
-		$filePath = $developerReleaseManager->getOutputPath($release->getFileName());
+        $product = ProductManager::instance()->getProductById($release->getProductId());
+        $addonId = $product['adls_addon_id'];
+		$filePath = $developerReleaseManager->getOutputPath($addonId, $release->getFileName());
 
 		$release->download();
 		$this->repository->update($release);
