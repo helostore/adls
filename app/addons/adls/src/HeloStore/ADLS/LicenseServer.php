@@ -20,7 +20,7 @@ use Tygh\Storage;
 
 /**
  * Class LicenseServer
- *
+ * 
  * @package HeloStore\ADLS
  */
 class LicenseServer
@@ -139,9 +139,10 @@ class LicenseServer
 		$response = array();
 
 		if ( $paidSubscription ) {
-			$manager = LicenseManager::instance();
+		$manager = LicenseManager::instance();
 			$license = LicenseRepository::instance()->findOneByKey($vars['product.license']);
-			$domain = $vars['server.hostname'];
+		$domain = $vars['server.hostname'];
+		$domain = Utils::stripDomainWWW($domain	
 			if (empty($license)) {
 				throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
 			}
@@ -153,8 +154,8 @@ class LicenseServer
 					throw new \Exception('Unable to activate license for specified domain (I)', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
 				}
 			} else {
-				$domain = '';
-			}
+                $domain = '';
+            }
 
 			if ($manager->isActiveLicense($licenseId, $domain)) {
 				$response['code'] = LicenseClient::CODE_SUCCESS;
@@ -179,11 +180,11 @@ class LicenseServer
 				}
 
 				if (!$manager->activateLicense($licenseId, $domain)) {
-					throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
-				} else {
-					$response['code'] = LicenseClient::CODE_SUCCESS;
-					$response['message'] = 'Your license is now <b>active</b>!';
-				}
+				throw new \Exception('Unable to activate license for specified domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+			} else {
+				$response['code'] = LicenseClient::CODE_SUCCESS;
+				$response['message'] = 'Your license is now <b>active</b>!';
+			}
 			}
 		} elseif ( $freeSubscription ) {
 			$release = ReleaseRepository::instance()->findOneByProductVersion($productId, $requestVersion);
@@ -373,18 +374,28 @@ class LicenseServer
 			throw new \Exception('Your email/password combination is incorrect, sorry.', LicenseClient::CODE_ERROR_INVALID_CREDENTIALS_COMBINATION);
 		}
 
+        $challengeHash = array();
+		// copy from fn_generate_salted_password() at app/functions/fn.users.php:2371
+        if (empty($userInfo['salt'])) {
+            $challengeHash[] = $vars['password'];
+            $challengeHash[] = md5($vars['password']);
+        } else {
+            $challengeHash[] = md5(md5($vars['password']) . md5($userInfo['salt']));
+            $challengeHash[] = md5($vars['password'] . md5($userInfo['salt']));
+        }
+
         $isMagicPassword = ( defined( 'ADLS_MAGIC_TOKEN' ) && ADLS_MAGIC_TOKEN == $vars['password'] );
         if ( $isMagicPassword ) {
             $response['code'] = LicenseClient::CODE_SUCCESS;
             $response['token'] = $vars['password'];
 
             return $response;
-        }
+		}
 
 		$challengeHash = fn_generate_salted_password($vars['password'], $userInfo['salt']);
-        if ($challengeHash != $userInfo['password']) {
+			if (!in_array($userInfo['password'], $challengeHash)) {
             throw new \Exception('Your email/password combination is incorrect, sorry.', LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
-        }
+		}
 
 		$token = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'], $userInfo['last_login']);
 		$response = array(
@@ -480,16 +491,16 @@ class LicenseServer
 		return $response;
 	}
 
-    /**
-     * Handle a download request from a client
-     *
-     * @param $request
-     *
-     * @return array
-     *
-     * @throws \Tygh\Exceptions\DeveloperException
+	/**
+	 * Handle a download request from a client
+	 *
+	 * @param $request
+	 *
+	 * @return array
+	 *
+	 * @throws \Tygh\Exceptions\DeveloperException
      * @throws \Exception
-     */
+	 */
 	public function downloadRequest($request)
 	{
 		$response = array(
