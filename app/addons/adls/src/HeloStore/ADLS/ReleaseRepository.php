@@ -105,7 +105,7 @@ class ReleaseRepository extends EntityRepository
             'createdAt' => "releases.createdAt",
             'fileId' => "releases.fileId",
             'version' => "releases.number",
-            'product' => array("productDesc.product", "releases.createdAt"),
+            'product' => array("productDesc.product", "releases.number"),
         );
         $sorting = db_sort($params, $sortingFields, 'version', 'desc');
 
@@ -223,11 +223,11 @@ class ReleaseRepository extends EntityRepository
 			}
 			$joins[] = db_quote('
 				INNER JOIN (
-					SELECT ?:adls_releases.productId, MAX(createdAt) AS maxCreatedAt 
+					SELECT ?:adls_releases.productId, MAX(number) AS maxVersionNumber 
 					FROM ?:adls_releases
 					' . $subJoin . ' 
 					GROUP BY ?:adls_releases.productId
-				) AS latestRelease ON releases.productId = latestRelease.productId AND releases.createdAt = latestRelease.maxCreatedAt
+				) AS latestRelease ON releases.productId = latestRelease.productId AND releases.number = latestRelease.maxVersionNumber
 			');
 
 			$group = 'releases.productId';

@@ -175,7 +175,11 @@ class ProductManager extends Singleton
 			$products[$k]['releases2'] = array();
 			$products[$k]['latestRelease2'] = array();
 			if ( ! empty( $v['product_id'] ) ) {
-				list($products[$k]['releases2'], ) = ReleaseRepository::instance()->findByProductId($v['product_id']);
+                $params = [];
+                if (AREA === 'A') {
+                    $params['getUserCount'] = true;
+                }
+				list($products[$k]['releases2'], ) = ReleaseRepository::instance()->findByProductId($v['product_id'], $params);
 				$products[$k]['latestRelease2'] = ReleaseRepository::instance()->findOneLatestByProduct($v['product_id']);
 			}
 

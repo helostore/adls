@@ -81,7 +81,7 @@ class PlatformVersionRepository extends EntityRepository
 
         $sortingFields = array (
             'id' => "version.id",
-            'version' => "version.versionNumber",
+            'version' => "version.number",
         );
         $sorting = db_sort($params, $sortingFields, 'version', 'desc');
 

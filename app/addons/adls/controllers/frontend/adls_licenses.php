@@ -26,11 +26,20 @@ if ( $mode === 'manage' ) {
 	$userId = $auth['user_id'];
 	$licenseRepository = LicenseRepository::instance();
 	$userId = $auth['user_id'];
-	list($licenses, $search) = $licenseRepository->find(array(
-		'userId' => $userId,
-		'getDomains' => true,
-		'extended' => true
-	));
+    $params = array(
+        'userId'     => $userId,
+        'getDomains' => true,
+        'extended'   => true,
+        'sort_by'    => 'product',
+        'sort_order' => 'asc',
+    );
+    if ( ! empty( $_REQUEST['sort_order'] ) ) {
+        $params['sort_order'] = $_REQUEST['sort_order'];
+    }
+    if ( ! empty( $_REQUEST['sort_by'] ) ) {
+        $params['sort_by'] = $_REQUEST['sort_by'];
+    }
+	list($licenses, $search) = $licenseRepository->find($params);
 	Tygh::$app['view']->assign('licenses', $licenses);
 	Tygh::$app['view']->assign('search', $search);
 	fn_add_breadcrumb(__('adls.licenses'));
