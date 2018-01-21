@@ -15,6 +15,9 @@
 namespace HeloStore\ADLS;
 
 
+use HeloStore\ADLS\Platform\PlatformEditionRepository;
+use HeloStore\ADLS\Platform\PlatformRepository;
+use HeloStore\ADLS\Platform\PlatformVersionRepository;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 use Tygh\Addons\SchemesManager;
 use Tygh\Registry;
@@ -223,12 +226,12 @@ class ProductManager extends Singleton
      * @param array $customerProducts
      * @param array $storeProducts
      * @param int $userId
-     * @param null $requestSidekick
+     * @param null $request
      *
      * @return array
      * @throws \Exception
      */
-	public function checkUpdates($customerProducts, $storeProducts, $userId = 0, $requestSidekick = null)
+	public function checkUpdates($customerProducts, $storeProducts, $userId = 0, $request = null)
 	{
 		$updates = array();
 		foreach ($customerProducts as $productCode => $customerProduct) {
@@ -236,7 +239,7 @@ class ProductManager extends Singleton
 			if (empty($storeProduct)) {
 				continue;
 			}
-			$update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId, $requestSidekick);
+			$update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId, $request);
 			if ( ! empty( $update ) ) {
 				$updates[$productCode] = $update;
 			}
@@ -251,12 +254,12 @@ class ProductManager extends Singleton
      * @param $customerProduct
      * @param $storeProduct
      * @param int $userId
-     * @param null $requestSidekick
+     * @param null $request
      *
      * @return array|bool
      * @throws \Exception
      */
-	public function getProductUpdate( $productCode, $customerProduct, $storeProduct, $userId = 0, $requestSidekick = null ) {
+	public function getProductUpdate( $productCode, $customerProduct, $storeProduct, $userId = 0, $request = null ) {
 		$licenseKey = $customerProduct['license'];
 		$license = null;
 		$subscription = null;
@@ -277,6 +280,7 @@ class ProductManager extends Singleton
 
 		$freeSubscription = $this->isFreeSubscription($storeProduct['adls_subscription_id']);
 		$paidSubscription = $this->isPaidSubscription($storeProduct['adls_subscription_id']);
+
 
 		if ( $paidSubscription ) {
 			if ( ! empty( $licenseKey ) ) {
@@ -308,13 +312,42 @@ class ProductManager extends Singleton
 			));
 		}
 
+        $platformId = null;
+        $platformEditionId = null;
+        $platformVersionId = null;
+        if (!empty($request) && ! empty($request['platform'])) {
+            if ( ! empty($request['platform']['name'])) {
+                $platform = PlatformRepository::instance()->findOneByName($request['platform']['name']);
+                if ( ! empty($platform)) {
+                    $platformId = $platform->getId();
+                }
+            }
+            if ( ! empty($request['platform']['edition'])) {
+                $platformEdition = PlatformEditionRepository::instance()->findOneByName($request['platform']['edition']);
+                if ( ! empty($platformEdition)) {
+                    $platformEditionId = $platformEdition->getId();
+                }
+            }
+            if ( ! empty($request['platform']['version'])) {
+                $platformVersion = PlatformVersionRepository::instance()->findOneByVersion($request['platform']['version']);
+                if ( ! empty($platformVersion)) {
+                    $platformVersionId = $platformVersion->getId();
+                }
+            }
+        }
+
 		/** @var Release $latestRelease */
 		$latestRelease = $releaseRepository->find( array(
 			'one' => true,
-			'productId' => $productId
+			'productId' => $productId,
+            'compatibilityPlatformId' => $platformId,
+            'compatibilityPlatformEditionId' => $platformEditionId,
+            'compatibilityPlatformVersionId' => $platformVersionId
 		) );
+
 		if ( empty( $latestRelease ) ) {
-			throw new \Exception('Latest release not found', LicenseClient::CODE_ERROR_ALIEN);
+//			throw new \Exception('Latest release not found for ' . $productCode, LicenseClient::CODE_ERROR_ALIEN);
+            return false;
 		}
 
 		/** @var Release $latestUserRelease */
@@ -327,19 +360,28 @@ class ProductManager extends Singleton
 				'productId' => $productId,
 				'licenseId' => $license->getId(),
 				'subscriptionId' => $subscription->getId(),
+                'compatibilityPlatformId' => $platformId,
+                'compatibilityPlatformEditionId' => $platformEditionId,
+                'compatibilityPlatformVersionId' => $platformVersionId
 			) );
 		} elseif (!empty($license)) {
 			$latestUserRelease = $releaseRepository->find( array(
 				'one' => true,
 				'userId' => $userId,
 				'productId' => $productId,
-				'licenseId' => $license->getId()
+				'licenseId' => $license->getId(),
+                'compatibilityPlatformId' => $platformId,
+                'compatibilityPlatformEditionId' => $platformEditionId,
+                'compatibilityPlatformVersionId' => $platformVersionId
 			) );
 		} else {
 			$latestUserRelease = $releaseRepository->find( array(
 				'one' => true,
 				'userId' => $userId,
-				'productId' => $productId
+				'productId' => $productId,
+                'compatibilityPlatformId' => $platformId,
+                'compatibilityPlatformEditionId' => $platformEditionId,
+                'compatibilityPlatformVersionId' => $platformVersionId
 			) );
 
             if ($freeSubscription) {
@@ -355,7 +397,6 @@ class ProductManager extends Singleton
 
 		$currentUserRelease = $releaseRepository->findOneByProductVersion( $productId, $customerVersion );
 		if ( empty( $currentUserRelease ) ) {
-
 			$message = 'You are using a deprecated product, ' . $productName . ' v' . $customerVersion . '. Please manually update to the latest version available in our store.';
 			$code = LicenseClient::CODE_ERROR_UPDATE_CHECK_FAILED_INVALID_VERSION;
 			return array(

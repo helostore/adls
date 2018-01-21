@@ -471,7 +471,7 @@ class LicenseServer
             $requestSidekick = $request['licenseClient'];
         }
 
-        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId, $requestSidekick);
+        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId, $request);
 
         if (empty($response['updates'])) {
             $response['code'] = LicenseClient::CODE_NOTIFICATION_NO_UPDATES_AVAILABLE;
@@ -503,7 +503,7 @@ class LicenseServer
             $userId = $request['auth']['user_id'];
         }
         $storeProducts       = $productManager->getStoreProducts();
-        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId);
+        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId, $request);
 
         return $response;
     }

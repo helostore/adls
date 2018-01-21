@@ -136,4 +136,15 @@ class Compatibility extends Entity
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return
+            $this->getExtra('platform$name') . ' ' .
+            $this->getExtra('edition$name') . ' ' .
+            $this->getExtra('platform$version') . ' ';
+    }
 }

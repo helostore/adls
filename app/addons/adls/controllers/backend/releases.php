@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->assign($productId, $releaseId, $platformVersion);
         }
 
-        return [CONTROLLER_STATUS_REDIRECT, 'releases.manage?id=' . $addonId];
+        return [CONTROLLER_STATUS_REDIRECT, 'releases.update?release_id=' . $releaseId];
     }
 }
 
