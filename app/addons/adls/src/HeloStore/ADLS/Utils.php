@@ -27,6 +27,59 @@ use Zend\Validator\ValidatorChain;
  */
 class Utils extends Singleton
 {
+    public static function versionToInteger($string)
+    {
+        $version = Utils::explodeVersion($string);
+        $ip = $version->major . '.' . $version->minor . '.' . $version->patch . '.' . 0;
+
+        return ip2long($ip);
+    }
+    public static function integerToVersion($number)
+    {
+        $ip = long2ip($number);
+        $version = substr($ip, 0, -2);
+
+        return $version;
+    }
+
+    /**
+     * @param $version
+     *
+     * @return Version
+     */
+    public static function explodeVersion($version)
+    {
+        $result = preg_match("/^(\d+)\.(\d+)[\. \-]?([a-z0-9\-\.]+)?$/i", $version, $matches);
+        $minor = $major = $patch = 0;
+        if ($result) {
+            $major = (int) $matches[1];
+            $minor = (int) $matches[2];
+            $patch = isset($matches[3]) ? (int) $matches[3] : 0;
+
+        } else {
+            $major = intval($version);
+        }
+
+        if (!is_numeric($major)) {
+            return new Version();
+        }
+
+        return new Version($major, $minor, $patch);
+    }
+
+    /**
+     * @param $string
+     *
+     * @return mixed
+     */
+	public static function matchVersion($string) {
+        preg_match("/(?:version|v)\s*((?:[0-9]+\.?)+)/i", $string, $matches);
+
+        if ( ! empty($matches[1])) {
+            $matches[1] = trim($matches[1], '. ');
+        }
+        return $matches[1];
+    }
 	public static function stripDomainWWW($domain) {
         return preg_replace('/^www\./i', '', $domain);
     }

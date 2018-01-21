@@ -67,6 +67,7 @@
             `productId` mediumint(8) unsigned NOT NULL,
             `createdAt` datetime NOT NULL,
             `version` varchar(16) NOT NULL,
+            `number`  bigint UNSIGNED NOT NULL,
             `fileName` varchar(255) NOT NULL,
             `fileSize` int(11) unsigned NOT NULL,
             `hash` varchar(32) NOT NULL,
@@ -94,6 +95,7 @@
             `platformId` tinyint(3) UNSIGNED NOT NULL,
             `editionId` tinyint(3) UNSIGNED NOT NULL,
             `version` varchar(16) NOT NULL,
+            `number`  bigint UNSIGNED NOT NULL,
             `releaseDate` datetime NULL ,
             `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             PRIMARY KEY (`id`)

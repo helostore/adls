@@ -85,9 +85,9 @@ class CompatibilityRepository extends EntityRepository
             'platformId' => "compatibility.platformId",
             'editionId' => "compatibility.editionId",
             'productId' => "compatibility.productId",
-            'platformVersionReleaseDate' => "version.releaseDate",
+            'platformVersion' => "version.number",
         );
-        $sorting = db_sort($params, $sortingFields, 'platformVersionId', 'asc');
+        $sorting = db_sort($params, $sortingFields, 'platformVersion', 'asc');
 
         $condition = array();
         $joins = array();
@@ -175,12 +175,12 @@ class CompatibilityRepository extends EntityRepository
     public function findMinMax($productId, $params = array()) {
         $min = $this->findOne([
             'productId' => $productId,
-            'sort_by' => 'platformVersionReleaseDate',
+            'sort_by' => 'platformVersionNumber',
             'sort_order' => 'asc'
         ]);
         $max = $this->findOne([
             'productId' => $productId,
-            'sort_by' => 'platformVersionId',
+            'sort_by' => 'platformVersionNumber',
             'sort_order' => 'desc'
         ]);
 
