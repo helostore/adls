@@ -219,15 +219,16 @@ class ProductManager extends Singleton
 		return $products;
 	}
 
-	/**
-	 * @param array $customerProducts
-	 * @param array $storeProducts
-	 * @param int $userId
-	 *
-	 * @return array
-	 * @throws \Exception
-	 */
-	public function checkUpdates($customerProducts, $storeProducts, $userId = 0)
+    /**
+     * @param array $customerProducts
+     * @param array $storeProducts
+     * @param int $userId
+     * @param null $requestSidekick
+     *
+     * @return array
+     * @throws \Exception
+     */
+	public function checkUpdates($customerProducts, $storeProducts, $userId = 0, $requestSidekick = null)
 	{
 		$updates = array();
 		foreach ($customerProducts as $productCode => $customerProduct) {
@@ -235,7 +236,7 @@ class ProductManager extends Singleton
 			if (empty($storeProduct)) {
 				continue;
 			}
-			$update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId);
+			$update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId, $requestSidekick);
 			if ( ! empty( $update ) ) {
 				$updates[$productCode] = $update;
 			}
@@ -245,16 +246,17 @@ class ProductManager extends Singleton
 		return $updates;
 	}
 
-	/**
-	 * @param $productCode
-	 * @param $customerProduct
-	 * @param $storeProduct
-	 * @param int $userId
-	 *
-	 * @return array|bool
-	 * @throws \Exception
-	 */
-	public function getProductUpdate( $productCode, $customerProduct, $storeProduct, $userId = 0 ) {
+    /**
+     * @param $productCode
+     * @param $customerProduct
+     * @param $storeProduct
+     * @param int $userId
+     * @param null $requestSidekick
+     *
+     * @return array|bool
+     * @throws \Exception
+     */
+	public function getProductUpdate( $productCode, $customerProduct, $storeProduct, $userId = 0, $requestSidekick = null ) {
 		$licenseKey = $customerProduct['license'];
 		$license = null;
 		$subscription = null;
@@ -339,17 +341,17 @@ class ProductManager extends Singleton
 				'userId' => $userId,
 				'productId' => $productId
 			) );
+
+            if ($freeSubscription) {
+                $latestUserRelease = $latestRelease;
+            }
 		}
+
 
 		if ( empty( $latestUserRelease ) ) {
-			return false;
-//				throw new \Exception('No latest release found');
+//            throw new \Exception('No latest release found');
+            return false;
 		}
-
-
-
-
-
 
 		$currentUserRelease = $releaseRepository->findOneByProductVersion( $productId, $customerVersion );
 		if ( empty( $currentUserRelease ) ) {

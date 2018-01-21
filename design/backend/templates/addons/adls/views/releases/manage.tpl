@@ -9,6 +9,9 @@
 {capture name="mainbox"}
 	<h4>Releases</h4>
     {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases2}
+    {if $product.has_unreleased_version}
+        <p style="color: red;">Has unreleased version!</p>
+    {/if}
 {/capture}
 
 {capture name="adv_buttons"}

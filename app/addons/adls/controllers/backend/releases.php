@@ -26,6 +26,9 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'update') {
         $addonId = $_REQUEST['addon_id'];
+        if (empty($addonId)) {
+            throw new \Exception('Addon ID not specified');
+        }
 
         // app/addons/developer/controllers/backend/addons.post.php:106
         $manager = ReleaseManager::instance();

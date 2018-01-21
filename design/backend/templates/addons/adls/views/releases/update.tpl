@@ -34,7 +34,7 @@
         <div class="control-group">
             <label class="control-label">Add-on ID:</label>
             <div class="controls">
-                <input type="text" readonly value="{$product.adls_addon_id}" />
+                <input type="text" name="addon_id" readonly value="{$product.adls_addon_id}" />
             </div>
         </div>
 
