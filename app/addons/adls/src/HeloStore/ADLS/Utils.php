@@ -73,7 +73,7 @@ class Utils extends Singleton
      * @return mixed
      */
 	public static function matchVersion($string) {
-        preg_match("/(?:version|v)\s*((?:[0-9]+\.?)+)/i", $string, $matches);
+        preg_match("/(?:version|v|)\s*((?:[0-9]+\.?)+)/i", $string, $matches);
 
         if ( ! empty($matches[1])) {
             $matches[1] = trim($matches[1], '. ');

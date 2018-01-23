@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.21",
+        "releaseDate": "2018-01-23 09:37:35",
+        "releaseTimestamp": "1516700255",
+        "hash": "5d620c176e9f3ab617fca7fa97eb6c90b93d4a98",
+        "commits": [
+            "[2018-01-23] Bumped version to 0.2.21",
+            "[2018-01-23]\tClean"
+        ]
+    },
+    {
         "version": "0.2.20",
         "releaseDate": "2018-01-21 08:39:43",
         "releaseTimestamp": "1516567183",
@@ -27,17 +37,6 @@
         "commits": [
             "[2018-01-21] Bumped version to 0.2.18",
             "[2018-01-21]\tAdd auxiliary 'number' bigint field for better version sorting"
-        ]
-    },
-    {
-        "version": "0.2.17",
-        "releaseDate": "2018-01-21 04:30:15",
-        "releaseTimestamp": "1516552215",
-        "hash": "3c201d5205a863eeac3efd7f07726049184fa884",
-        "commits": [
-            "[2018-01-21] Bumped version to 0.2.17",
-            "[2018-01-21]\tDisplay compatibility in frontend",
-            "[2018-01-21]\tImprovements"
         ]
     }
 ]
