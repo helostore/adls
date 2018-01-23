@@ -193,9 +193,6 @@ if ($mode == 'manage' && !empty($_REQUEST['id'])) {
     }
     Registry::get('view')->assign('product', $product);
     Registry::get('view')->assign('addonId', $addonId);
-
-
-
 }
 
 if (($mode == 'publish' || $mode == 'unpublish') && !empty($_REQUEST['release_id'])) {
