@@ -21,9 +21,24 @@ namespace HeloStore\ADLS;
  */
 class Release extends Entity
 {
-    const STATUS_ACTIVE = 'A';
-    const STATUS_DISABLED = 'D';
-    const STATUS_INACTIVE = 'I';
+    /**
+     * Lifecycle
+     *  - Pre-alpha / Nightly build / Development release
+     *  - Alpha
+     *  - Beta
+     *  - Release candidate / gamma / delta
+     *  - RTM / Release to marketing
+     *  - GA / General availability
+     *  - Production / live release / Gold
+     *
+     *  - Discontinued / Retired / Obsolete
+     */
+
+    const STATUS_ALPHA = 'A';
+    const STATUS_BETA = 'B';
+    const STATUS_RELEASE_CANDIDATE= 'C';
+    const STATUS_PRODUCTION = 'P';
+    const STATUS_DISCONTINUED = 'D';
 
 	/**
 	 * @var integer
