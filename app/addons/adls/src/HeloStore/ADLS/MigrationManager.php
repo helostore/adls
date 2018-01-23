@@ -20,21 +20,17 @@ class MigrationManager extends Manager
 {
 
     /**
-     * @throws ReleaseException
      * @throws \Exception
      */
     public function migrate()
     {
-
         $storeProducts = ProductManager::instance()->getStoreProductsData();
-
         foreach ($storeProducts as $storeProduct) {
             if (empty($storeProduct['product_id'])) {
                 fn_print_r('Skipping `' . $storeProduct['name'] . ': no store product found');
                 continue;
             }
             $this->migrateProduct($storeProduct);
-
         }
     }
 

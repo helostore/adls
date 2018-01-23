@@ -11,7 +11,7 @@ namespace HeloStore\ADLS;
 
 class Usage
 {
-    public static function general($params = array())
+    public static function platforms($params = array())
     {
         $logger = \HeloStore\ADLS\Logger::instance();
         $params['limit'] = isset($params['limit']) ? $params['limit'] : 1000;
@@ -20,6 +20,7 @@ class Usage
             '188.166.76.129'
             , '127.0.0.1'
         );
+        $params['fromDate'] = new \DateTime("-30 days");
         list($logs, $result) = $logger->get($params);
         $usage = array();
         foreach ($logs as $log) {
@@ -73,17 +74,19 @@ class Usage
         return $usage;
     }
 
-    public static function product($productCode, $params = array())
+    public static function productPlatforms($productCode, $params = array())
     {
         $logger = \HeloStore\ADLS\Logger::instance();
-        $params['limit'] = isset($params['limit']) ? $params['limit'] : 100;
+        $params['limit'] = isset($params['limit']) ? $params['limit'] : 10000;
         $params['productCode'] = $productCode;
         $params['objectAction'] = 'update_check';
         $params['excludeIps'] = array(
             '188.166.76.129'
             , '127.0.0.1'
         );
+        $params['fromDate'] = new \DateTime("-30 days");
         list($logs, $result) = $logger->get($params);
+
         $usage = array();
         foreach ($logs as $log) {
             if (empty($log)) {
@@ -138,6 +141,52 @@ class Usage
                 ksort($usage[$platform][$edition]);
             }
         }
+
+        return $usage;
+    }
+
+    public static function productVersions($productCode, $params = array())
+    {
+        $logger = \HeloStore\ADLS\Logger::instance();
+        $params['limit'] = isset($params['limit']) ? $params['limit'] : 100000;
+        $params['productCode'] = $productCode;
+        $params['objectAction'] = 'update_check';
+        $params['excludeIps'] = array(
+            '188.166.76.129'
+        , '127.0.0.1'
+        );
+        $params['fromDate'] = new \DateTime("-30 days");
+        list($logs, $result) = $logger->get($params);
+
+        $usage = array();
+        foreach ($logs as $log) {
+            if (empty($log)) {
+                continue;
+            }
+            if (empty($log['request'])) {
+                continue;
+            }
+            if (empty($log['request']['products'])) {
+                continue;
+            }
+            if (empty($log['request']['products'][$productCode])) {
+                continue;
+            }
+            if (empty($log['request']['products'][$productCode]['version'])) {
+                continue;
+            }
+            $version = $log['request']['products'][$productCode]['version'];
+            if ( ! isset($usage[$version])) {
+                $usage[$version] = 0;
+            }
+            $usage[$version]++;
+        }
+//        foreach ($usage as $platform => $editions) {
+//            ksort($usage[$platform]);
+//            foreach ($editions as $edition => $versions) {
+//                ksort($usage[$platform][$edition]);
+//            }
+//        }
 
         return $usage;
     }

@@ -206,6 +206,9 @@ class ReleaseManager extends Manager
 		if ( empty( $release ) ) {
 			return false;
 		}
+        if (!$release->isProduction()) {
+            return false;
+        }
 		$product = ProductManager::instance()->getProductById( $release->getProductId() );
 		if ( empty( $product ) ) {
 			return false;
@@ -308,24 +311,26 @@ class ReleaseManager extends Manager
     public function addUserLinks($userId, $productId, $licenseId = null, $subscriptionId = null, $startDate = null, $endDate = null) {
 	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
 //		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
-		    list($releases, ) = $this->repository->findByProductInRange( $productId, null, $endDate );
+		    list($releases, ) = $this->repository->findProductionByProductInRange( $productId, null, $endDate );
 		    if ( empty( $releases ) ) {
-			    $release = ReleaseRepository::instance()->findOneLatestByProduct($productId, $endDate);
+			    $release = ReleaseRepository::instance()->findProductionOneLatestByProduct($productId, $endDate);
 			    $releases = array( $release );
 		    }
 	    } else if ($subscriptionId === null) {
 		    // This is a free product.
-		    list($releases, ) = ReleaseRepository::instance()->find(array(
+		    list($releases, ) = ReleaseRepository::instance()->findProduction(array(
 			    'productId' => $productId
 		    ));
 
 	    }
 
-	    if ( empty( $releases ) ) {
-		    throw new \Exception('Unable to find releases for given params');
+	    if ( fn_is_empty( $releases ) ) {
+		    throw new \Exception('Unable to find releases for given params, product #'. $productId);
 	    }
-
 	    foreach ( $releases as $release ) {
+            if (empty($release)) {
+                throw new \Exception('Invalid release');
+            }
 		    ReleaseAccessRepository::instance()->addLink($userId, $productId, $release->getId(), $licenseId, $subscriptionId);
 	    }
 	}

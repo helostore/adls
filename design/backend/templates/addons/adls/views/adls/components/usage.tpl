@@ -1,4 +1,5 @@
 {if $usage}
+	<h4>Usage: product platforms</h4>
 	<table class="table">
 		<thead>
 		<tr>

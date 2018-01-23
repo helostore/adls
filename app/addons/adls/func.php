@@ -16,6 +16,7 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseAccessRepository;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
@@ -314,7 +315,7 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 	            }
             }
             // If it's not a subscription-based product, but license-based
-            $hasNoSubscription = empty( $product['subscription'] ) && empty($orderInfo['adls_subscription_setup_pending']);
+            $hasNoSubscription = empty($product['subscription']) && empty($orderInfo['adls_subscription_setup_pending']);
 	        if ( $hasNoSubscription ) {
 		        ReleaseManager::instance()->addUserLinks(
 			        $userId,
@@ -400,6 +401,16 @@ function fn_adls_license_is_active($status)
     return $status == License::STATUS_ACTIVE;
 }
 
+function fn_adls_get_release_statuses()
+{
+    return [
+        Release::STATUS_ALPHA => Release::convertStatusToLabel(Release::STATUS_ALPHA),
+        Release::STATUS_BETA => Release::convertStatusToLabel(Release::STATUS_BETA),
+        Release::STATUS_RELEASE_CANDIDATE => Release::convertStatusToLabel(Release::STATUS_RELEASE_CANDIDATE),
+        Release::STATUS_PRODUCTION => Release::convertStatusToLabel(Release::STATUS_PRODUCTION),
+        Release::STATUS_DISCONTINUED => Release::convertStatusToLabel(Release::STATUS_DISCONTINUED),
+    ];
+}
 function fn_adls_get_license_statuses()
 {
     return LicenseManager::instance()->getLicenseStatuses();

@@ -28,7 +28,7 @@ $schema['central']['adls'] = array(
         ),
         'adls.usage' => array(
             'href' => 'adls.usage',
-            'position' => 100
+            'position' => 200
         )
 	),
 	'position' => 900,
