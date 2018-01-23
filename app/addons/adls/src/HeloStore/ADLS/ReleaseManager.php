@@ -243,7 +243,7 @@ class ReleaseManager extends Manager
 	            'items_per_page' => $itemsPerPage
             ));
         }
-aa($releases);
+
         if (!empty($releases)) {
             $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
             $technicalProduct = ProductManager::instance()->getProductById($productId);
@@ -308,7 +308,8 @@ aa($releases);
 
     public function addUserLinks($userId, $productId, $licenseId = null, $subscriptionId = null, $startDate = null, $endDate = null) {
 	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
-		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
+//		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
+		    list($releases, ) = $this->repository->findByProductInRange( $productId, null, $endDate );
 		    if ( empty( $releases ) ) {
 			    $release = ReleaseRepository::instance()->findOneLatestByProduct($productId, $endDate);
 			    $releases = array( $release );
@@ -324,6 +325,7 @@ aa($releases);
 	    if ( empty( $releases ) ) {
 		    throw new \Exception('Unable to find releases for given params');
 	    }
+
 	    foreach ( $releases as $release ) {
 		    ReleaseLinkRepository::instance()->addLink($userId, $productId, $release->getId(), $licenseId, $subscriptionId);
 	    }

@@ -19,12 +19,12 @@
             `updatedAt` datetime NOT NULL ,
             `licenseKey` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
             `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-                PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
             CREATE TABLE IF NOT EXISTS `?:adls_license_domains` (
-                `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
+            `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT ,
             `licenseId` mediumint(8) UNSIGNED NOT NULL ,
             `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
             `type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
@@ -48,7 +48,7 @@
             `country` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `backtrace` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
-                PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
@@ -58,7 +58,7 @@
             `productId` mediumint(8) UNSIGNED NOT NULL,
             `licenseId` mediumint(8) UNSIGNED NOT NULL DEFAULT 0,
             `subscriptionId` mediumint(8) UNSIGNED NOT NULL DEFAULT 0,
-            PRIMARY KEY (`userId`, `releaseId`)
+            PRIMARY KEY (`userId`, `releaseId`, `licenseId`, `subscriptionId`)
             )
         </item>
         <item for="install">
@@ -67,11 +67,11 @@
             `productId` mediumint(8) unsigned NOT NULL,
             `createdAt` datetime NOT NULL,
             `version` varchar(16) NOT NULL,
-            `number`  bigint UNSIGNED NOT NULL,
+            `number` bigint UNSIGNED NOT NULL,
             `fileName` varchar(255) NOT NULL,
             `fileSize` int(11) unsigned NOT NULL,
             `hash` varchar(32) NOT NULL,
-                PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`)
             )
         </item>
         <item for="install">
@@ -95,7 +95,7 @@
             `platformId` tinyint(3) UNSIGNED NOT NULL,
             `editionId` tinyint(3) UNSIGNED NOT NULL,
             `version` varchar(16) NOT NULL,
-            `number`  bigint UNSIGNED NOT NULL,
+            `number` bigint UNSIGNED NOT NULL,
             `releaseDate` datetime NULL ,
             `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             PRIMARY KEY (`id`)
