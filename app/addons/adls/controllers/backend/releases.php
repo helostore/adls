@@ -26,38 +26,42 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($mode == 'update') {
         $addonId = $_REQUEST['addon_id'];
-        if (empty($addonId)) {
-            throw new \Exception('Addon ID not specified');
-        }
+        $releaseId = !empty($_REQUEST['release_id']) ? $_REQUEST['release_id'] : 0;
 
-        // app/addons/developer/controllers/backend/addons.post.php:106
-        $manager = ReleaseManager::instance();
-        if ($manager->pack($addonId, $output)) {
-            fn_set_notification('N', __('notice'), 'Packed to ' . $output['archivePath']);
-
-            // attempt to release the newly packed add-on
-            $releaseId = null;
-            try {
-                $releaseId = $manager->release($addonId, $output);
-            } catch (\Exception $e) {
-                fn_set_notification('W', __('warning'), $e->getMessage(), 'I');
+        if (empty($releaseId)) {
+            if (empty($addonId)) {
+                throw new \Exception('Addon ID not specified');
             }
-            if ($releaseId !== null) {
-                if ($releaseId) {
-                    fn_set_notification('N', __('notice'), 'Attached release to product: ' . $output['archivePath']);
-                } else {
-                    fn_set_notification('E', __('error'), 'Failed attaching release to product: ' . $output['archivePath']);
+
+            // app/addons/developer/controllers/backend/addons.post.php:106
+            $manager = ReleaseManager::instance();
+            if ($manager->pack($addonId, $output)) {
+                fn_set_notification('N', __('notice'), 'Packed to ' . $output['archivePath']);
+
+                // attempt to release the newly packed add-on
+                $releaseId = null;
+                try {
+                    $releaseId = $manager->release($addonId, $output);
+                } catch (\Exception $e) {
+                    fn_set_notification('W', __('warning'), $e->getMessage(), 'I');
+                }
+                if ($releaseId !== null) {
+                    if ($releaseId) {
+                        fn_set_notification('N', __('notice'), 'Attached release to product: ' . $output['archivePath']);
+                    } else {
+                        fn_set_notification('E', __('error'), 'Failed attaching release to product: ' . $output['archivePath']);
+                    }
+                }
+            } else if ($manager->hasErrors()) {
+                foreach ($manager->getErrors() as $error) {
+                    fn_set_notification('E', __('error'), $error);
                 }
             }
-        } else if ($manager->hasErrors()) {
-            foreach ($manager->getErrors() as $error) {
-                fn_set_notification('E', __('error'), $error);
-            }
+
+
         }
 
-        if ( empty($releaseId)) {
-            return [CONTROLLER_STATUS_REDIRECT, 'releases.manage?id=' . $addonId];
-        }
+
 
         $release = \HeloStore\ADLS\ReleaseRepository::instance()->findOneById($releaseId);
         if (empty($release)) {

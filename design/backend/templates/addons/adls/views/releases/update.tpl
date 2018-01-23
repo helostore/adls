@@ -1,9 +1,10 @@
 <style>
     .compatibility {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         max-width: 800px;
-        flex-wrap: ;
+        max-height: 400px;
+        flex-wrap: wrap;
     }
     .compatibility-version {
         display: inline-block;
@@ -28,19 +29,20 @@
         {/if}
 
         <div class="control-group">
-            <label class="control-label">Add-on ID:</label>
-            <div class="controls">
-                <input type="text" readonly value="{$product.adls_addon_id}" />
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Development Version</label>
             <div class="controls">{$product.version}</div>
         </div>
         <div class="control-group">
             <label class="control-label">Latest published version</label>
             <div class="controls">{$product.adls_release_version}</div>
+        </div>
+        <hr>
+
+        <div class="control-group">
+            <label class="control-label">Add-on ID:</label>
+            <div class="controls">
+                <input type="text" name="addon_id" readonly value="{$product.adls_addon_id}" />
+            </div>
         </div>
 
         <div class="control-group">

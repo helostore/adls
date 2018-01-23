@@ -358,5 +358,15 @@
     "version": "4.6.2",
     "date": "2017-08-09 12:00:00",
     "description": "Fixes in Product Variations, Fedex, Paypal, reward points and performance Optimization up to 14%"
+  },
+  {
+    "version": "4.6.3",
+    "date": "2017-10-31 12:00:00",
+    "description": "Admin and Customer Improvements"
+  },
+  {
+    "version": "4.7.1",
+    "date": "2017-12-20 12:00:00",
+    "description": "This update has a lot of new features for order management and export/import. Also, Multi-Vendor features Stripe Connect and a Customer-to-vendor communication system. Plus, we improved store usability."
   }
 ]

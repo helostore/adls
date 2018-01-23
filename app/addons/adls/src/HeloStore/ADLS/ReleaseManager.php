@@ -53,12 +53,12 @@ class ReleaseManager extends Manager
         $productId = intval($storeProduct['product_id']);
 
         if (empty($params['version'])) {
-            throw new ReleaseException("Missing version parameter in release data");
+            throw new ReleaseException("Missing version parameter in release data (" . $storeProduct['name'] . ")");
         }
         $version = $params['version'];
 
         if (empty($params['filename'])) {
-            throw new ReleaseException("Missing filename parameter in release data");
+            throw new ReleaseException("Missing filename parameter in release data (" . $storeProduct['name'] . ")");
         }
         $fileName = $params['filename'];
 
@@ -66,7 +66,7 @@ class ReleaseManager extends Manager
             $fileSize = intval($params['filesize']);
         } else {
             if (empty($params['archivePath'])) {
-                throw new ReleaseException("Missing archivePath parameter in release data");
+                throw new ReleaseException("Missing archivePath parameter in release data (" . $storeProduct['name'] . ")");
             }
             $fileSize = filesize($params['archivePath']);
         }
@@ -220,14 +220,17 @@ class ReleaseManager extends Manager
 		return (!empty($release));
 	}
 
-	/**
-	 * @param $userId
-	 * @param $product
-	 *
-	 * @return mixed
-	 */
+    /**
+     * @param $userId
+     * @param $product
+     *
+     * @param int $itemsPerPage
+     *
+     * @return mixed
+     */
     public function getOrderItemReleases($userId, $product, $itemsPerPage = 1)
     {
+        $productId = $product['product_id'];
         if (!empty($product['subscription'])) {
             /** @var Subscription $subscription */
             $subscription = $product['subscription'];
@@ -235,16 +238,16 @@ class ReleaseManager extends Manager
 	            'items_per_page' => $itemsPerPage
             ));
         } else {
-            $productId = $product['product_id'];
             list($releases, ) = $this->repository->findByProductId($productId, array(
             	'userId' => $userId,
 	            'items_per_page' => $itemsPerPage
             ));
         }
-
+aa($releases);
         if (!empty($releases)) {
             $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
-            $addonId = $product['adls_addon_id'];
+            $technicalProduct = ProductManager::instance()->getProductById($productId);
+            $addonId = $technicalProduct['adls_addon_id'];
             /**
              * @var integer $k
              * @var Release $release
