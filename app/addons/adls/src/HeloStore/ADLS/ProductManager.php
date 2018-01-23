@@ -180,7 +180,7 @@ class ProductManager extends Singleton
                     $params['getUserCount'] = true;
                 }
 				list($products[$k]['releases2'], ) = ReleaseRepository::instance()->findByProductId($v['product_id'], $params);
-				$products[$k]['latestRelease2'] = ReleaseRepository::instance()->findOneLatestByProduct($v['product_id']);
+				$products[$k]['latestRelease2'] = ReleaseRepository::instance()->findProductionOneLatestByProduct($v['product_id']);
 			}
 
 

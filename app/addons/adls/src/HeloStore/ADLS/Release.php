@@ -36,7 +36,7 @@ class Release extends Entity
 
     const STATUS_ALPHA = 'A';
     const STATUS_BETA = 'B';
-    const STATUS_RELEASE_CANDIDATE= 'C';
+    const STATUS_RELEASE_CANDIDATE = 'C';
     const STATUS_PRODUCTION = 'P';
     const STATUS_DISCONTINUED = 'D';
 
@@ -391,4 +391,61 @@ class Release extends Entity
         return $this;
     }
 
+    /**
+     * @param $status
+     *
+     * @return string
+     */
+    public static function convertStatusToLabel($status)
+    {
+        return __('adls.release.status.' . strtolower($status));
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusLabel()
+    {
+        return self::convertStatusToLabel($this->status);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAlpha()
+    {
+        return $this->status === self::STATUS_ALPHA;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBeta()
+    {
+        return $this->status === self::STATUS_BETA;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReleaseCanditate()
+    {
+        return $this->status === self::STATUS_RELEASE_CANDIDATE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProduction()
+    {
+        return $this->status === self::STATUS_PRODUCTION;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDiscontinued()
+    {
+        return $this->status === self::STATUS_DISCONTINUED;
+    }
 }

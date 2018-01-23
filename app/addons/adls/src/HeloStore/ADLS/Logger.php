@@ -133,6 +133,14 @@ class Logger extends Singleton
         if (!empty($params['requestPattern'])) {
             $conditions[] = db_quote('al.request LIKE ?l', '%' . $params['requestPattern'] . '%');
         }
+
+        if (!empty($params['fromDate'])) {
+            if ($params['fromDate'] instanceof \DateTime) {
+                $params['fromDate'] = $params['fromDate']->getTimestamp();
+            }
+            $conditions[] = db_quote('al.timestamp > ?i', $params['fromDate']);
+        }
+
         if (!empty($params['limit'])) {
             $limit = ' LIMIT 0,' . $params['limit'];
 		}

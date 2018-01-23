@@ -27,9 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'usage') {
-    $usage = \HeloStore\ADLS\Usage::general();
+    $usage = \HeloStore\ADLS\Usage::platforms();
     \Tygh\Registry::get('view')->assign('usage', $usage);
 }
+if ($mode == 'usage') {
+    $usage = \HeloStore\ADLS\Usage::products();
+    \Tygh\Registry::get('view')->assign('usage', $usage);
+}
+
 if ($mode == 'logs') {
 	$logger = \HeloStore\ADLS\Logger::instance();
 	$params = $_REQUEST;

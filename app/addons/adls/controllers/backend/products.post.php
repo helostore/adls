@@ -49,8 +49,11 @@ if ($mode == 'update') {
 
     $product = $view->getTemplateVars('product_data');
 
-    $usage = \HeloStore\ADLS\Usage::product($product['adls_addon_id']);
+    $usage = \HeloStore\ADLS\Usage::productPlatforms($product['adls_addon_id']);
     \Tygh\Registry::get('view')->assign('usage', $usage);
+
+    $usage = \HeloStore\ADLS\Usage::productVersions($product['adls_addon_id']);
+    \Tygh\Registry::get('view')->assign('usageProductVersions', $usage);
 
 	Registry::set('navigation.tabs.adls_releases', array (
 		'title' => __('adls.releases'),

@@ -49,6 +49,7 @@
 
 
         {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
+        {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
     </div>
 
     <!--content_adls--></div>

@@ -14,6 +14,8 @@
     {assign var="ajax_class" value="cm-ajax"}
 {/if}
 
+{$release_statuses = fn_adls_get_release_statuses()}
+
 {include file="common/pagination.tpl"}
 
 <table class="table ty-table ty-releases-search">
@@ -26,6 +28,7 @@
         {tableRowHeader key="fileName" label="fileName" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="fileSize" label="fileSize" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="userCount" label="user_count" sort_sign=$sort_sign search=$search}
+        {tableRowHeader key="status" label="status" sort_sign=$sort_sign search=$search}
         {hook name="releases:manage_header"}{/hook}
 
         <th></th>
@@ -40,6 +43,9 @@
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>{$release->getExtra('releaseAccess$userCount')}</td>
+            <td>
+                {include file="common/select_popup.tpl" items_status=$release_statuses popup_additional_class="dropleft" id=$release->getId() status=$release->getStatus() hidden=true object_id_name="id" table="adls_releases"}
+            </td>
             <td>
                 {include
                 file="buttons/button.tpl"

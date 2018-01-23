@@ -132,6 +132,12 @@ class ReleaseRepository extends EntityRepository
         if (!empty($params['productId'])) {
             $condition[] = db_quote('releases.productId = ?n', $params['productId']);
         }
+        if (!empty($params['status'])) {
+            $condition[] = db_quote('releases.status = ?s', $params['status']);
+        }
+        if (AREA === 'C') {
+            $condition[] = db_quote('releases.status = ?s', Release::STATUS_PRODUCTION);
+        }
 
         if ( ! empty($params['compatibilityPlatformId'])
              || ! empty($params['compatibilityPlatformVersionId'])
@@ -252,7 +258,6 @@ class ReleaseRepository extends EntityRepository
         }
         $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
         $items = db_get_array($query);
-//        aa($query, $items);
 
         if (!empty($items)) {
             foreach ($items as $k => $v) {
@@ -269,6 +274,12 @@ class ReleaseRepository extends EntityRepository
 		return array($items, $params);
 	}
 
+    public function findProduction($params = array())
+    {
+        $params['status'] = Release::STATUS_PRODUCTION;
+
+        return $this->find($params);
+    }
 	/**
 	 * Find latest releases of all products
 	 *
@@ -319,6 +330,25 @@ class ReleaseRepository extends EntityRepository
 
     /**
      * @param $productId
+     * @param \DateTime|null $startDate
+     * @param \DateTime|null $endDate
+     * @param array $params
+     *
+     * @return array|null
+     */
+    public function findProductionByProductInRange(
+        $productId,
+        \DateTime $startDate = null,
+        \DateTime $endDate = null,
+        $params = array()
+    ) {
+        $params['status'] = Release::STATUS_PRODUCTION;
+
+        return $this->findByProductInRange($productId, $startDate, $endDate, $params);
+    }
+
+    /**
+     * @param $productId
      * @param \DateTime $endDate
      * @param array $params
      * @return array|null
@@ -337,13 +367,26 @@ class ReleaseRepository extends EntityRepository
     }
 
     /**
+     * @param $productId
+     * @param \DateTime|null $endDate
+     * @param array $params
+     *
+     * @return array|null
+     */
+    public function findProductionOneLatestByProduct($productId, \DateTime $endDate = null, $params = array())
+    {
+        $params['status'] = Release::STATUS_PRODUCTION;
+
+        return $this->findOneLatestByProduct($productId, $endDate, $params);
+    }
+
+    /**
      * @param Subscription $subscription
      * @param array $params
      * @return array|null
      */
     public function findBySubscription(Subscription $subscription, $params = array())
     {
-	    $params['status'] = Release::STATUS_ACTIVE;
         $params['productId'] = $subscription->getProductId();
         $params['userId'] = $subscription->getUserId();
         $params['subscriptionId'] = $subscription->getId();

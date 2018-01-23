@@ -211,6 +211,26 @@ msgctxt "Languages::adls.release.file.name"
 msgid ""
 msgstr "File name"
 
+msgctxt "Languages::adls.release.status.a"
+msgid ""
+msgstr "Alpha"
+
+msgctxt "Languages::adls.release.status.b"
+msgid ""
+msgstr "Beta"
+
+msgctxt "Languages::adls.release.status.c"
+msgid ""
+msgstr "Candidate"
+
+msgctxt "Languages::adls.release.status.p"
+msgid ""
+msgstr "Production"
+
+msgctxt "Languages::adls.release.status.d"
+msgid ""
+msgstr "Discontinued"
+
 
 
 

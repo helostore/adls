@@ -12,6 +12,9 @@
     {if $product.has_unreleased_version}
         <p style="color: red;">Has unreleased version!</p>
     {/if}
+
+    {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
+
 {/capture}
 
 {capture name="adv_buttons"}
