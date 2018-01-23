@@ -39,7 +39,7 @@
             <td>{$release->getCreatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
-            <td>{$release->getExtra('releaseLink$userCount')}</td>
+            <td>{$release->getExtra('releaseAccess$userCount')}</td>
             <td>
                 {include
                 file="buttons/button.tpl"
