@@ -44,6 +44,12 @@
                 {include
                 file="buttons/button.tpl"
                 but_role="action"
+                but_text=__("adls.release.download")
+                but_href=fn_url("releases.download?release_id=`$release->getId()`")
+                but_meta=""}
+                {include
+                file="buttons/button.tpl"
+                but_role="action"
                 but_text=__("adls.release.publish")
                 but_href=fn_url("releases.publish?release_id=`$release->getId()`")
                 but_meta="cm-ajax"}

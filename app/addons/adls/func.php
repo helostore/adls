@@ -84,6 +84,17 @@ function fn_adls_place_order($orderId, $action, $orderStatus, $cart, $auth)
     return false;
 
 }
+
+/**
+ * @param $status_to
+ * @param $status_from
+ * @param $orderInfo
+ * @param $force_notification
+ * @param $order_statuses
+ * @param $place_order
+ *
+ * @throws Exception
+ */
 function fn_adls_change_order_status($status_to, $status_from, $orderInfo, $force_notification, $order_statuses, $place_order)
 {
 	fn_adls_process_order($orderInfo, $status_to, $status_from);
@@ -220,6 +231,14 @@ function fn_adls_validate_product_options($product_options)
     }
 }
 
+/**
+ * @param $orderInfo
+ * @param $orderStatus
+ * @param null $statusFrom
+ *
+ * @return bool
+ * @throws Exception
+ */
 function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 {
     if (defined('ORDER_MANAGEMENT')) {
@@ -276,7 +295,13 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                     }
                 }
             } else {
-	            if ( ! empty( $product['subscription'] ) || ! empty( $orderInfo['adls_subscription_setup_pending'])) {
+
+                // @TODO move this into an option per product, eg. "This product generates license keys"
+                // if is sidekick, don't generate license
+                $isSidekick = ($productId == 5);
+                $hasSubscription = ! empty($product['subscription']) || ! empty($orderInfo['adls_subscription_setup_pending']);
+
+	            if (!$isSidekick && $hasSubscription ) {
 		            $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 		            if ($licenseId) {
 			            fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
@@ -289,7 +314,8 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 	            }
             }
             // If it's not a subscription-based product, but license-based
-	        if ( empty( $product['subscription'] ) ) {
+            $hasNoSubscription = empty( $product['subscription'] ) && empty($orderInfo['adls_subscription_setup_pending']);
+	        if ( $hasNoSubscription ) {
 		        ReleaseManager::instance()->addUserLinks(
 			        $userId,
 			        $productId,
@@ -428,7 +454,13 @@ function fn_adls_get_options_ids()
     return $optionIds;
 }
 
-
+/**
+ * @param Subscription $subscription
+ * @param $product
+ * @param $orderInfo
+ *
+ * @throws Exception
+ */
 function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $product, $orderInfo)
 {
     // Assign most recent product release to subscription, to be used when querying for subscription's releases because the latest release might be out of subscriptions start/end range.
@@ -464,6 +496,14 @@ function fn_adls_adls_subscriptions_post_begin(Subscription $subscription, $prod
 		$subscription->getEndDate()
 	);
 }
+
+/**
+ * @param Subscription $subscription
+ * @param $product
+ * @param $orderInfo
+ *
+ * @throws Exception
+ */
 function fn_adls_adls_subscriptions_post_resume(Subscription $subscription, $product, $orderInfo)
 {
 	fn_adls_adls_subscriptions_post_begin( $subscription, $product, $orderInfo );

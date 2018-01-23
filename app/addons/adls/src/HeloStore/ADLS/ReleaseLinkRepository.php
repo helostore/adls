@@ -44,6 +44,7 @@ class ReleaseLinkRepository extends EntityRepository
 				'subscriptionId' => $subscriptionId,
 				'licenseId'      => $licenseId
 			) );
+
 		return db_query($query);
 	}
 

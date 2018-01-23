@@ -167,6 +167,10 @@ msgctxt "Languages::adls.release_now"
 msgid "adls.release_now"
 msgstr "Release"
 
+msgctxt "Languages::adls.release.download"
+msgid ""
+msgstr "Download"
+
 msgctxt "Languages::adls.release.publish"
 msgid ""
 msgstr "Publish"

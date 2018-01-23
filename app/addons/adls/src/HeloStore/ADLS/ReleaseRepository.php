@@ -251,9 +251,9 @@ class ReleaseRepository extends EntityRepository
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
         $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
-
         $items = db_get_array($query);
-        aa($query, $items);
+//        aa($query, $items);
+
         if (!empty($items)) {
             foreach ($items as $k => $v) {
                 $items[$k] = new Release($v);
@@ -306,7 +306,7 @@ class ReleaseRepository extends EntityRepository
      * @param array $params
      * @return array|null
      */
-    public function findByProductInRange($productId, \DateTime $startDate, \DateTime $endDate, $params = array())
+    public function findByProductInRange($productId, \DateTime $startDate = null, \DateTime $endDate = null, $params = array())
     {
         $params['productId'] = $productId;
 
