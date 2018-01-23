@@ -84,7 +84,6 @@ class ReleaseManager extends Manager
      * @param $fileName
      * @param $fileSize
      * @return bool|int
-     * @throws ReleaseException
      */
 	public function createRelease($productId, $version, $fileName, $fileSize)
 	{
@@ -105,7 +104,7 @@ class ReleaseManager extends Manager
             ->setFileSize($fileSize)
             ->setDownloads(0)
 			->setHash($hash)
-            ->setStatus(Release::STATUS_ACTIVE);
+            ->setStatus(Release::STATUS_ALPHA);
 
         $result = $this->repository->create($release);
         if ($result) {
