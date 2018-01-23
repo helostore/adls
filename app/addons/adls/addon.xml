@@ -52,7 +52,7 @@
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
         <item for="install">
-            CREATE TABLE IF NOT EXISTS `?:adls_release_links` (
+            CREATE TABLE IF NOT EXISTS `?:adls_release_access` (
             `userId` mediumint(8) UNSIGNED NOT NULL ,
             `releaseId` mediumint(8) UNSIGNED NOT NULL ,
             `productId` mediumint(8) UNSIGNED NOT NULL,

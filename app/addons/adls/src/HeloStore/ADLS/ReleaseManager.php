@@ -302,7 +302,7 @@ class ReleaseManager extends Manager
 //		list($latestReleases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
 //		$releases += $latestReleases;
 //		foreach ( $releases as $release ) {
-//			ReleaseLinkRepository::instance()->removeLink($userId, $release->getId());
+//			ReleaseAccessRepository::instance()->removeLink($userId, $release->getId());
 //		}
 //	}
 
@@ -327,12 +327,12 @@ class ReleaseManager extends Manager
 	    }
 
 	    foreach ( $releases as $release ) {
-		    ReleaseLinkRepository::instance()->addLink($userId, $productId, $release->getId(), $licenseId, $subscriptionId);
+		    ReleaseAccessRepository::instance()->addLink($userId, $productId, $release->getId(), $licenseId, $subscriptionId);
 	    }
 	}
 
 	public function unpublish(Release $release) {
-		list ($links, ) = ReleaseLinkRepository::instance()->findByRelease($release);
+		list ($links, ) = ReleaseAccessRepository::instance()->findByRelease($release);
 		$premium = 0;
 		$free = 0;
 		foreach ( $links as $link ) {
@@ -342,7 +342,7 @@ class ReleaseManager extends Manager
 				$free++;
 			}
 		}
-		ReleaseLinkRepository::instance()->deleteByReleaseId($release->getId());
+		ReleaseAccessRepository::instance()->deleteByReleaseId($release->getId());
 
 		return array($premium, $free);
 	}
@@ -375,7 +375,7 @@ class ReleaseManager extends Manager
 			foreach ( $subscriptions as $subscription ) {
 				$license = $subscription->getLicense();
 				$licenseId = !empty($license) ? $license->getId() : null;
-				$result = ReleaseLinkRepository::instance()->addLink(
+				$result = ReleaseAccessRepository::instance()->addLink(
 					$subscription->getUserId(),
 					$release->getProductId(),
 					$release->getId(),
@@ -397,7 +397,7 @@ class ReleaseManager extends Manager
 	 */
 	public function publishFree(Release $release) {
 
-		list ($links, ) = ReleaseLinkRepository::instance()->find(array(
+		list ($links, ) = ReleaseAccessRepository::instance()->find(array(
 			'productId' => $release->getProductId(),
 			'licenseId' => 0,
 			'subscriptionId' => 0,
@@ -407,7 +407,7 @@ class ReleaseManager extends Manager
 		$count = 0;
 		if ( ! empty( $links ) ) {
 			foreach ( $links as $link ) {
-				$result = ReleaseLinkRepository::instance()->addLink(
+				$result = ReleaseAccessRepository::instance()->addLink(
 					$link['userId'],
 					$release->getProductId(),
 					$release->getId()

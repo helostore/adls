@@ -78,7 +78,7 @@ class ReleaseRepository extends EntityRepository
 	 */
     public function deleteById($id)
     {
-	    ReleaseLinkRepository::instance()->deleteByReleaseId( $id );
+	    ReleaseAccessRepository::instance()->deleteByReleaseId( $id );
 	    CompatibilityRepository::instance()->deleteByReleaseId( $id );
 
         return db_query('DELETE FROM ?p WHERE id = ?i', $this->table, $id);
@@ -173,21 +173,21 @@ class ReleaseRepository extends EntityRepository
         }
 		if ( ! empty( $params['subscriptionId'] ) || ! empty( $params['userId'] ) ) {
 			$joins[] = db_quote('
-				INNER JOIN ?:adls_release_links AS releaseLink 
-                    ON releaseLink.releaseId = releases.id' .
+				INNER JOIN ?:adls_release_access AS releaseAccess 
+                    ON releaseAccess.releaseId = releases.id' .
                     (! empty( $params['subscriptionId'] ) ?
-	                    db_quote(' AND releaseLink.subscriptionId = ?i', $params['subscriptionId']) : '') .
+	                    db_quote(' AND releaseAccess.subscriptionId = ?i', $params['subscriptionId']) : '') .
                     (! empty( $params['userId'] ) ?
-	                    db_quote(' AND releaseLink.userId = ?i', $params['userId']) : '')
+	                    db_quote(' AND releaseAccess.userId = ?i', $params['userId']) : '')
 			);
-			$fields[] = 'releaseLink.licenseId AS link$licenseId';
-			$fields[] = 'releaseLink.subscriptionId AS link$subscriptionId';
+			$fields[] = 'releaseAccess.licenseId AS link$licenseId';
+			$fields[] = 'releaseAccess.subscriptionId AS link$subscriptionId';
 		}
 		if ( ! empty($params['getUserCount']) ) {
 			$joins[] = db_quote('
-				LEFT JOIN ?:adls_release_links AS releaseLinkUserCount
-                    ON releaseLinkUserCount.releaseId = releases.id');
-			$fields[] = 'COUNT(DISTINCT releaseLinkUserCount.userId) AS releaseLink$userCount';
+				LEFT JOIN ?:adls_release_access AS releaseAccessUserCount
+                    ON releaseAccessUserCount.releaseId = releases.id');
+			$fields[] = 'COUNT(DISTINCT releaseAccessUserCount.userId) AS releaseAccess$userCount';
 		}
         if (!empty($params['fromReleaseId'])) {
             $orCondition[] = db_quote('releases.id = ?i', $params['fromReleaseId']);
@@ -217,9 +217,9 @@ class ReleaseRepository extends EntityRepository
         	$subJoin = '';
 			if ( ! empty( $params['userId'] ) ) {
 				$subJoin = db_quote('
-					INNER JOIN ?:adls_release_links
-					    ON ?:adls_release_links.releaseId = ?:adls_releases.id 
-					    AND ?:adls_release_links.userId = ?i', $params['userId']);
+					INNER JOIN ?:adls_release_access
+					    ON ?:adls_release_access.releaseId = ?:adls_releases.id 
+					    AND ?:adls_release_access.userId = ?i', $params['userId']);
 			}
 			$joins[] = db_quote('
 				INNER JOIN (

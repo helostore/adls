@@ -15,13 +15,13 @@ namespace HeloStore\ADLS;
 use HeloStore\ADLSS\Subscription;
 
 /**
- * Class ReleaseLinkRepository
+ * Class ReleaseAccessRepository
  *
  * @package HeloStore\ADLS
  */
-class ReleaseLinkRepository extends EntityRepository
+class ReleaseAccessRepository extends EntityRepository
 {
-	protected $table = '?:adls_release_links';
+	protected $table = '?:adls_release_access';
 
 	/**
 	 * @param $userId
@@ -85,7 +85,7 @@ class ReleaseLinkRepository extends EntityRepository
 		$params = array_merge($defaultParams, $params);
 
 		$sortingFields = array (
-			'id' => "releaseLinks.releaseId",
+			'id' => "releaseAccess.releaseId",
 		);
 		$sorting = db_sort($params, $sortingFields, 'id', 'asc');
 
@@ -93,30 +93,30 @@ class ReleaseLinkRepository extends EntityRepository
 		$orCondition = array();
 		$joins = array();
 		$fields = array();
-		$fields[] = 'releaseLinks.*';
-		$group = 'releaseLinks.releaseId, releaseLinks.userId';
+		$fields[] = 'releaseAccess.*';
+		$group = 'releaseAccess.releaseId, releaseAccess.userId';
 		if (isset($params['distinctUserId'])) {
-			$group = 'releaseLinks.userId';
+			$group = 'releaseAccess.userId';
 		}
 
 		if (isset($params['releaseId'])) {
-			$condition[] = db_quote('releaseLinks.releaseId = ?i', $params['releaseId']);
+			$condition[] = db_quote('releaseAccess.releaseId = ?i', $params['releaseId']);
 		}
 		if (isset($params['productId'])) {
-			$condition[] = db_quote('releaseLinks.productId = ?i', $params['productId']);
+			$condition[] = db_quote('releaseAccess.productId = ?i', $params['productId']);
 		}
 		if (isset($params['userId'])) {
-			$condition[] = db_quote('releaseLinks.userId = ?i', $params['userId']);
+			$condition[] = db_quote('releaseAccess.userId = ?i', $params['userId']);
 		}
 		if (isset($params['subscriptionId'])) {
-			$condition[] = db_quote('releaseLinks.subscriptionId = ?i', $params['subscriptionId']);
+			$condition[] = db_quote('releaseAccess.subscriptionId = ?i', $params['subscriptionId']);
 		}
 		if (isset($params['licenseId'])) {
-			$condition[] = db_quote('releaseLinks.licenseId = ?i', $params['licenseId']);
+			$condition[] = db_quote('releaseAccess.licenseId = ?i', $params['licenseId']);
 		}
 
 		$joins = empty($joins) ? '' : implode(' ', $joins);
-		$fields = empty($fields) ? 'releaseLinks.*' : implode(', ', $fields);
+		$fields = empty($fields) ? 'releaseAccess.*' : implode(', ', $fields);
 		$condition = implode(' AND ', $condition);
 		$orCondition = implode(' AND ', $orCondition);
 		$conditions = !empty($condition) ? ' WHERE (' . $condition . ')' : '';
@@ -128,11 +128,11 @@ class ReleaseLinkRepository extends EntityRepository
 		if (isset($params['one'])) {
 			$limit = 'LIMIT 0,1';
 		} else if (!empty($params['items_per_page'])) {
-			$query = db_quote('SELECT COUNT(releaseLinks.*) FROM ?p AS releaseLinks ?p ?p GROUP BY releaseLinks.releaseId, releaseLinks.userId ?p', $this->table, $joins, $conditions, $limit);
+			$query = db_quote('SELECT COUNT(releaseAccess.*) FROM ?p AS releaseAccess ?p ?p GROUP BY releaseAccess.releaseId, releaseAccess.userId ?p', $this->table, $joins, $conditions, $limit);
 			$params['total_items'] = db_get_field($query);
 			$limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
 		}
-		$query = db_quote('SELECT ?p FROM ?p AS releaseLinks ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
+		$query = db_quote('SELECT ?p FROM ?p AS releaseAccess ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
 		$items = db_get_array($query);
 
 		if (isset($params['one'])) {

@@ -16,7 +16,7 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
-use HeloStore\ADLS\ReleaseLinkRepository;
+use HeloStore\ADLS\ReleaseAccessRepository;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use HeloStore\ADLS\Utils;
@@ -105,16 +105,16 @@ function fn_adls_delete_order($orderId)
     $manager = LicenseManager::instance();
     $licenseRepository = LicenseRepository::instance();
     $licenses = $manager->getOrderLicenses($orderId);
-	$releaseLinkRepository = ReleaseLinkRepository::instance();
+	$releaseAccessRepository = ReleaseAccessRepository::instance();
 	/** @var License $license */
 	foreach ($licenses as $license) {
 		if ( ! empty( $license->getUserId() ) && ! empty( $license->getId() ) ) {
-			list ($links, ) = $releaseLinkRepository->find( array(
+			list ($links, ) = $releaseAccessRepository->find( array(
 				'userId' => $license->getUserId(),
 				'licenseId' => $license->getId(),
 			));
 			foreach ( $links as $link ) {
-				$releaseLinkRepository->removeLink( $link );
+                $releaseAccessRepository->removeLink( $link );
 			}
 		}
 
@@ -513,13 +513,13 @@ function fn_adls_adls_subscriptions_post_suspend(Subscription $subscription)
 {
 	$license = LicenseRepository::instance()->findOneBySubscription( $subscription );
 	if ( ! empty( $license ) ) {
-//		list ($links, ) = ReleaseLinkRepository::instance()->find( array(
+//		list ($links, ) = ReleaseAccessRepository::instance()->find( array(
 //			'userId' => $subscription->getUserId(),
 //			'licenseId' => $license->getId(),
 //			'subscriptionId' => $subscription->getId(),
 //		));
 //		foreach ( $links as $link ) {
-//			ReleaseLinkRepository::instance()->removeLink( $link );
+//			ReleaseAccessRepository::instance()->removeLink( $link );
 //		}
 		LicenseManager::instance()->doDisableLicense( $license->getId() );
 	}
@@ -531,13 +531,13 @@ function fn_adls_adls_subscriptions_post_fail(Subscription $subscription, $produ
 }
 
 function fn_adls_adlss_delete_subscription(Subscription $subscription ) {
-	list ($links, ) = ReleaseLinkRepository::instance()->find( array(
+	list ($links, ) = ReleaseAccessRepository::instance()->find( array(
 		'userId' => $subscription->getUserId(),
 		'subscriptionId' => $subscription->getId(),
 	));
 
 	foreach ( $links as $link ) {
-		ReleaseLinkRepository::instance()->removeLink( $link );
+		ReleaseAccessRepository::instance()->removeLink( $link );
 	}
 }
 function fn_adls_adlss_get_subscriptions_post(&$items , $params ) {
