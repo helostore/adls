@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.22",
+        "releaseDate": "2018-01-23 01:58:09",
+        "releaseTimestamp": "1516715889",
+        "hash": "bc24f3f47430d9717a5e42faf3023b5db5a9079b",
+        "commits": [
+            "[2018-01-23] Bumped version to 0.2.22"
+        ]
+    },
+    {
         "version": "0.2.21",
         "releaseDate": "2018-01-23 09:37:35",
         "releaseTimestamp": "1516700255",
@@ -27,16 +36,6 @@
         "commits": [
             "[2018-01-21] Bumped version to 0.2.19",
             "[2018-01-21]\tChange release archive path into subdirectories (addonId)"
-        ]
-    },
-    {
-        "version": "0.2.18",
-        "releaseDate": "2018-01-21 07:08:58",
-        "releaseTimestamp": "1516561738",
-        "hash": "7f243881b60dd4806d31aceac762373880cd8b6e",
-        "commits": [
-            "[2018-01-21] Bumped version to 0.2.18",
-            "[2018-01-21]\tAdd auxiliary 'number' bigint field for better version sorting"
         ]
     }
 ]
