@@ -13,6 +13,69 @@
         flex-grow: 1;
     }
 </style>
+
+<script>
+
+    $('.select-all').click(function(e){
+        var checked = e.currentTarget.checked;
+        $('.list-item-checkbox').prop('checked', checked);
+        countChecked((checked) ? 20 : 0);
+    });
+
+    var lastChecked = null;
+    $('.list-item-checkbox').click(function(e){
+        var selectAllChecked = $('.select-all:checked').length ? true : false;
+
+        if (selectAllChecked) {
+            var itemsTotal = $('.list-item-checkbox').length;
+            var uncheckedItemsTotal = itemsTotal - checkedItemsTotal();
+            var selected = 20 - uncheckedItemsTotal;
+            countChecked(selected);
+        } else {
+            countChecked();
+        }
+
+        if(!lastChecked) {
+            lastChecked = this;
+            return;
+        }
+
+        if(e.shiftKey) {
+            var from = $('.list-item-checkbox').index(this);
+            var to = $('.list-item-checkbox').index(lastChecked);
+
+            var start = Math.min(from, to);
+            var end = Math.max(from, to) + 1;
+
+            $('.list-item-checkbox').slice(start, end)
+                .filter(':not(:disabled)')
+                .prop('checked', lastChecked.checked);
+            countChecked();
+        }
+        lastChecked = this;
+
+        if(e.altKey){
+
+            $('.list-item-checkbox')
+                .filter(':not(:disabled)')
+                .each(function () {
+                    var $checkbox = $(this);
+                    $checkbox.prop('checked', !$checkbox.is(':checked'));
+                    countChecked();
+
+                });
+        }
+
+    });
+    function countChecked(number){
+        number = number ? number : checkedItemsTotal();
+        $('#counter-selected').html(number);
+    }
+
+    function checkedItemsTotal(){
+        return $('.list-item-checkbox:checked').length;
+    }
+</script>
 {if !empty($release)}
     {$title = __('adls.release.edit.title', ['%id%' => $release->getId()])}
     {$submitButtonText = __('adls.release.edit.submit')}
@@ -73,6 +136,7 @@
             </div>
         </div>
 
+
         <div class="control-group">
             <label class="control-label">{__("adls.compatibility")}:</label>
             <div class="controls compatibility">
@@ -82,8 +146,8 @@
                     {if in_array($version->getId(), $compatiblePlatformVersionIds)}
                         {$checked = true}
                     {/if}
-                    <label class="compatibility-version">
-                        <input type="checkbox" value="{$version->getId()}" name="compatibility[]" {if $checked}checked="checked"{/if}>
+                    <label class="checkbox compatibility-version">
+                        <input type="checkbox" value="{$version->getId()}" name="compatibility[]" {if $checked}checked="checked"{/if} class="list-item-checkbox">
                         {$version->getExtra('platform$name')}
                         {$version->getExtra('edition$name')}
                         {$version->getVersion()}

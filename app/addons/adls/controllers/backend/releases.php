@@ -195,10 +195,24 @@ if ($mode == 'manage' && ! empty($_REQUEST['id'])) {
     $manager  = ProductManager::instance();
     $products = $manager->getStoreProductsData();
     $product  = $products[$addonId];
-
     if ( ! isset($products[$addonId])) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+    $platform = PlatformRepository::instance()->findDefault();
+    /** @var \HeloStore\ADLS\Release $release */
+    foreach ($product['releases2'] as $release) {
+
+        $compatibilities = [];
+        if ( ! empty($release)) {
+            list($compatibilities, ) = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->find(array(
+                'releaseId' => $release->getId(),
+                'platformId' => $platform->getId()
+            ));
+            $release->setCompatibility($compatibilities);
+        }
+    }
+
+
     Registry::get('view')->assign('product', $product);
     Registry::get('view')->assign('addonId', $addonId);
 
