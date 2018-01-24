@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.27",
+        "releaseDate": "2018-01-24 06:14:22",
+        "releaseTimestamp": "1516817662",
+        "hash": "00065c8d3da943a8e8b0f185b5549c5c4c308df5",
+        "commits": [
+            "[2018-01-24] Bumped version to 0.2.27",
+            "[2018-01-24]\tShow compatibility in backend"
+        ]
+    },
+    {
         "version": "0.2.26",
         "releaseDate": "2018-01-23 08:53:05",
         "releaseTimestamp": "1516740785",
@@ -26,16 +36,6 @@
         "commits": [
             "[2018-01-23] Bumped version to 0.2.24",
             "[2018-01-23]\tRefactor: ReleaseLink* is now ReleaseAccess*"
-        ]
-    },
-    {
-        "version": "0.2.23",
-        "releaseDate": "2018-01-23 04:23:38",
-        "releaseTimestamp": "1516724618",
-        "hash": "e2b23d5c68392683a861780dec08827ab102bc2d",
-        "commits": [
-            "[2018-01-23] Bumped version to 0.2.23",
-            "[2018-01-23]\tFix releases issue"
         ]
     }
 ]
