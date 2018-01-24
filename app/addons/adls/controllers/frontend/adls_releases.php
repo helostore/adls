@@ -74,9 +74,9 @@ if ($mode == 'view') {
         list( $releases, $search ) = ReleaseRepository::instance()->findLatest( $params );
     }
 
-    $platform = PlatformRepository::instance()->findDefault();
 
-	/** @var \HeloStore\ADLS\Release $release */
+    $platform = PlatformRepository::instance()->findDefault();
+    /** @var \HeloStore\ADLS\Release $release */
     foreach ($releases as $release) {
 
         $compatibilities = [];

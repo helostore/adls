@@ -28,6 +28,7 @@
         {tableRowHeader key="fileName" label="fileName" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="fileSize" label="fileSize" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="userCount" label="user_count" sort_sign=$sort_sign search=$search}
+        {tableRowHeader key="" label="adls.compatibility" sort_sign=$sort_sign search=$search}
         {tableRowHeader key="status" label="status" sort_sign=$sort_sign search=$search}
         {hook name="releases:manage_header"}{/hook}
 
@@ -43,6 +44,18 @@
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>{$release->getExtra('releaseAccess$userCount')}</td>
+            <td>
+
+                {if !empty($release->getCompatibility())}
+                    {$htmlId = "rc-`$release->getId()`"}
+                    <button data-toggle="collapse" data-target="#{$htmlId}">View</button>
+                    <div id="{$htmlId}" class="collapse">
+                        {implode('<br />', $release->getCompatibility()) nofilter}
+                    </div>
+                {else}
+                    n/a
+                {/if}
+            </td>
             <td>
                 {include file="common/select_popup.tpl" items_status=$release_statuses popup_additional_class="dropleft" id=$release->getId() status=$release->getStatus() hidden=true object_id_name="id" table="adls_releases"}
             </td>
