@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.29",
+        "releaseDate": "2018-01-25 05:39:08",
+        "releaseTimestamp": "1516901948",
+        "hash": "b071050cc5ae00e5fb2a2295524c0c2f5ed9a0f9",
+        "commits": [
+            "[2018-01-25] Bumped version to 0.2.29",
+            "[2018-01-25]\tAdd proper release dates to releases during migration"
+        ]
+    },
+    {
         "version": "0.2.28",
         "releaseDate": "2018-01-24 06:14:29",
         "releaseTimestamp": "1516817669",
@@ -26,15 +36,6 @@
         "commits": [
             "[2018-01-23] Bumped version to 0.2.26",
             "[2018-01-23]\tAdd status field to release"
-        ]
-    },
-    {
-        "version": "0.2.25",
-        "releaseDate": "2018-01-23 06:07:07",
-        "releaseTimestamp": "1516730827",
-        "hash": "68d67ef05fce5065dc537230254c33089b2e820e",
-        "commits": [
-            "[2018-01-23] Bumped version to 0.2.25"
         ]
     }
 ]
