@@ -76,6 +76,28 @@ class MigrationManager extends Manager
             }
         }
 
+        if ( ! empty($releaseIds)) {
+            $dates = file_get_contents(DIR_ROOT . '/app/addons/local/controllers/backend/migrate/release_dates.json');
+            $dates = json_decode($dates, true);
+            $dates = $dates[$addonId];
+            foreach ($releaseIds as $releaseId) {
+                if (empty($releaseId)) {
+                    continue;
+                }
+
+                $release = ReleaseRepository::instance()->findOneById($releaseId);
+                if (empty($release)) {
+                    continue;
+                }
+
+                $timestamp = $dates[$release->getVersion()]['timestamp'];
+                $releaseDate = new \DateTime();
+                $releaseDate->setTimestamp($timestamp);
+                $release->setCreatedAt($releaseDate);
+                ReleaseRepository::instance()->update($release);
+            }
+        }
+
         fn_print_r('OK `' . $storeProduct['name'] . '` ' . count($releaseIds) . ' releases');
 
         return true;
@@ -106,10 +128,6 @@ class MigrationManager extends Manager
                 'filesize' => filesize($filePath),
             ];
             $releaseIds[] = $releaseId = ReleaseManager::instance()->release($storeProduct, $entry);
-            if ( ! empty($releaseId)) {
-//                $release = ReleaseRepository::instance()->findOneById($releaseId);
-//                $release->setCreatedAt($releaseDate);
-            }
         }
 
         return $releaseIds;
