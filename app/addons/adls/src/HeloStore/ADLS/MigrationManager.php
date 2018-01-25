@@ -11,6 +11,7 @@
  * @license    https://helostore.com/legal/license-agreement/   License Agreement
  * @version    $Id$
  */
+
 namespace HeloStore\ADLS;
 
 use HeloStore\Developer\ReleaseManager AS DeveloperReleaseManager;
@@ -43,15 +44,16 @@ class MigrationManager extends Manager
     public function migrateProduct($storeProduct)
     {
         $releaseRepository = ReleaseRepository::instance();
-        $releaseManager = ReleaseManager::instance();
+        $releaseManager    = ReleaseManager::instance();
 
         $productId = $storeProduct['product_id'];
-        $addonId = $storeProduct['adls_addon_id'];
+        $addonId   = $storeProduct['adls_addon_id'];
 
-        list($releases, ) = $releaseRepository->findByProductId($productId);
+        list($releases,) = $releaseRepository->findByProductId($productId);
 
-        if (!empty($releases)) {
+        if ( ! empty($releases)) {
             fn_print_r('Skipping `' . $storeProduct['name'] . '` already got ' . count($releases) . ' releases');
+
             return false;
         }
 
@@ -62,7 +64,7 @@ class MigrationManager extends Manager
 
         $releaseIds = [];
         $releaseIds += $this->createReleaseFromArchives($storeProduct);
-        $releaseId = $this->migrateReleaseFromAttachments($storeProduct);
+        $releaseId  = $this->migrateReleaseFromAttachments($storeProduct);
         if ( ! empty($releaseId)) {
             $releaseIds[] = $releaseId;
         }
@@ -75,6 +77,7 @@ class MigrationManager extends Manager
         }
 
         fn_print_r('OK `' . $storeProduct['name'] . '` ' . count($releaseIds) . ' releases');
+
         return true;
     }
 
@@ -86,35 +89,40 @@ class MigrationManager extends Manager
      */
     public function createReleaseFromArchives($storeProduct)
     {
-        $productId = $storeProduct['product_id'];
-        $addonId = $storeProduct['adls_addon_id'];
+        $productId               = $storeProduct['product_id'];
+        $addonId                 = $storeProduct['adls_addon_id'];
         $developerReleaseManager = DeveloperReleaseManager::instance();
 
         $releaseRepositoryPath = $developerReleaseManager->getOutputPath($addonId);
 
-        $files = glob($releaseRepositoryPath . '/' . $addonId . '*');
+        $files      = glob($releaseRepositoryPath . '/' . $addonId . '*');
         $releaseIds = [];
         foreach ($files as $filePath) {
-            $fileName = basename($filePath);
-            $version = Utils::matchVersion($fileName);
-            $entry = [
-                'version' => $version,
+            $fileName     = basename($filePath);
+            $version      = Utils::matchVersion($fileName);
+            $entry        = [
+                'version'  => $version,
                 'filename' => $fileName,
                 'filesize' => filesize($filePath),
             ];
-           $releaseIds[] = ReleaseManager::instance()->release($storeProduct, $entry);
+            $releaseIds[] = $releaseId = ReleaseManager::instance()->release($storeProduct, $entry);
+            if ( ! empty($releaseId)) {
+//                $release = ReleaseRepository::instance()->findOneById($releaseId);
+//                $release->setCreatedAt($releaseDate);
+            }
         }
 
         return $releaseIds;
     }
+
     public function createReleaseFromPack($storeProduct)
     {
 
-        $productId = $storeProduct['product_id'];
-        $addonId = $storeProduct['adls_addon_id'];
+        $productId               = $storeProduct['product_id'];
+        $addonId                 = $storeProduct['adls_addon_id'];
         $developerReleaseManager = DeveloperReleaseManager::instance();
 
-        $output = array();
+        $output    = array();
         $releaseId = null;
         if ($developerReleaseManager->pack($addonId, $output)) {
 
@@ -123,24 +131,25 @@ class MigrationManager extends Manager
             try {
                 $releaseId = $developerReleaseManager->release($addonId, $output);
             } catch (\Exception $e) {
-                fn_print_r( 'Release error: ' . $e->getMessage() );
+                fn_print_r('Release error: ' . $e->getMessage());
             }
             if ($result !== null) {
                 if ($result) {
-                    fn_print_r( 'Attached release to product: ' . $output['archivePath'] );
+                    fn_print_r('Attached release to product: ' . $output['archivePath']);
                 } else {
-                    fn_print_r( 'Release error: Attached release to product: ' . 'Failed attaching release to product: ' . $output['archivePath'] );
+                    fn_print_r('Release error: Attached release to product: ' . 'Failed attaching release to product: ' . $output['archivePath']);
                 }
             }
-        } else if ($developerReleaseManager->hasErrors()) {
+        } elseif ($developerReleaseManager->hasErrors()) {
             foreach ($developerReleaseManager->getErrors() as $error) {
-                fn_print_r( 'Packing error: ' . $error );
+                fn_print_r('Packing error: ' . $error);
             }
         }
 
 
-        if ( $releaseId == null ) {
+        if ($releaseId == null) {
             fn_print_r('Skipping `' . $storeProduct['name'] . '`, failed to release: no release files found OR packing failed');
+
             return false;
         }
 
@@ -163,7 +172,7 @@ class MigrationManager extends Manager
 
         $releaseManager = ReleaseManager::instance();
 
-        list($files, ) = fn_get_product_files(array(
+        list($files,) = fn_get_product_files(array(
             'product_id' => $productId
         ));
 
@@ -173,9 +182,9 @@ class MigrationManager extends Manager
         }
 
         foreach ($files as $file) {
-            $fileSize   = $file['file_size'];
-            $fileName   = $file['file_name'];
-            $version = Utils::matchVersion($fileName);
+            $fileSize = $file['file_size'];
+            $fileName = $file['file_name'];
+            $version  = Utils::matchVersion($fileName);
             if (empty($version)) {
                 throw new ReleaseException('Unable to get version from string ' . $fileName);
             }

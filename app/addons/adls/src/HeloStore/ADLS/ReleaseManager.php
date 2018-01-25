@@ -83,7 +83,9 @@ class ReleaseManager extends Manager
      * @param $version
      * @param $fileName
      * @param $fileSize
+     *
      * @return bool|int
+     * @throws \Exception
      */
 	public function createRelease($productId, $version, $fileName, $fileSize)
 	{
