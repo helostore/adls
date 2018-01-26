@@ -208,17 +208,18 @@ if ($mode == 'fix_orphaned_licenses') {
     $licenseRepository = \HeloStore\ADLS\LicenseRepository::instance();
     $manager = LicenseManager::instance();
 
+    /** @var License $license */
     foreach ($licenses as $license) {
         $item = db_get_row('SELECT * FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
-            $license['orderItemId']
-            , $license['orderId']
-            , $license['productId']
+            $license->getOrderItemId(),
+            $license->getOrderId(),
+            $license->getProductId()
         );
         if (empty($item)) {
-            $license = $manager->getOrderLicense($license['orderId'], $license['orderItemId']);
+            $license = $manager->getOrderLicense($license->getOrderId(), $license->getOrderItemId());
             if (!empty($license)) {
-                aa('Deleted orphan license #' . $license['id']);
-                $licenseRepository->delete($license['id']);
+                aa('Deleted orphan license #' . $license->getId());
+                $licenseRepository->delete($license->getId());
             }
         }
     }
