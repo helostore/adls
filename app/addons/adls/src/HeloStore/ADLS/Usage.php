@@ -119,21 +119,23 @@ class Usage
             if ( ! isset($usage[$platform][$edition][$version])) {
                 $usage[$platform][$edition][$version] = array(
                     'requests' => 0,
-                    'hostname' => array()
+                    'hostname' => array(),
+                    'productVersions' => array(),
                 );
             }
+            $productVersion = $log['request']['products'][$productCode]['version'];
             if ( ! empty($log['request']['server']['hostname'])) {
                 $hostname = $log['request']['server']['hostname'];
                 if ( ! isset($usage[$platform][$edition][$version]['hostname'][$hostname])) {
                     $usage[$platform][$edition][$version]['hostname'][$hostname] = array();
                 }
-                $productVersion = $log['request']['products'][$productCode]['version'];
                 if ( ! in_array($productVersion, $usage[$platform][$edition][$version]['hostname'][$hostname])) {
                     $usage[$platform][$edition][$version]['hostname'][$hostname][] = $productVersion;
                 }
             }
 
             $usage[$platform][$edition][$version]['requests']++;
+            $usage[$platform][$edition][$version]['productVersions'][$productVersion]++;
         }
         foreach ($usage as $platform => $editions) {
             ksort($usage[$platform]);

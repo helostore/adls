@@ -50,7 +50,6 @@ class LicenseServer
             } catch (\Exception $exception) {
             }
             $response = $this->checkUpdates($request);
-
         } elseif ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
             $response = $this->authenticate($request);
         } elseif ($this->authorize($request)) {

@@ -282,8 +282,9 @@ class ProductManager extends Singleton
 //		$product = $this->getProductById( $productId );
 		$customerVersion = !empty($customerProduct['version']) ? $customerProduct['version'] : '';
 
-		$freeSubscription = $this->isFreeSubscription($storeProduct['adls_subscription_id']);
-		$paidSubscription = $this->isPaidSubscription($storeProduct['adls_subscription_id']);
+        $productData = ProductManager::instance()->getProductByAddonId($productCode);
+        $freeSubscription = $this->isFreeSubscription($productData['adls_subscription_id']);
+        $paidSubscription = $this->isPaidSubscription($productData['adls_subscription_id']);
 
 
 		if ( $paidSubscription ) {
@@ -387,11 +388,12 @@ class ProductManager extends Singleton
                 'compatibilityPlatformEditionId' => $platformEditionId,
                 'compatibilityPlatformVersionId' => $platformVersionId
 			) );
-
-            if ($freeSubscription) {
-                $latestUserRelease = $latestRelease;
-            }
 		}
+
+        if ($freeSubscription) {
+            $latestUserRelease = $latestRelease;
+        }
+
 
 
 		if ( empty( $latestUserRelease ) ) {

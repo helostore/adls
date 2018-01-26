@@ -8,6 +8,7 @@
 			<th>Version</th>
 			<th>Requests</th>
 			<th>Hostname</th>
+			<th>Product</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -20,12 +21,20 @@
 						<td>{$version}</td>
 						<td>{$entry.requests}</td>
 						<td>
-							{if is_array($entry.hostname.0)}
-                                {foreach from=$entry.hostname key="hostname" item="productVersions"}
-									{$hostname} ({", "|implode:$productVersions})
-								{/foreach}
+                            {foreach from=$entry.hostname key="hostname" item="productVersions"}
+                                {$hostname} ({", "|implode:$productVersions})
+                            {/foreach}
+{*							{if is_array($entry.hostname.0)}
+
 							{else}
                                 {", "|implode:$entry.hostname}
+                            {/if}*}
+						</td>
+						<td>
+                            {if !empty($entry.productVersions)}
+                                {foreach from=$entry.productVersions item="count" key="productVersion"}
+                                    {$productVersion} (#{$count})
+                                {/foreach}
                             {/if}
 						</td>
 					</tr>
