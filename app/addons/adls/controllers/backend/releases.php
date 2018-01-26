@@ -18,6 +18,7 @@ use HeloStore\ADLS\Platform\PlatformVersionRepository;
 use HeloStore\ADLS\ProductManager;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
+use HeloStore\Developer\ReleaseManager AS DeveloperReleaseManager;
 use Tygh\Registry;
 
 
@@ -36,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // app/addons/developer/controllers/backend/addons.post.php:106
-            $manager = ReleaseManager::instance();
+            $manager = DeveloperReleaseManager::instance();
             if ($manager->pack($addonId, $output)) {
                 fn_set_notification('N', __('notice'), 'Packed to ' . $output['archivePath']);
 
@@ -217,7 +218,10 @@ if ($mode == 'manage' && ! empty($_REQUEST['id'])) {
     Registry::get('view')->assign('addonId', $addonId);
 
 
-    $usage = \HeloStore\ADLS\Usage::productVersions($addonId);
+    $usage = \HeloStore\ADLS\Usage::productPlatforms($product['adls_addon_id']);
+    \Tygh\Registry::get('view')->assign('usage', $usage);
+
+    $usage = \HeloStore\ADLS\Usage::productVersions($product['adls_addon_id']);
     \Tygh\Registry::get('view')->assign('usageProductVersions', $usage);
 }
 

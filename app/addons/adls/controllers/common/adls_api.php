@@ -16,7 +16,7 @@ use HeloStore\ADLS\LicenseServer;
 use HeloStore\ADLS\Logger;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
-
+// header("HTTP/1.1 404 Not Found"); exit;
 $app = new LicenseServer();
 $response = array();
 $exception = null;
