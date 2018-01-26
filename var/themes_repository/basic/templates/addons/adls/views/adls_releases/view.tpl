@@ -36,21 +36,50 @@
             <td><strong>{$release->getExtra('product$name')}</strong></td>
             <td>{$release->getVersion()}</td>
             <td>
-                {if !empty($release->getCompatibility())}
-                    {implode('<br />', $release->getCompatibility()) nofilter}
+                {$compatiblity = $release->getCompatibility()}
+                {if !empty($compatiblity)}
+                    {$firstTwo = ""}
+                    {if count($compatiblity) >= 2}
+                        {$firstTwo = implode("<br />", array_slice($compatiblity, 0, 2))}
+                    {/if}
+
+                    {$htmlId = "rc-`$release->getId()`"}
+                    {if count($compatiblity) > 2}
+                        <a class="cm-combination cm-save-state cm-ss-reverse pull-left" id="sw_{$htmlId}">
+                            <span class="ty-section__switch ty-section_switch_on">
+                                View more<i class="ty-section__arrow ty-icon-down-open"></i><br/>
+                                {$firstTwo nofilter}
+                                <br>...
+                            </span>
+                            <span class="ty-section__switch ty-section_switch_off">
+                                View less <i class="ty-section__arrow ty-icon-up-open"></i> <br/>
+                            </span>
+                        </a>
+                        <br/>
+                        <div id="{$htmlId}" class="hidden">
+                            {implode('<br />', $compatiblity) nofilter}
+                        </div>
+                    {else}
+                        {$firstTwo nofilter}
+                        <br/>
+                    {/if}
+                {else}
+                    n/a
                 {/if}
             </td>
             <td>{$release->getCreatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>
-                <a class="ty-btn ty-btn__primary ty-btn" href="{"adls_releases.download?hash={$release->getHash()}"|fn_url}">Download</a>
+                <a class="ty-btn ty-btn__primary ty-btn"
+                   href="{"adls_releases.download?hash={$release->getHash()}"|fn_url}">Download</a>
                 {if !isset($smarty.request.product_id)}
-                    <a class="ty-btn ty-btn__primary ty-btn" href="{"adls_releases.view?product_id={$release->getProductId()}"|fn_url}">View all</a>
+                    <a class="ty-btn ty-btn__primary ty-btn"
+                       href="{"adls_releases.view?product_id={$release->getProductId()}"|fn_url}">View all</a>
                 {/if}
             </td>
         </tr>
-    {foreachelse}
+        {foreachelse}
         <tr class="ty-table__no-items">
             <td colspan="7"><p class="ty-no-items">{__("no_items")}</p></td>
         </tr>

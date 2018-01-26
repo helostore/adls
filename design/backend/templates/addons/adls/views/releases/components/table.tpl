@@ -45,7 +45,6 @@
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>{$release->getExtra('releaseAccess$userCount')}</td>
             <td>
-
                 {if !empty($release->getCompatibility())}
                     {$htmlId = "rc-`$release->getId()`"}
                     <button data-toggle="collapse" data-target="#{$htmlId}">View</button>
