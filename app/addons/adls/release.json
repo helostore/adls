@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.30",
+        "releaseDate": "2018-01-26 10:58:57",
+        "releaseTimestamp": "1516964337",
+        "hash": "8803d17a65d58f2a22d1236808c6230e74f4be8c",
+        "commits": [
+            "[2018-01-26] Bumped version to 0.2.30",
+            "[2018-01-26]\tImprove usage stats"
+        ]
+    },
+    {
         "version": "0.2.29",
         "releaseDate": "2018-01-25 05:39:08",
         "releaseTimestamp": "1516901948",
@@ -26,16 +36,6 @@
         "commits": [
             "[2018-01-24] Bumped version to 0.2.27",
             "[2018-01-24]\tShow compatibility in backend"
-        ]
-    },
-    {
-        "version": "0.2.26",
-        "releaseDate": "2018-01-23 08:53:05",
-        "releaseTimestamp": "1516740785",
-        "hash": "5b98458a06afc5978c92980e8d46d7f9f50e7194",
-        "commits": [
-            "[2018-01-23] Bumped version to 0.2.26",
-            "[2018-01-23]\tAdd status field to release"
         ]
     }
 ]
