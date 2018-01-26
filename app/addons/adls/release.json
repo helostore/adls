@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.33",
+        "releaseDate": "2018-01-26 01:18:11",
+        "releaseTimestamp": "1516972691",
+        "hash": "3c48b5e09aa84e57f7e7a8796a64a483ce5ec83f",
+        "commits": [
+            "[2018-01-26] Bumped version to 0.2.33",
+            "[2018-01-26]\tBackward compatibility fix on updating license domains"
+        ]
+    },
+    {
         "version": "0.2.32",
         "releaseDate": "2018-01-26 01:00:12",
         "releaseTimestamp": "1516971612",
@@ -27,16 +37,6 @@
         "commits": [
             "[2018-01-26] Bumped version to 0.2.30",
             "[2018-01-26]\tImprove usage stats"
-        ]
-    },
-    {
-        "version": "0.2.29",
-        "releaseDate": "2018-01-25 05:39:08",
-        "releaseTimestamp": "1516901948",
-        "hash": "b071050cc5ae00e5fb2a2295524c0c2f5ed9a0f9",
-        "commits": [
-            "[2018-01-25] Bumped version to 0.2.29",
-            "[2018-01-25]\tAdd proper release dates to releases during migration"
         ]
     }
 ]
