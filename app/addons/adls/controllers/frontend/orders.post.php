@@ -31,8 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $requestLicenses = is_array($_REQUEST['licenses']) ? $_REQUEST['licenses'] : array();
             $requestLicensesIds = array_keys($requestLicenses);
 
+            /** @var License $license */
             foreach ($licenses as $license) {
-                $licenseId = $license['id'];
+                $licenseId = $license->getId();
                 if (!in_array($licenseId, $requestLicensesIds)) {
                     continue;
                 }
@@ -93,7 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         } else {
                             $langVar = 'adls.order_license_development_domain_updated';
                         }
-
+                        $oldDomainValue = empty($oldDomainValue) ? "nothing" : $oldDomainValue;
+                        $newDomainValue = empty($newDomainValue) ? "nothing" : $newDomainValue;
                         $message = __($langVar, array('[old]' => $oldDomainValue, '[new]' => $newDomainValue));
                         fn_set_notification('N', __('notice'), $message, 'K');
 
@@ -105,9 +107,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                         $extra = db_get_field('SELECT extra FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
-                            $license['orderItemId'],
-                            $license['orderId'],
-                            $license['productId']
+                            $license->getOrderItemId(),
+                            $license->getOrderId(),
+                            $license->getProductId()
                         );
                         $productOptionId = $domain['productOptionId'];
                         if (!empty($extra) && !empty($productOptionId)) {
@@ -123,9 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $extra = serialize($extra);
                                 db_query('UPDATE ?:order_details SET extra = ?s WHERE item_id = ?i AND order_id = ?i AND product_id = ?i',
                                     $extra,
-                                    $license['orderItemId'],
-                                    $license['orderId'],
-                                    $license['productId']
+                                    $license->getOrderItemId(),
+                                    $license->getOrderId(),
+                                    $license->getProductId()
                                 );
                                 $orderChanged = true;
                             }
