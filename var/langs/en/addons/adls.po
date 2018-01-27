@@ -130,11 +130,11 @@ msgstr "Development domain was changed from <b>[old]</b> to <b>[new]</b>. The li
 
 msgctxt "Languages::adls.order_license_domain_update_failed_license_is_disabled"
 msgid "order_license_domain_update_failed_license_is_disabled"
-msgstr "Sorry, failed updating development domain: [domain]. Your license is <b>disabled</b>."
+msgstr "Sorry, there was a problem while trying to update the domain: [domain]. Your license is <b>disabled</b>."
 
 msgctxt "Languages::adls.order_license_domain_update_failed"
 msgid "adls.order_license_domain_update_failed"
-msgstr "Sorry, failed updating development domain: [domain]"
+msgstr "Sorry, there was a problem while trying to update the domain: [domain]"
 
 msgctxt "Languages::adls.order_licenses_disabled"
 msgid "order_licenses_disabled"
