@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.34",
+        "releaseDate": "2018-01-27 11:52:15",
+        "releaseTimestamp": "1517053935",
+        "hash": "5e777e1b4670b4cc64114392252b0bdd9c0daa59",
+        "commits": [
+            "[2018-01-27] Bumped version to 0.2.34",
+            "[2018-01-27]\tUpdate labels"
+        ]
+    },
+    {
         "version": "0.2.33",
         "releaseDate": "2018-01-26 01:18:11",
         "releaseTimestamp": "1516972691",
@@ -27,16 +37,6 @@
         "commits": [
             "[2018-01-26] Bumped version to 0.2.31",
             "[2018-01-26]\tImprove compatibility display"
-        ]
-    },
-    {
-        "version": "0.2.30",
-        "releaseDate": "2018-01-26 10:58:57",
-        "releaseTimestamp": "1516964337",
-        "hash": "8803d17a65d58f2a22d1236808c6230e74f4be8c",
-        "commits": [
-            "[2018-01-26] Bumped version to 0.2.30",
-            "[2018-01-26]\tImprove usage stats"
         ]
     }
 ]
