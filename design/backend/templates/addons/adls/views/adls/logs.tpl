@@ -1,12 +1,12 @@
 {capture name="mainbox"}
 
 	{capture name="sidebar"}
-{*		{include file="common/saved_search.tpl" dispatch="logs.manage" view_type="logs"}
-		{include file="views/logs/components/logs_search_form.tpl"}*}
+		{include file="common/saved_search.tpl" dispatch="logs.manage" view_type="logs"}
+		{include file="addons/adls/views/adls/search.tpl"}
 	{/capture}
 
 	{include file="common/pagination.tpl"}
-    Total entries: {$result.total}
+    {*Total entries: {$result.total}*}
 
 	{if $logs}
 		<table class="table">
@@ -71,7 +71,7 @@
 						{if !empty($log.backtrace)}
 							<p><a onclick="Tygh.$('#backtrace_{$log.id}').toggle(); return false;" class="underlined"><span>{__("backtrace")}</span></a></p>
 							<div id="backtrace_{$log.id}" class="notice-box hidden">
-								{$log.backtrace|nl2br}
+								{$log.backtrace|nl2br nofilter}
 								{*
 								{foreach from=$log.backtrace item="v"}
 									{$v.file}{if $v.function}&nbsp;({$v.function }){/if}:&nbsp;{$v.line}<br />

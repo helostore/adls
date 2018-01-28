@@ -19,8 +19,21 @@ namespace HeloStore\ADLS;
  *
  * @package HeloStore\ADLS
  */
-class LicenseManager extends Singleton
+class LicenseManager extends Manager
 {
+	/**
+	 * @var LicenseRepository
+	 */
+	protected $repository;
+
+	/**
+	 * LicenseManager constructor.
+	 */
+	public function __construct()
+	{
+		$this->setRepository(LicenseRepository::instance());
+	}
+
 	public function existsLicense($productId, $itemId, $orderId, $userId)
 	{
 		return db_get_field('SELECT id FROM ?:adls_licenses WHERE productId = ?i AND orderItemId = ?i AND orderId = ?i and userId = ?i', $productId, $itemId, $orderId, $userId);
@@ -57,23 +70,18 @@ class LicenseManager extends Singleton
 		return $result;
 	}
 
-	public function deleteLicense($licenseId)
-	{
-		db_query('DELETE FROM ?:adls_license_domains WHERE licenseId = ?i', $licenseId);
-
-		return db_query('DELETE FROM ?:adls_licenses WHERE id = ?i', $licenseId);
-	}
-
-	public function getLicenseByKey($key) {
-		return db_get_row('SELECT * FROM ?:adls_licenses WHERE licenseKey = ?s', $key);
-	}
+	/**
+	 * Create unique license key
+	 *
+	 * @return bool|string
+	 */
 	public function generateUniqueKey() {
 		$tries = 0;
 		$maxTries = 10;
 		while ($tries < $maxTries) {
 			$tries++;
 			$candidate = Utils::generateKey();
-			$exists = $this->getLicenseByKey($candidate);
+			$exists = $this->repository->findOneByKey($candidate);
 			if (empty($exists)) {
 				return $candidate;
 			}
@@ -124,6 +132,12 @@ class LicenseManager extends Singleton
 		return true;
 	}
 
+    public function isValidLicenseDomain($licenseId, $domainName)
+    {
+        $domain = $this->getDomainBy(array('licenseId' => $licenseId, 'domain' => $domainName));
+
+        return !empty($domain);
+    }
 	public function getDomainByType($licenseId, $type)
 	{
 		return $this->getDomainBy(array('licenseId' => $licenseId, 'type' => $type));
@@ -203,19 +217,20 @@ class LicenseManager extends Singleton
 
 		if (!empty($items)) {
 			foreach ($items as &$item) {
+				$item = new License( $item );
 				if (!empty($item)) {
-					$item['domains'] = $this->getLicenseDomains($item['id']);
+					$item->setDomains($this->getLicenseDomains($item->getId()));
 				}
 
-				if (!empty($item['domains'])) {
+				if (!empty($item->hasDomains())) {
 					$disabled = 0;
-					foreach ($item['domains'] as $domain) {
+					foreach ($item->getDomains() as $domain) {
 						if ($domain['status'] == License::STATUS_DISABLED) {
 							$disabled++;
 						}
 					}
-					if ($disabled == count($item['domains'])) {
-						$item['domains_disabled'] = true;
+					if ($disabled == count($item->getDomains())) {
+						$item->setAllDomainsDisabled(true);
 					}
 				}
 			}
@@ -296,30 +311,63 @@ class LicenseManager extends Singleton
 	 *
 	 * @return bool
 	 */
-	public function changeLicenseStatus($licenseId, $status, $domain = '')
+	public function changeLicenseStatus($licenseId, $status, $domain = null)
 	{
-		$update = array(
-			'status' => $status
-		);
-		$domainId = null;
-		if (!empty($domain)) {
-			$domainId = db_get_field('SELECT id FROM ?:adls_license_domains WHERE licenseId = ?i AND name = ?s', $licenseId, $domain);
-			if (!empty($domainId)) {
-				db_query('UPDATE ?:adls_license_domains SET ?u WHERE licenseId = ?i AND name = ?s', $update, $licenseId, $domain);
-			} // else wildcard license (for any domain)
+		if ($domain !== null) {
+			$domainIds = db_get_fields('SELECT id FROM ?:adls_license_domains WHERE licenseId = ?i AND name = ?s', $licenseId, $domain);
+			if ( ! empty( $domainIds ) ) {
+				foreach ( $domainIds as $domainId ) {
+					if (!$this->updateLicenseDomainStatus($domainId, $status)) {
+						return false;
+					}
+				}
+			}
 		}
-		db_query('UPDATE ?:adls_licenses SET ?u WHERE id = ?i', $update, $licenseId);
 
-		return true;
+        return $this->updateLicenseStatus($licenseId, $status);
+	}
+
+    public function updateLicenseStatus($licenseId, $status)
+    {
+        return db_query('UPDATE ?:adls_licenses SET status = ?s WHERE id = ?i', $status, $licenseId);
+    }
+
+    public function updateLicenseDomainStatus($domainId, $status)
+    {
+        return db_query('UPDATE ?:adls_license_domains SET status = ?s WHERE id = ?i', $status, $domainId);
+    }
+
+	public function doDisableLicense( $licenseId ) {
+
+		$domains = $this->getLicenseDomains($licenseId);
+
+		if (!empty($domains)) {
+			$success = true;
+			foreach ($domains as $domain) {
+				if (!$this->disableLicense($licenseId, $domain['name'])) {
+					$success = false;
+				}
+			}
+			return $success;
+
+		} else {
+			if ($this->disableLicense($licenseId)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 	public function disableLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_DISABLED, $domain);
 	}
+
 	public function activateLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_ACTIVE, $domain);
 	}
+
 	public function inactivateLicense($licenseId, $domain = '')
 	{
 		return $this->changeLicenseStatus($licenseId, License::STATUS_INACTIVE, $domain);

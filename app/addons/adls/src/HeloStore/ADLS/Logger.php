@@ -32,6 +32,8 @@ class Logger extends Singleton
 
 	const OBJECT_TYPE_REQUEST = 'request';
 	const OBJECT_TYPE_API = 'api';
+	const OBJECT_TYPE_SUBSCRIPTION_ALERT = 'subscription_alert';
+	const OBJECT_TYPE_SUBSCRIPTION_MIGRATE_ALERT = 'subscription_migrate_alert';
 
 	public function success($request, $server, $objectType = '', $objectAction = '', $content = '')
 	{
@@ -48,6 +50,18 @@ class Logger extends Singleton
 	public function log($request, $server, $objectType = '', $objectAction = '', $content = '')
 	{
 		return $this->add(Logger::TYPE_LOG, $request, $server, $objectType, $objectAction, $content);
+	}
+
+    public function update($id, $entry)
+    {
+        array_walk($entry, function (&$value, $key) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+        });
+
+        return db_query('UPDATE ?:adls_logs SET ?u WHERE id = ?i', $entry, $id);
+
 	}
 	public function add($type, $request, $server, $objectType = '', $objectAction = '', $content = '', $backtrace = '')
 	{
@@ -103,6 +117,9 @@ class Logger extends Singleton
 		}
 		if (!empty($params['objectType'])) {
 			$conditions[] = db_quote('al.objectType = ?s', $params['objectType']);
+        }
+        if (!empty($params['objectAction'])) {
+            $conditions[] = db_quote('al.objectAction = ?s', $params['objectAction']);
 		}
 		if (!empty($params['ip'])) {
 			$conditions[] = db_quote('al.ip = ?s', $params['ip']);
@@ -113,14 +130,33 @@ class Logger extends Singleton
         if (!empty($params['userId'])) {
             $conditions[] = db_quote('al.userId = ?s', $params['userId']);
 		}
+        if (!empty($params['requestPattern'])) {
+            $conditions[] = db_quote('al.request LIKE ?l', '%' . $params['requestPattern'] . '%');
+        }
+
+        if (!empty($params['fromDate'])) {
+            if ($params['fromDate'] instanceof \DateTime) {
+                $params['fromDate'] = $params['fromDate']->getTimestamp();
+            }
+            $conditions[] = db_quote('al.timestamp > ?i', $params['fromDate']);
+        }
+
         if (!empty($params['limit'])) {
             $limit = ' LIMIT 0,' . $params['limit'];
 		}
-
+        if (!empty($params['productCode'])) {
+            $conditions[] = db_quote('al.request LIKE ?l', '%"code":"' . $params['productCode'] . '"%');
+        }
 		$joins[] = db_quote('LEFT JOIN ?:country_descriptions AS cd ON cd.code = al.country AND cd.lang_code = ?s', CART_LANGUAGE);
 
 		$joins = !empty($joins) ?  implode("\n", $joins) : '';
 		$conditions = !empty($conditions) ? ' WHERE ' . implode(' AND ', $conditions) : '';
+
+        if (!empty($params['items_per_page'])) {
+            $params['total_items'] = db_get_field("SELECT COUNT(DISTINCT(al.id)) FROM ?:adls_logs AS al ?p ?p ?p ?p", $joins, $conditions);
+            $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
+        }
+
 
 		$query = db_quote('
 			SELECT
@@ -133,12 +169,10 @@ class Logger extends Singleton
 			' . $limit . '
 		');
 
-        $result = array();
 		if (!empty($params['single'])) {
 			$items = db_get_row($query);
         } else {
             $items = db_get_array($query);
-            $result['total'] = count($items);
 		}
 
         foreach ($items as $i => $item) {
@@ -161,7 +195,7 @@ class Logger extends Singleton
             }
         }
 
-		return array($items, $result);
+		return array($items, $params);
 	}
 
 	public function getCountryCodeByIp($ip)

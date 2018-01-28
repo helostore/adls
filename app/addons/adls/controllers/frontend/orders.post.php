@@ -16,6 +16,7 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\Utils;
 use Tygh\Registry;
+use Tygh\Tygh;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -30,8 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $requestLicenses = is_array($_REQUEST['licenses']) ? $_REQUEST['licenses'] : array();
             $requestLicensesIds = array_keys($requestLicenses);
 
+            /** @var License $license */
             foreach ($licenses as $license) {
-                $licenseId = $license['id'];
+                $licenseId = $license->getId();
                 if (!in_array($licenseId, $requestLicensesIds)) {
                     continue;
                 }
@@ -92,7 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         } else {
                             $langVar = 'adls.order_license_development_domain_updated';
                         }
-
+                        $oldDomainValue = empty($oldDomainValue) ? "nothing" : $oldDomainValue;
+                        $newDomainValue = empty($newDomainValue) ? "nothing" : $newDomainValue;
                         $message = __($langVar, array('[old]' => $oldDomainValue, '[new]' => $newDomainValue));
                         fn_set_notification('N', __('notice'), $message, 'K');
 
@@ -104,9 +107,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                         $extra = db_get_field('SELECT extra FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
-                            $license['orderItemId'],
-                            $license['orderId'],
-                            $license['productId']
+                            $license->getOrderItemId(),
+                            $license->getOrderId(),
+                            $license->getProductId()
                         );
                         $productOptionId = $domain['productOptionId'];
                         if (!empty($extra) && !empty($productOptionId)) {
@@ -122,9 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $extra = serialize($extra);
                                 db_query('UPDATE ?:order_details SET extra = ?s WHERE item_id = ?i AND order_id = ?i AND product_id = ?i',
                                     $extra,
-                                    $license['orderItemId'],
-                                    $license['orderId'],
-                                    $license['productId']
+                                    $license->getOrderItemId(),
+                                    $license->getOrderId(),
+                                    $license->getProductId()
                                 );
                                 $orderChanged = true;
                             }
@@ -141,4 +144,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             return array(CONTROLLER_STATUS_OK, 'orders.details?order_id=' . $_REQUEST['order_id']);
         }
     }
+}
+
+
+if ($mode == 'details') {
+    $order = \Tygh\Tygh::$app['view']->getTemplateVars('order_info');
+
+    // We postpone populating the releases up to this point because CS-Cart offers us no control on prioritizing hooks,
+    // and the subscriptions addon's hooks are executed before this addon's hooks, but releases are depended on subscriptions!
+    // So to avoid duplicating queries, we postpone releases up to this point.
+    $releaseRepository = \HeloStore\ADLS\ReleaseRepository::instance();
+    $releaseManager = \HeloStore\ADLS\ReleaseManager::instance();
+
+    if (!empty($order) && !empty($order['products'])) {
+        $changed = false;
+        foreach ($order['products'] as &$product) {
+            if (!fn_is_adls_product($product)) {
+                continue;
+            }
+            $product['releases'] = $releaseManager->getOrderItemReleases($order['user_id'], $product);
+
+            $changed = true;
+        }
+        unset($product);
+        if ($changed) {
+            \Tygh\Tygh::$app['view']->assign('order_info', $order);
+        }
+    }
+}
+
+if ($mode == 'order_downloads') {
+//    $orderId = $_REQUEST['order_id'];
+//    if (empty($orderId)) {
+//        return;
+//    }
+//
+//    $orderInfo = fn_get_order_info($orderId);
+//
+//    foreach ($orderInfo['products'] as $orderItem) {
+//        if (empty($orderItem['subscription'])) {
+//            continue;
+//        }
+//        $subscription = $orderItem['subscription'];
+//    }
+//
+////    aa($orderInfo, 1);
+//
+//    $products = Tygh::$app['view']->getTemplateVars('products');
+//    aa($products, 1);
+//
+//    Tygh::$app['view']->assign('products', $products);
 }

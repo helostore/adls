@@ -9,7 +9,7 @@
 namespace HeloStore\ADLS;
 
 
-class Entity
+abstract class Entity
 {
     /**
      * Keep here the entity$prop variables for now
@@ -23,6 +23,8 @@ class Entity
      * Entity constructor.
      *
      * @param array $data
+     *
+     * @throws \Exception
      */
     public function __construct($data = array())
     {
@@ -30,6 +32,34 @@ class Entity
             $this->fromArray($data);
         }
     }
+
+	/**
+	 * @param $key
+	 *
+	 * @return mixed|null
+	 */
+	public function getExtra( $key ) {
+		if ( isset( $this->extra[ $key ] ) ) {
+			return $this->extra[ $key ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param $key
+	 * @param $value
+	 *
+	 * @return mixed|null
+	 */
+	public function setExtra( $key, $value ) {
+		if (! isset( $this->extra[ $key ] ) ) {
+			return false;
+		}
+		$this->extra[ $key ] = $value;
+
+		return null;
+	}
 
     /**
      * @return array
@@ -47,6 +77,7 @@ class Entity
                 'endDate',
                 'updatedAt',
                 'createdAt',
+                'releaseDate',
                 'date'))) {
                 $value = ($value instanceof \DateTime ? $value->format('Y-m-d H:i:s') : $value);
             }
@@ -87,6 +118,7 @@ class Entity
                 'startDate',
                 'endDate',
                 'updatedAt',
+                'releaseDate',
                 'createdAt',
                 'date'))) {
 
