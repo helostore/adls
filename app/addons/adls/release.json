@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.36",
+        "releaseDate": "2018-07-28 01:09:18",
+        "releaseTimestamp": "1532783358",
+        "hash": "0ac7d1157148140371a6611289d394fbd34473fc",
+        "commits": [
+            "[2018-01-28] Bumped version to 0.2.36"
+        ]
+    },
+    {
         "version": "0.2.35",
         "releaseDate": "2018-01-27 11:52:46",
         "releaseTimestamp": "1517053966",
@@ -26,16 +35,6 @@
         "commits": [
             "[2018-01-26] Bumped version to 0.2.33",
             "[2018-01-26]\tBackward compatibility fix on updating license domains"
-        ]
-    },
-    {
-        "version": "0.2.32",
-        "releaseDate": "2018-01-26 01:00:12",
-        "releaseTimestamp": "1516971612",
-        "hash": "bb15e01a90fe3afc3ca621dc6f8e3041bd37f37b",
-        "commits": [
-            "[2018-01-26] Bumped version to 0.2.32",
-            "[2018-01-26]\tRemove deprecated templates"
         ]
     }
 ]

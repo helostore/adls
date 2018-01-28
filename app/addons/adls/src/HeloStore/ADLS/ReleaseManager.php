@@ -311,6 +311,7 @@ class ReleaseManager extends Manager
 //	}
 
     public function addUserLinks($userId, $productId, $licenseId = null, $subscriptionId = null, $startDate = null, $endDate = null) {
+        $releases = array();
 	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
 //		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
 		    list($releases, ) = $this->repository->findProductionByProductInRange( $productId, null, $endDate );
@@ -323,11 +324,10 @@ class ReleaseManager extends Manager
 		    list($releases, ) = ReleaseRepository::instance()->findProduction(array(
 			    'productId' => $productId
 		    ));
-
 	    }
 
 	    if ( fn_is_empty( $releases ) ) {
-		    throw new \Exception('Unable to find releases for given params, product #'. $productId);
+            throw new \Exception('Unable to find releases for given params, product #' . $productId);
 	    }
 	    foreach ( $releases as $release ) {
             if (empty($release)) {

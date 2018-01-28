@@ -20,6 +20,8 @@
     {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
     {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
 
+    <p><a href="{"products.update?product_id=`$product.product_id`"|fn_url}">Update product in store</a></p>
+
 {/capture}
 
 {capture name="adv_buttons"}
