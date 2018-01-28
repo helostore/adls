@@ -193,8 +193,11 @@ class ProductManager extends Singleton
 						$products[$k]['releases'] = $json;
 						$products[$k]['lastRelease'] = $lastRelease;
 						$developmentVersion = $products[$k]['version'];
+                        if (empty($products[$k]['adls_release_version'])) {
+                            continue;
+                        }
 						$releasedVersion = $products[$k]['adls_release_version'];
-						if (!empty($releasedVersion) && version_compare($developmentVersion, $releasedVersion, '>')) {
+						if (version_compare($developmentVersion, $releasedVersion, '>')) {
 							$products[$k]['has_unreleased_version'] = true;
 						}
 					}

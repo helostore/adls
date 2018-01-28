@@ -30,10 +30,6 @@ if ($mode == 'usage') {
     $usage = \HeloStore\ADLS\Usage::platforms();
     \Tygh\Registry::get('view')->assign('usage', $usage);
 }
-if ($mode == 'usage') {
-    $usage = \HeloStore\ADLS\Usage::products();
-    \Tygh\Registry::get('view')->assign('usage', $usage);
-}
 
 if ($mode == 'logs') {
 	$logger = \HeloStore\ADLS\Logger::instance();
