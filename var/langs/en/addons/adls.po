@@ -44,7 +44,9 @@ msgctxt "Languages::adls.subscription_type"
 msgid "subscription_type"
 msgstr "Subscription type"
 
-
+msgctxt "Languages::adls.downloads"
+msgid ""
+msgstr "Downloads"
 
 
 msgctxt "Languages::adls.license.status.i"
@@ -63,9 +65,13 @@ msgctxt "Languages::adls.license.status."
 msgid "Unknown"
 msgstr "Unknown"
 
+msgctxt "Languages::adls.license.status"
+msgid "Status"
+msgstr "License status"
+
 msgctxt "Languages::adls.license.key"
 msgid "key"
-msgstr "License Key"
+msgstr "License key"
 
 msgctxt "Languages::adls.license.updatedAt"
 msgid "updatedAt"
@@ -98,6 +104,10 @@ msgctxt "Languages::adls.licenses"
 msgid "licenses"
 msgstr "Licenses"
 
+msgctxt "Languages::adls.usage"
+msgid "usage"
+msgstr "Usage"
+
 msgctxt "Languages::adls.order_licenses_created"
 msgid "order_licenses_created"
 msgstr "Your license(s) have been created!"
@@ -120,11 +130,11 @@ msgstr "Development domain was changed from <b>[old]</b> to <b>[new]</b>. The li
 
 msgctxt "Languages::adls.order_license_domain_update_failed_license_is_disabled"
 msgid "order_license_domain_update_failed_license_is_disabled"
-msgstr "Sorry, failed updating development domain: [domain]. Your license is <b>disabled</b>."
+msgstr "Sorry, there was a problem while trying to update the domain: [domain]. Your license is <b>disabled</b>."
 
 msgctxt "Languages::adls.order_license_domain_update_failed"
 msgid "adls.order_license_domain_update_failed"
-msgstr "Sorry, failed updating development domain: [domain]"
+msgstr "Sorry, there was a problem while trying to update the domain: [domain]"
 
 msgctxt "Languages::adls.order_licenses_disabled"
 msgid "order_licenses_disabled"
@@ -150,9 +160,85 @@ msgctxt "Languages::adls.version"
 msgid "adls.version"
 msgstr "Version"
 
+
+
+
 msgctxt "Languages::adls.release_now"
 msgid "adls.release_now"
-msgstr "Release!"
+msgstr "Release"
+
+msgctxt "Languages::adls.release.download"
+msgid ""
+msgstr "Download"
+
+msgctxt "Languages::adls.release.publish"
+msgid ""
+msgstr "Publish"
+
+msgctxt "Languages::adls.release.unpublish"
+msgid ""
+msgstr "Unpublish"
+
+msgctxt "Languages::adls.release.new.title"
+msgid ""
+msgstr "New release"
+
+msgctxt "Languages::adls.release.new.submit"
+msgid "Add"
+msgstr "Add"
+
+msgctxt "Languages::adls.release.edit.title"
+msgid ""
+msgstr "Edit release #%id%"
+
+msgctxt "Languages::adls.release.edit.submit"
+msgid "Update"
+msgstr "Update"
+
+msgctxt "Languages::adls.release.version"
+msgid ""
+msgstr "Release version"
+
+msgctxt "Languages::adls.release.created_at"
+msgid ""
+msgstr "Created at"
+
+msgctxt "Languages::adls.release.hash"
+msgid ""
+msgstr "Hash"
+
+msgctxt "Languages::adls.release.file.name"
+msgid ""
+msgstr "File name"
+
+msgctxt "Languages::adls.release.status.a"
+msgid ""
+msgstr "Alpha"
+
+msgctxt "Languages::adls.release.status.b"
+msgid ""
+msgstr "Beta"
+
+msgctxt "Languages::adls.release.status.c"
+msgid ""
+msgstr "Candidate"
+
+msgctxt "Languages::adls.release.status.p"
+msgid ""
+msgstr "Production"
+
+msgctxt "Languages::adls.release.status.d"
+msgid ""
+msgstr "Discontinued"
+
+
+
+
+
+
+msgctxt "Languages::adls.compatibility"
+msgid ""
+msgstr "Compatibility"
 
 msgctxt "Languages::adls.commits"
 msgid "adls.commits"
@@ -161,3 +247,17 @@ msgstr "Commits"
 msgctxt "Languages::adls.view_commits"
 msgid "adls.view_commits"
 msgstr "View ([count])"
+
+msgctxt "Languages::adls.api.update.message"
+msgid ""
+msgstr "An update is available for <b>[addon]</b> add-on from version [currentVersion] to [nextVersion]. <a href='[updateUrl]' class='cm-ajax cm-comet cm-notification-close' onclick=\"$.ceNotification('closeAll');\">Click here to update</a>."
+
+
+msgctxt "Languages::adls.api.update.title"
+msgid ""
+msgstr "Fresh code"
+
+
+msgctxt "Languages::adls.api.update.upsell.message"
+msgid ""
+msgstr "There is a new version of <b>[addon]</b> add-on, but you first need to renew your subscription in order to upgrade. <a href='[updateUrl]' target='_bl'>Click here to renew</a> (your version: [currentVersion], latest version: [nextVersion])"

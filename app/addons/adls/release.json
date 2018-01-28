@@ -1,57 +1,40 @@
 [
     {
-        "version": "0.1.76",
-        "releaseDate": "2017-07-07 04:27:19",
-        "releaseTimestamp": "1499401639",
-        "hash": "ae41a471e34265f3f2f8bc57bb63188d1fb179d3",
+        "version": "0.2.36",
+        "releaseDate": "2018-07-28 01:09:18",
+        "releaseTimestamp": "1532783358",
+        "hash": "0ac7d1157148140371a6611289d394fbd34473fc",
         "commits": [
-            "[2017-07-07] Bumped version to 0.1.76",
-            "[2017-07-07]\tDomain activation now works with www and non-www domains",
-            "[2017-05-09]\tReplace hostname validation on frontend",
-            "[2017-02-25]\tAdded version to release",
-            "[2017-02-25]\tAdded licenses view",
-            "[2017-02-25]\tMerge branch 'feature-naming-update-1'",
-            "[2017-02-25]\tNaming convention updated",
-            "[2017-02-21]\tAdded hook for ADLSS",
-            "[2017-02-21]\tLicense generator fix"
+            "[2018-01-28] Bumped version to 0.2.36"
         ]
     },
     {
-        "version": "0.1.74",
-        "releaseDate": "2017-02-18 02:10:47",
-        "releaseTimestamp": "1487383847",
-        "hash": "237c465fbc6b71b22b5932ea22d8eb036d128638",
+        "version": "0.2.35",
+        "releaseDate": "2018-01-27 11:52:46",
+        "releaseTimestamp": "1517053966",
+        "hash": "05982b1061b746b00e4efad75861c7da6a095f3b",
         "commits": [
-            "[2017-02-18] Bumped version to 0.1.74",
-            "[2017-02-18] Bugfix: release->update function renaming",
-            "[2017-02-17] Bugfix: fixed domain validation",
-            "[2017-02-16] Minor fix, css",
-            "[2017-02-16] Dirtyfix: fill required product's options",
-            "[2017-02-01] Bugfix: any-domain licenses failed after first activation",
-            "[2017-02-01] Merge branch 'master' of disruptive.academy:helostore\/adls",
-            "[2017-02-01] Added magic password, useful to activate keys on behalf of customers",
-            "[2017-01-29] Feature: subscriptions",
-            "[2017-01-17] Removed adls licenses tab in orders"
+            "[2018-07-28] Bumped version to 0.2.35"
         ]
     },
     {
-        "version": "0.1.73",
-        "releaseDate": "2017-01-17 02:53:44",
-        "releaseTimestamp": "1484664824",
-        "hash": "5aa62460ac3240491bbf6f310b725ea9ae26cbfe",
+        "version": "0.2.34",
+        "releaseDate": "2018-01-27 11:52:15",
+        "releaseTimestamp": "1517053935",
+        "hash": "5e777e1b4670b4cc64114392252b0bdd9c0daa59",
         "commits": [
-            "[2017-01-17] Bumped version to 0.1.73",
-            "[2017-01-17] Bugfix: disable\/enable licenses according to order status"
+            "[2018-01-27] Bumped version to 0.2.34",
+            "[2018-01-27]\tUpdate labels"
         ]
     },
     {
-        "version": "0.1.72",
-        "releaseDate": "2017-01-17 02:38:49",
-        "releaseTimestamp": "1484663929",
-        "hash": "41129928b70af3982a178d0c0d806c5deb978e2c",
+        "version": "0.2.33",
+        "releaseDate": "2018-01-26 01:18:11",
+        "releaseTimestamp": "1516972691",
+        "hash": "3c48b5e09aa84e57f7e7a8796a64a483ce5ec83f",
         "commits": [
-            "[2017-01-17] Bumped version to 0.1.72",
-            "[2017-01-17] Bugfix: disable\/enable licenses according to order status"
+            "[2018-01-26] Bumped version to 0.2.33",
+            "[2018-01-26]\tBackward compatibility fix on updating license domains"
         ]
     }
 ]

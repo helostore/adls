@@ -13,6 +13,7 @@
  */
 namespace HeloStore\ADLS;
 
+use HeloStore\ADLSS\Subscription;
 use Tygh\Registry;
 
 /**
@@ -23,6 +24,13 @@ use Tygh\Registry;
 class LicenseRepository extends EntityRepository
 {
 	protected $table = '?:adls_licenses';
+
+    public function delete($id)
+    {
+        db_query('DELETE FROM ?:adls_license_domains WHERE licenseId = ?i', $id);
+
+        return db_query('DELETE FROM ?:adls_licenses WHERE id = ?i', $id);
+    }
 
 	/**
 	 * @param array $params
@@ -140,8 +148,7 @@ class LicenseRepository extends EntityRepository
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
 
-		$query = db_quote('SELECT ?p FROM ?p AS license ?p ?p ?p ?p', $fields, $this->table, $joins, $condition, $sorting, $limit);
-
+		$query = db_quote('SELECT ?p FROM ?p AS license ?p ?p GROUP BY license.id ?p ?p', $fields, $this->table, $joins, $condition, $sorting, $limit);
 		$items = db_get_array($query);
 
 		if (empty($items)) {
@@ -156,9 +163,7 @@ class LicenseRepository extends EntityRepository
             $licenseManager = LicenseManager::instance();
             /** @var License $item */
             foreach ($items as &$item) {
-                if (!empty($item)) {
-                    $item->setDomains($licenseManager->getLicenseDomains($item->getId()));
-                }
+                $item->setDomains($licenseManager->getLicenseDomains($item->getId()));
 
                 if ($item->hasDomains()) {
                     $disabled = 0;
@@ -209,5 +214,40 @@ class LicenseRepository extends EntityRepository
 		));
 	}
 
+	/**
+	 * @param Subscription $subscription
+	 *
+	 * @param array $params
+	 *
+	 * @return License|null
+	 */
+	public function findOneBySubscription(Subscription $subscription, $params = array()) {
 
+		$params = array_merge(array(
+			'orderId' => $subscription->getOrderId(),
+			'productId' => $subscription->getProductId(),
+			'orderItemId' => $subscription->getItemId(),
+			'userId' => $subscription->getUserId()
+		), $params);
+
+		return $this->findOne($params);
+	}
+
+	/**
+	 * @param $licenseKey
+	 *
+	 * @param array $params
+	 *
+	 * @return License|null
+	 */
+	public function findOneByKey($licenseKey, $params = array()) {
+
+		$params = array_merge(array(
+			'licenseKey' => $licenseKey,
+			'getDomains' => true
+
+		), $params);
+
+		return $this->findOne($params);
+	}
 }

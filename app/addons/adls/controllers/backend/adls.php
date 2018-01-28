@@ -26,28 +26,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if ($mode == 'usage') {
+    $usage = \HeloStore\ADLS\Usage::platforms();
+    \Tygh\Registry::get('view')->assign('usage', $usage);
+}
+
 if ($mode == 'logs') {
 	$logger = \HeloStore\ADLS\Logger::instance();
 	$params = $_REQUEST;
 
 	if (!empty($params['self_exclude'])) {
-		$params['exclude_ips'] = array(
+		$params['excludeIps'] = array(
 			'***REMOVED***'
 		);
 	}
-    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : 20;
+//    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUESST['limit']) : 20;
+    $params['items_per_page'] = isset($_REQUEST['items_per_page']) ? intval($_REQUESST['items_per_page']) : 20;
 	list($logs, $result) = $logger->get($params);
 
 	if (!empty($params['id'])) {
-
-		echo '<pre>' . var_export($logs, 1) . '</pre>';
+        $output = stripcslashes(var_export($logs, 1));
+        $output = stripcslashes($output);
+		echo '<pre>' . $output . '</pre>';
 		exit;
 	}
 
-	\Tygh\Registry::get('view')->assign('result', $result);
+	\Tygh\Registry::get('view')->assign('search', $result);
 	\Tygh\Registry::get('view')->assign('logs', $logs);
-
-
 }
 
 if ($mode == 'update_logs_info') {
@@ -196,18 +201,21 @@ if ($mode == 'test') {
 
 if ($mode == 'fix_orphaned_licenses') {
     $licenses = db_get_array('SELECT * FROM ?:adls_licenses');
+    $licenseRepository = \HeloStore\ADLS\LicenseRepository::instance();
+    $manager = LicenseManager::instance();
+
+    /** @var License $license */
     foreach ($licenses as $license) {
         $item = db_get_row('SELECT * FROM ?:order_details WHERE item_id = ?s AND order_id = ?i AND product_id = ?i',
-            $license['orderItemId']
-            , $license['orderId']
-            , $license['productId']
+            $license->getOrderItemId(),
+            $license->getOrderId(),
+            $license->getProductId()
         );
         if (empty($item)) {
-            $manager = LicenseManager::instance();
-            $license = $manager->getOrderLicense($license['orderId'], $license['orderItemId']);
+            $license = $manager->getOrderLicense($license->getOrderId(), $license->getOrderItemId());
             if (!empty($license)) {
-                aa('Deleted orphan license #' . $license['id']);
-                $manager->deleteLicense($license['id']);
+                aa('Deleted orphan license #' . $license->getId());
+                $licenseRepository->delete($license->getId());
             }
         }
     }
@@ -255,7 +263,6 @@ if ($mode == 'fix_domain_product_option_ids') {
                     $option = array_shift($options[$type]);
                     if (!empty($option)) {
                         $query = db_quote('UPDATE ?:adls_license_domains SET productOptionId = ?i WHERE id = ?i', $option['option_id'], $domain['id']);
-                        aa($query);
                         db_query($query);
                     }
                 }

@@ -16,7 +16,7 @@ use HeloStore\ADLS\LicenseServer;
 use HeloStore\ADLS\Logger;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
-
+// header("HTTP/1.1 404 Not Found"); exit;
 $app = new LicenseServer();
 $response = array();
 $exception = null;
@@ -34,7 +34,14 @@ try {
 	$response['code'] = $e->getCode();
 	$response['message'] = $e->getMessage();
 	$exception = $e;
-	Logger::instance()->error($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $e->getMessage() . ' ' . $e->getCode(), nl2br($e->getTraceAsString()));
+	Logger::instance()->error(
+		$_REQUEST,
+		$_SERVER,
+		Logger::OBJECT_TYPE_API,
+		$mode,
+		$e->getMessage() . ' ' . $e->getCode(),
+		nl2br($e->getTraceAsString())
+	);
 //	if (defined('WS_DEBUG')) {
 //		$response['request'] = $_REQUEST;
 //		$response['trace'] = $e->getTraceAsString();

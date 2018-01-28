@@ -287,6 +287,21 @@ class License extends Entity
 	 */
 
 	/**
+	 * @return bool|mixed
+	 */
+	public function getProductionDomain() {
+		if ( ! $this->hasDomains() ) {
+			return false;
+		}
+
+		foreach ( $this->domains as $domain ) {
+			if ( $domain['type'] === License::DOMAIN_TYPE_PRODUCTION ) {
+				return $domain;
+			}
+		}
+	}
+
+	/**
 	 * @return string
 	 */
     public static function convertStatusToLabel($status)
@@ -313,7 +328,7 @@ class License extends Entity
     /**
      * @return boolean
      */
-    public function areAllDomainsDisabled()
+    public function hasAllDomainsDisabled()
     {
         return $this->allDomainsDisabled;
     }
@@ -325,4 +340,26 @@ class License extends Entity
     {
         $this->allDomainsDisabled = $allDomainsDisabled;
     }
+
+	/**
+	 * @return bool
+	 */
+	public function isActive()
+	{
+		return $this->status == self::STATUS_ACTIVE;
+	}
+	/**
+	 * @return bool
+	 */
+	public function isInactive()
+	{
+		return $this->status == self::STATUS_INACTIVE;
+	}
+	/**
+	 * @return bool
+	 */
+	public function isDisabled()
+	{
+		return $this->status == self::STATUS_DISABLED;
+	}
 }
