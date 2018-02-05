@@ -120,6 +120,15 @@ class CompatibilityRepository extends EntityRepository
             $condition[] = db_quote('compatibility.productId = ?i', $params['productId']);
         }
 
+        if ( ! empty($params['releaseStatus'])) {
+            $joins[] = db_quote('
+				INNER JOIN ?:adls_releases AS releases
+                    ON releases.id = compatibility.releaseId
+                    AND releases.status = ?s
+                    ',
+                $params['releaseStatus']);
+        }
+
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'compatibility.*' : implode(', ', $fields);
         $condition = implode(' AND ', $condition);
@@ -168,18 +177,23 @@ class CompatibilityRepository extends EntityRepository
 
     /**
      * @param $productId
+     * @param $platformId
      * @param array $params
      *
      * @return array
      */
-    public function findMinMax($productId, $params = array()) {
+    public function findMinMax($productId, $platformId, $params = array()) {
         $min = $this->findOne([
             'productId' => $productId,
+            'platformId' => $platformId,
+            'releaseStatus' => Release::STATUS_PRODUCTION,
             'sort_by' => 'platformVersion',
             'sort_order' => 'asc'
         ]);
         $max = $this->findOne([
             'productId' => $productId,
+            'platformId' => $platformId,
+            'releaseStatus' => Release::STATUS_PRODUCTION,
             'sort_by' => 'platformVersion',
             'sort_order' => 'desc'
         ]);

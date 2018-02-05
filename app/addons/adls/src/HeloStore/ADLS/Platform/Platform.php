@@ -12,6 +12,10 @@ use HeloStore\ADLS\Entity;
 
 class Platform extends Entity
 {
+    const SLUG_CSCART = 'cscart';
+    const SLUG_WORDPRESS = 'wordpress';
+    const SLUG_MAGENTO = 'magento';
+
     /**
      * @var integer
      */
@@ -21,6 +25,11 @@ class Platform extends Entity
      * @var string
      */
     protected $name;
+
+    /**
+     * @var string
+     */
+    protected $slug;
 
     /**
      * @return int
@@ -60,5 +69,49 @@ class Platform extends Entity
         $this->name = $name;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     *
+     * @return Platform
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCSCart()
+    {
+        return Platform::SLUG_CSCART === $this->slug;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWordPress()
+    {
+        return Platform::SLUG_WORDPRESS === $this->slug;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMagento()
+    {
+        return Platform::SLUG_MAGENTO === $this->slug;
     }
 }

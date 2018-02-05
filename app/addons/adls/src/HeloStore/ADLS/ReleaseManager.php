@@ -13,6 +13,8 @@
  */
 namespace HeloStore\ADLS;
 
+use HeloStore\ADLS\Platform\PlatformRepository;
+use HeloStore\ADLS\Source\SourceRepository;
 use HeloStore\ADLSS\Subscription;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 use Tygh\Registry;
@@ -70,8 +72,13 @@ class ReleaseManager extends Manager
             }
             $fileSize = filesize($params['archivePath']);
         }
+        $platform = PlatformRepository::instance()->findDefault();
+        $source = SourceRepository::instance()->find(array(
+            'platformId' => $platform->getId(),
+            'productId' => $productId
+        ));
 
-        $releaseId = $this->createRelease($productId, $version, $fileName, $fileSize);
+        $releaseId = $this->createRelease($productId, $version, $fileName, $fileSize, $source->getId());
 
 		return $releaseId;
 	}
@@ -83,11 +90,12 @@ class ReleaseManager extends Manager
      * @param $version
      * @param $fileName
      * @param $fileSize
+     * @param $sourceId
      *
      * @return bool|int
      * @throws \Exception
      */
-	public function createRelease($productId, $version, $fileName, $fileSize)
+	public function createRelease($productId, $version, $fileName, $fileSize, $sourceId)
 	{
         $existingRelease = $this->repository->findOneByProductVersion($productId, $version);
 
@@ -106,6 +114,7 @@ class ReleaseManager extends Manager
             ->setFileSize($fileSize)
             ->setDownloads(0)
 			->setHash($hash)
+            ->setSourceId($sourceId)
             ->setStatus(Release::STATUS_ALPHA);
 
         $result = $this->repository->create($release);

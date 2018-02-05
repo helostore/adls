@@ -65,4 +65,25 @@ if ($mode == 'update') {
 	$productId = ! empty( $_REQUEST['product_id'] ) ? $_REQUEST['product_id'] : 0;
 	list ( $releases, $search ) = \HeloStore\ADLS\ReleaseRepository::instance()->findByProductId($productId, array('getUserCount' => true));
 	$view->assign('adls_releases', $releases);
+
+
+
+
+
+
+    Registry::set('navigation.tabs.adls_sources', array (
+        'title' => __('adls.sources'),
+        'js' => true
+    ));
+
+    $platformRepository = \HeloStore\ADLS\Platform\PlatformRepository::instance();
+    list($platforms, ) = $platformRepository->find();
+    $view->assign('adls_platforms', $platforms);
+    $sourceRepository = \HeloStore\ADLS\Source\SourceRepository::instance();
+    list($sources, ) = $sourceRepository->find(array(
+        'productId' => $product['product_id'],
+    ));
+    $view->assign('adls_sources', $sources);
+
+
 }

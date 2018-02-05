@@ -10,9 +10,12 @@
 {if !empty($product)}
     {$title = "$title - `$product.name`"}
 {/if}
+{if !empty($platform)}
+    {$title = "$title - `$platform->getName()`"}
+{/if}
 
 {capture name="mainbox"}
-    {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases2}
+    {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases}
     {if $product.has_unreleased_version}
         <p style="color: red;">Has unreleased version!</p>
     {/if}
@@ -26,7 +29,7 @@
 
 {capture name="adv_buttons"}
     {if $product.has_unreleased_version}
-        {include file="common/tools.tpl" tool_href="releases.add?addonId=`$product.adls_addon_id`" prefix="top" hide_tools="true" title=__("adls.release.new.title") icon="icon-plus"}
+        {include file="common/tools.tpl" tool_href="releases.add?productId=`$product.product_id`&platformId=`$platform->getId()`" prefix="top" hide_tools="true" title=__("adls.release.new.title") icon="icon-plus"}
     {/if}
 {/capture}
 
