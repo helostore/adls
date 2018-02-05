@@ -11,31 +11,49 @@
  * @license    https://helostore.com/legal/license-agreement/   License Agreement
  * @version    $Id$
  */
-namespace HeloStore\ADLS\Platform;
+namespace HeloStore\ADLS\Source;
 
 use HeloStore\ADLS\EntityRepository;
 
 /**
- * Class PlatformRepository
+ * Class SourceRepository
  *
  * @package HeloStore\ADLS
  */
-class PlatformRepository extends EntityRepository
+class SourceRepository extends EntityRepository
 {
-	protected $table = '?:adls_platforms';
+    /**
+     * @var string
+     */
+    protected $table = '?:adls_sources';
 
     /**
-     * @param $name
+     * @param Source $source
      *
      * @return mixed
      */
-    public function add($name)
+    public function add(Source $source)
     {
         $query = db_quote('INSERT INTO ?p ?e',
             $this->table,
-            array(
-                'name' => $name,
-            ));
+            $source->toArray()
+        );
+
+        return db_query($query);
+    }
+
+    /**
+     * @param Source $source
+     *
+     * @return mixed
+     */
+    public function update(Source $source)
+    {
+        $query = db_quote('UPDATE ?p SET ?u WHERE id = ?i',
+            $this->table,
+            $source->toArray(),
+            $source->getId()
+        );
 
         return db_query($query);
     }
@@ -43,7 +61,7 @@ class PlatformRepository extends EntityRepository
     /**
      * @param array $params
      *
-     * @return array|Platform[]|null
+     * @return array|Source[]|null
      * @throws \Exception
      */
     public function find($params = array())
@@ -57,26 +75,31 @@ class PlatformRepository extends EntityRepository
         $params = array_merge($defaultParams, $params);
 
         $sortingFields = array (
-            'id' => "platform.id",
-            'name' => "platform.name",
+            'id' => "source.id",
         );
-        $sorting = db_sort($params, $sortingFields, 'name', 'asc');
+        $sorting = db_sort($params, $sortingFields, 'id', 'asc');
 
         $condition = array();
         $joins = array();
         $fields = array();
-        $fields[] = 'platform.*';
-        $group = 'platform.id';
+        $fields[] = 'source.*';
+        $group = 'source.id';
 
-        if (isset($params['name'])) {
-            $condition[] = db_quote('platform.name = ?s', $params['name']);
-        }
+        $joins[] = db_quote('LEFT JOIN ?:adls_platforms AS platform ON platform.id = source.platformId');
+        $fields[] = 'platform.name AS platform$name';
+
         if (isset($params['id'])) {
-            $condition[] = db_quote('platform.id = ?i', $params['id']);
+            $condition[] = db_quote('source.id = ?i', $params['id']);
+        }
+        if (isset($params['platformId'])) {
+            $condition[] = db_quote('source.platformId = ?i', $params['platformId']);
+        }
+        if (isset($params['productId'])) {
+            $condition[] = db_quote('source.productId = ?i', $params['productId']);
         }
 
         $joins = empty($joins) ? '' : implode(' ', $joins);
-        $fields = empty($fields) ? 'platform.*' : implode(', ', $fields);
+        $fields = empty($fields) ? 'source.*' : implode(', ', $fields);
         $condition = implode(' AND ', $condition);
         $conditions = !empty($condition) ? ' WHERE (' . $condition . ')' : '';
 
@@ -84,16 +107,16 @@ class PlatformRepository extends EntityRepository
         if (isset($params['one'])) {
             $limit = 'LIMIT 0,1';
         } else if (!empty($params['items_per_page'])) {
-            $query = db_quote('SELECT COUNT(platform.*) FROM ?p AS platform ?p ?p ?p', $this->table, $joins, $conditions, $limit);
+            $query = db_quote('SELECT COUNT(source.*) FROM ?p AS source ?p ?p ?p', $this->table, $joins, $conditions, $limit);
             $params['total_items'] = db_get_field($query);
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
-        $query = db_quote('SELECT ?p FROM ?p AS platform ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
+        $query = db_quote('SELECT ?p FROM ?p AS source ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
         $items = db_get_array($query);
 
         if (!empty($items)) {
             foreach ($items as $k => $v) {
-                $items[$k] = new Platform($v);
+                $items[$k] = new Source($v);
             }
         }
 
@@ -110,7 +133,8 @@ class PlatformRepository extends EntityRepository
      *
      * @param array $params
      *
-     * @return Platform|null
+     * @return Source|null
+     * @throws \Exception
      */
     public function findOne($params = array()) {
         $params['one'] = true;
@@ -120,33 +144,15 @@ class PlatformRepository extends EntityRepository
 
     /**
      *
-     * @param $name
-     *
-     * @return Platform|null
-     */
-    public function findOneByName( $name ) {
-        return $this->findOne(array(
-            'name' => $name
-        ));
-    }
-
-    /**
-     * @return Platform|null
-     */
-    public function findDefault() {
-        return $this->findOne(array(
-            'name' => 'CS-Cart'
-        ));
-    }
-
-    /**
      * @param $id
+     * @param array $params
      *
-     * @return Platform|null
+     * @return Source|null
+     * @throws \Exception
      */
-    public function findOneById($id) {
-        return $this->findOne(array(
-            'id' => $id
-        ));
+    public function findOneById($id, $params = array()) {
+        $params['id'] = $id;
+
+        return $this->findOne($params);
     }
 }

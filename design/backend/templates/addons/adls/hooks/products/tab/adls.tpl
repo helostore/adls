@@ -17,6 +17,15 @@
                 </select>
             </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label" for="adls_addon_id">{__("adls.product.slug")}:</label>
+            <div class="controls">
+                <input type="text" name="product_data[adls_slug]" value="{$product_data.adls_slug|default:$product_data.adls_addon_id}"/>
+            </div>
+        </div>
+
+
         <div class="control-group">
             <label class="control-label" for="product_type">{__("adls.product_type")}:</label>
             <div class="controls">
