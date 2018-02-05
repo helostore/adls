@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.39",
+        "releaseDate": "2018-02-05 08:14:05",
+        "releaseTimestamp": "1517861645",
+        "hash": "d77c5d51c22fb054161b7cb8005ca2b1b6061244",
+        "commits": [
+            "[2018-02-05] Bumped version to 0.2.39",
+            "[2018-02-05]\tAdd support for WordPress plugin products"
+        ]
+    },
+    {
         "version": "0.2.38",
         "releaseDate": "2018-01-28 11:41:07",
         "releaseTimestamp": "1517139667",
@@ -27,15 +37,6 @@
         "hash": "0ac7d1157148140371a6611289d394fbd34473fc",
         "commits": [
             "[2018-01-28] Bumped version to 0.2.36"
-        ]
-    },
-    {
-        "version": "0.2.35",
-        "releaseDate": "2018-01-27 11:52:46",
-        "releaseTimestamp": "1517053966",
-        "hash": "05982b1061b746b00e4efad75861c7da6a095f3b",
-        "commits": [
-            "[2018-07-28] Bumped version to 0.2.35"
         ]
     }
 ]
