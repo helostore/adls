@@ -172,26 +172,3 @@ if ($mode == 'details') {
         }
     }
 }
-
-if ($mode == 'order_downloads') {
-//    $orderId = $_REQUEST['order_id'];
-//    if (empty($orderId)) {
-//        return;
-//    }
-//
-//    $orderInfo = fn_get_order_info($orderId);
-//
-//    foreach ($orderInfo['products'] as $orderItem) {
-//        if (empty($orderItem['subscription'])) {
-//            continue;
-//        }
-//        $subscription = $orderItem['subscription'];
-//    }
-//
-////    aa($orderInfo, 1);
-//
-//    $products = Tygh::$app['view']->getTemplateVars('products');
-//    aa($products, 1);
-//
-//    Tygh::$app['view']->assign('products', $products);
-}

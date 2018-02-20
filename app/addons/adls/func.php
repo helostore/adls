@@ -674,5 +674,4 @@ function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
             $product['compatibility'][] = $pair;
         }
     }
-    aa($product['compatibility']);
 }
