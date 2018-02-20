@@ -47,7 +47,7 @@
 
 
         {include file="common/popupbox.tpl"
-        id="add_global_option"
+        id="add_adls_source"
         text=__("adls.source.add")
         link_text=__("adls.source.add")
         content=$smarty.capture.add_source

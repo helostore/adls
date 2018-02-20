@@ -70,6 +70,9 @@ class ProductRepository extends EntityRepository
         if (isset($params['id'])) {
             $condition[] = db_quote('product.product_id = ?i', $params['id']);
         }
+        if (isset($params['slug'])) {
+            $condition[] = db_quote('product.adls_slug = ?s', $params['slug']);
+        }
         $condition[] = db_quote('product.product_type = ?s', ADLS_PRODUCT_TYPE_ADDON);
         $condition[] = db_quote('product.status IN (?a)', array('A', 'H'));
 
@@ -107,7 +110,7 @@ class ProductRepository extends EntityRepository
      *
      * @param array $params
      *
-     * @return Source|null
+     * @return array|null
      * @throws \Exception
      */
     public function findOne($params = array()) {
@@ -121,7 +124,7 @@ class ProductRepository extends EntityRepository
      * @param $id
      * @param array $params
      *
-     * @return Source|null
+     * @return array|null
      * @throws \Exception
      */
     public function findOneById($id, $params = array()) {
@@ -130,6 +133,27 @@ class ProductRepository extends EntityRepository
         return $this->findOne($params);
     }
 
+    /**
+     *
+     * @param $slug
+     * @param array $params
+     *
+     * @return array|null
+     * @throws \Exception
+     */
+    public function findOneBySlug($slug, $params = array()) {
+        $params['slug'] = $slug;
+
+        return $this->findOne($params);
+    }
+
+    /**
+     * @param $sourcePlatformId
+     * @param array $params
+     *
+     * @return array|null
+     * @throws \Exception
+     */
     public function findBySourcePlatformId($sourcePlatformId, $params = array())
     {
         $params['sourcePlatformId'] = $sourcePlatformId;
