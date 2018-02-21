@@ -160,10 +160,15 @@ class ReleaseRepository extends EntityRepository
                         db_quote(' AND compatibility.editionId = ?i', $params['compatibilityPlatformEditionId']) : '')
             );
         }
-//        if ( ! empty($params['compatibilityPlatformVersion'])) {
-//
-//        }
 
+        if ( ! empty($params['sourcePlatformId'])) {
+            $joins[] = db_quote('
+				INNER JOIN ?:adls_sources AS source 
+                    ON source.productId = releases.productId
+                    AND source.platformId = ?i
+                    ',
+                $params['sourcePlatformId']);
+        }
 
         $hasStartDate = !empty($params['startDate']);
         $hasEndDate = !empty($params['endDate']);

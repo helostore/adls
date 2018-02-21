@@ -73,5 +73,27 @@ class CompatibilitySetup extends Singleton
 //            $entry->date = \DateTime::createFromFormat('Y-m-d H:i:s', $entry->date);
             $versionRepository->add($platform->getId(), $entry->version, $edition->getId(), $entry->description, $entry->date);
         }
+
+
+        // Add versions to WordPress platform
+        // @TODO automatically update using https://wordpress.org/download/release-archive/ https://codex.wordpress.org/api.php?hidebots=1&days=7&limit=20&action=feedrecentchanges&feedformat=atom
+        $json = file_get_contents(ADLS_DIR . '/fixture/wordpress_history.json');
+        $data = json_decode($json);
+        $platform = $platformRepository->findOneByName('WordPress');
+        foreach ($data as $entry) {
+            $version = $versionRepository->findOne([
+//                'editionId' => $edition->getId(),
+                'platformId' => $platform->getId(),
+                'version' => $entry->version
+            ]);
+            if (!empty($version)) {
+                $version->setDescription($entry->description);
+                $versionRepository->update($version);
+                continue;
+            }
+//            $entry->date = \DateTime::createFromFormat('Y-m-d H:i:s', $entry->date);
+            $versionRepository->add($platform->getId(), $entry->version, null, $entry->description, $entry->date);
+        }
+
     }
 }

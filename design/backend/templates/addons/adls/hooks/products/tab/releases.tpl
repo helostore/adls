@@ -4,4 +4,4 @@
         {include file="addons/adls/views/releases/components/table.tpl" releases=$adls_releases}
     </div>
 
-<!--content_adls_releases--></div>
+    <!--content_adls_releases--></div>

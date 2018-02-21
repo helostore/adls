@@ -50,6 +50,11 @@ class Release extends Entity
 	 */
 	protected $productId;
 
+    /**
+     * @var integer
+     */
+	protected $sourceId;
+
 	/**
 	 * @var string
 	 */
@@ -64,7 +69,6 @@ class Release extends Entity
 	 * @var integer
 	 */
 	protected $fileId;
-
 
 	/**
 	 * @var \DateTime
@@ -447,5 +451,25 @@ class Release extends Entity
     public function isDiscontinued()
     {
         return $this->status === self::STATUS_DISCONTINUED;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSourceId()
+    {
+        return $this->sourceId;
+    }
+
+    /**
+     * @param int $sourceId
+     *
+     * @return Release
+     */
+    public function setSourceId($sourceId)
+    {
+        $this->sourceId = $sourceId;
+
+        return $this;
     }
 }

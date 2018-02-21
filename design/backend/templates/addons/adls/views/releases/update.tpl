@@ -76,6 +76,8 @@
         return $('.list-item-checkbox:checked').length;
     }
 </script>
+
+
 {if !empty($release)}
     {$title = __('adls.release.edit.title', ['%id%' => $release->getId()])}
     {$submitButtonText = __('adls.release.edit.submit')}
@@ -87,31 +89,56 @@
 
 {capture name="mainbox"}
     <form action="{""|fn_url}" method="post" class="form-horizontal form-edit" name="release_update_form">
+        <input type="hidden" name="productId" value="{$productId}"/>
+        <input type="hidden" name="platformId" value="{$platformId}"/>
+
         {if !empty($release)}
             <input type="hidden" name="release_id" value="{$release->getId()}"/>
         {/if}
 
         <div class="control-group">
-            <label class="control-label">Development Version</label>
-            <div class="controls">{$product.version}</div>
+            <label class="control-label">Platform</label>
+            <div class="controls">{$source->getExtra('platform$name')}
+            </div>
         </div>
+
         <div class="control-group">
-            <label class="control-label">Latest published version</label>
-            <div class="controls">{$product.adls_release_version}</div>
+            <label class="control-label">Latest development build</label>
+            <div class="controls">
+                {if !empty($product.latestBuild)}
+                    {$product.latestBuild.version}
+                {else}
+                    &mdash;
+                {/if}
+            </div>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">Latest published release</label>
+            <div class="controls">
+                {if !empty($product.latestRelease)}
+                    {$product.latestRelease->getVersion()}
+                {else}
+                    &mdash;
+                {/if}
+            </div>
+        </div>
+
         <hr>
+
+
 
         <div class="control-group">
             <label class="control-label">Add-on ID:</label>
             <div class="controls">
-                <input type="text" name="addon_id" readonly value="{$product.adls_addon_id}" />
+                <input type="text" readonly value="{$product.adls_slug}" />
             </div>
         </div>
 
         <div class="control-group">
             <label class="control-label">{__("adls.release.version")}:</label>
             <div class="controls">
-                <input type="text" readonly value="{if !empty($release)}{$release->getVersion()}{/if}" />
+                <input type="text" name="release[version]" readonly value="{if !empty($release)}{$release->getVersion()}{else}{$product.latestBuild.version}{/if}" />
             </div>
         </div>
 
@@ -161,7 +188,7 @@
 
         {include file="buttons/button.tpl" but_text=$submitButtonText but_role="submit" but_name="dispatch[releases.update]"}
 
-        <a href="{"releases.manage?id=`$product.adls_addon_id`"|fn_url}">{__('go_back')}</a>
+        <a href="{"releases.manage?productId=`$productId`&platformId=`$platformId`"|fn_url}">{__('go_back')}</a>
     </form>
 {/capture}
 {include file="common/mainbox.tpl" title=$title content=$smarty.capture.mainbox}

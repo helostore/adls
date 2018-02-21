@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.38</version>
+    <version>0.2.39</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -65,6 +65,7 @@
             CREATE TABLE IF NOT EXISTS `?:adls_releases` (
             `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
             `productId` mediumint(8) unsigned NOT NULL,
+            `sourceId` mediumint(4) unsigned,
             `createdAt` datetime NOT NULL,
             `version` varchar(16) NOT NULL,
             `number` bigint UNSIGNED NOT NULL,
@@ -79,6 +80,7 @@
             CREATE TABLE IF NOT EXISTS `?:adls_platforms` (
             `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
             `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            `slug` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
             PRIMARY KEY (`id`)
             )
         </item>
@@ -94,7 +96,7 @@
             CREATE TABLE IF NOT EXISTS `?:adls_platform_versions` (
             `id` mediumint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
             `platformId` tinyint(3) UNSIGNED NOT NULL,
-            `editionId` tinyint(3) UNSIGNED NOT NULL,
+            `editionId` tinyint(3) UNSIGNED NULL,
             `version` varchar(16) NOT NULL,
             `number` bigint UNSIGNED NOT NULL,
             `releaseDate` datetime NULL ,
@@ -107,9 +109,19 @@
             `releaseId` mediumint(8) UNSIGNED NOT NULL,
             `platformVersionId` mediumint(8) UNSIGNED NOT NULL,
             `platformId` tinyint(3) UNSIGNED NOT NULL,
-            `editionId` tinyint(3) UNSIGNED NOT NULL,
+            `editionId` tinyint(3) UNSIGNED NULL,
             `productId` mediumint(8) UNSIGNED NOT NULL,
             PRIMARY KEY (`releaseId`, `platformVersionId`)
+            )
+        </item>
+        <item for="install">
+            CREATE TABLE IF NOT EXISTS `?:adls_sources` (
+            `id`  mediumint(4) UNSIGNED NOT NULL AUTO_INCREMENT ,
+            `productId`  mediumint(8) UNSIGNED NOT NULL ,
+            `platformId`  tinyint(3) UNSIGNED NULL ,
+            `sourcePath`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            `releasePath`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            PRIMARY KEY (`id`)
             )
         </item>
 
@@ -118,6 +130,7 @@
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_date` INT(11);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_version` VARCHAR(16);</item>
         <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
+        <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_slug` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL AFTER `adls_subscription_id`</item>
 
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
