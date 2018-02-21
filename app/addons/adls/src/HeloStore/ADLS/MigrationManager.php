@@ -212,6 +212,7 @@ class MigrationManager extends Manager
                 , $version
                 , $fileName
                 , $fileSize
+                , null
             );
             if ( ! empty($releaseId)) {
                 if (fn_delete_product_files($file['file_id']) == false) {

@@ -103,16 +103,21 @@ class LicenseServer
         }
 
         $productManager = ProductManager::instance();
-        $storeProduct   = $productManager->getStoreProduct($vars['product.code']);
+        $storeProduct = ProductRepository::instance()->findOneBySlug($vars['product.code']);
+        if (empty($storeProduct)) {
+            throw new \Exception('Product not found in our store', LicenseClient::CODE_ERROR_PRODUCT_NOT_FOUND);
+        }
+
+//        $storeProduct   = $productManager->getStoreProduct($vars['product.code']);
         if (empty($storeProduct['adls_subscription_id'])) {
             throw new \Exception('Unable to determine the subscription type of specified product',
                 LicenseClient::CODE_ERROR_PRODUCT_SUBSCRIPTION_TYPE_NOT_FOUND);
         }
         $productId = $storeProduct['product_id'];
 
-        if (empty($productId)) {
-            throw new \Exception('Product not found in our store', LicenseClient::CODE_ERROR_PRODUCT_NOT_FOUND);
-        }
+//        if (empty($productId)) {
+//            throw new \Exception('Product not found in our store', LicenseClient::CODE_ERROR_PRODUCT_NOT_FOUND);
+//        }
         $freeSubscription = $productManager->isFreeSubscription($storeProduct['adls_subscription_id']);
         $paidSubscription = $productManager->isPaidSubscription($storeProduct['adls_subscription_id']);
 
@@ -162,7 +167,7 @@ class LicenseServer
 
             if ($manager->isActiveLicense($licenseId, $domain)) {
                 $response['code']    = LicenseClient::CODE_SUCCESS;
-                $response['message'] = 'License is already activated for specified domain.';
+                $response['message'] = 'License is already activated for this domain.';
             } else {
                 // Check if subscription allows activation to requested version
 //                fn_set_hook('adls_api_license_pre_activation', $licenseId, $orderId, $productId);

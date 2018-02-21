@@ -658,8 +658,20 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
  * @param $auth
  * @param $preview
  * @param $lang_code
+ *
+ * @throws Exception
  */
 function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
     $productId = $product['product_id'];
-    $product['compatibility'] = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId);
+    static $platforms = null;
+    if ($platforms === null) {
+        list($platforms,) = \HeloStore\ADLS\Platform\PlatformRepository::instance()->find();
+    }
+    $product['compatibility'] = array();
+    foreach ($platforms as $platform) {
+        $pair = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId, $platform->getId());
+        if (!empty($pair['min']) && !empty($pair['max'])) {
+            $product['compatibility'][] = $pair;
+        }
+    }
 }

@@ -1,0 +1,107 @@
+[
+  {
+    "version": "4.4.1",
+    "date": "2016-01-06 12:00:00",
+    "description": "WordPress 4.4.1 Security and Maintenance Release"
+  },
+  {
+    "version": "4.4.2",
+    "date": "2016-02-02 12:00:00",
+    "description": "WordPress 4.4.2 Security and Maintenance Release"
+  },
+  {
+    "version": "4.5",
+    "date": "2016-04-12 12:00:00",
+    "description": "WordPress 4.5 \u201cColeman\u201d"
+  },
+  {
+    "version": "4.5.1",
+    "date": "2016-04-26 12:00:00",
+    "description": "WordPress 4.5.1 Maintenance Release"
+  },
+  {
+    "version": "4.5.2",
+    "date": "2016-05-06 12:00:00",
+    "description": "WordPress 4.5.2 Security Release"
+  },
+  {
+    "version": "4.5.3",
+    "date": "2016-06-18 12:00:00",
+    "description": "WordPress 4.5.3 Maintenance and Security Release"
+  },
+  {
+    "version": "4.6",
+    "date": "2016-08-16 12:00:00",
+    "description": "WordPress 4.6 \u201cPepper\u201d"
+  },
+  {
+    "version": "4.6.1",
+    "date": "2016-09-07 12:00:00",
+    "description": "WordPress 4.6.1 Security and Maintenance Release"
+  },
+  {
+    "version": "4.7",
+    "date": "2016-12-06 12:00:00",
+    "description": "WordPress 4.7 \u201cVaughan\u201d"
+  },
+  {
+    "version": "4.7.1",
+    "date": "2017-01-11 12:00:00",
+    "description": "WordPress 4.7.1 Security and Maintenance Release"
+  },
+  {
+    "version": "4.7.2",
+    "date": "2017-01-26 12:00:00",
+    "description": "WordPress 4.7.2 Security Release"
+  },
+  {
+    "version": "4.7.3",
+    "date": "2017-03-06 12:00:00",
+    "description": "WordPress 4.7.3 Security and Maintenance Release"
+  },
+  {
+    "version": "4.7.4",
+    "date": "2017-04-20 12:00:00",
+    "description": "WordPress 4.7.4 Maintenance Release"
+  },
+  {
+    "version": "4.7.5",
+    "date": "2017-05-16 12:00:00",
+    "description": "WordPress 4.7.5 Security and Maintenance Release"
+  },
+  {
+    "version": "4.8",
+    "date": "2017-06-08 12:00:00",
+    "description": "WordPress 4.8 \u201cEvans\u201d"
+  },
+  {
+    "version": "4.8.1",
+    "date": "2017-08-02 12:00:00",
+    "description": "WordPress 4.8.1 Maintenance Release"
+  },
+  {
+    "version": "4.8.2",
+    "date": "2017-09-19 12:00:00",
+    "description": "WordPress 4.8.2 Security and Maintenance Release"
+  },
+  {
+    "version": "4.8.3",
+    "date": "2017-10-31 12:00:00",
+    "description": "WordPress 4.8.3 Security Release"
+  },
+  {
+    "version": "4.9",
+    "date": "2017-11-16 12:00:00",
+    "description": "WordPress 4.9 \u201cTipton\u201d"
+  },
+  {
+    "version": "4.9.1",
+    "date": "2017-11-29 12:00:00",
+    "description": "WordPress 4.9.1 Security and Maintenance Release"
+  },
+  {
+    "version": "4.9.2",
+    "date": "2018-01-16 12:00:00",
+    "description": "WordPress 4.9.2 Security and Maintenance Release"
+  }
+]

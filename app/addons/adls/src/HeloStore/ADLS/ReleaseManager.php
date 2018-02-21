@@ -13,9 +13,11 @@
  */
 namespace HeloStore\ADLS;
 
+use HeloStore\ADLS\Platform\PlatformRepository;
+use HeloStore\ADLS\Source\SourceFileRepository;
+use HeloStore\ADLS\Source\SourceRepository;
 use HeloStore\ADLSS\Subscription;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
-use Tygh\Registry;
 
 /**
  * Class ReleaseManager
@@ -42,8 +44,10 @@ class ReleaseManager extends Manager
      *
      * @param $storeProduct
      * @param $params
+     *
      * @return bool
      * @throws ReleaseException
+     * @throws \Exception
      */
 	public function release($storeProduct, $params)
 	{
@@ -70,8 +74,13 @@ class ReleaseManager extends Manager
             }
             $fileSize = filesize($params['archivePath']);
         }
+        $platform = PlatformRepository::instance()->findDefault();
+        $source = SourceRepository::instance()->find(array(
+            'platformId' => $platform->getId(),
+            'productId' => $productId
+        ));
 
-        $releaseId = $this->createRelease($productId, $version, $fileName, $fileSize);
+        $releaseId = $this->createRelease($productId, $version, $fileName, $fileSize, $source->getId());
 
 		return $releaseId;
 	}
@@ -83,11 +92,12 @@ class ReleaseManager extends Manager
      * @param $version
      * @param $fileName
      * @param $fileSize
+     * @param $sourceId
      *
      * @return bool|int
      * @throws \Exception
      */
-	public function createRelease($productId, $version, $fileName, $fileSize)
+	public function createRelease($productId, $version, $fileName, $fileSize, $sourceId)
 	{
         $existingRelease = $this->repository->findOneByProductVersion($productId, $version);
 
@@ -106,6 +116,7 @@ class ReleaseManager extends Manager
             ->setFileSize($fileSize)
             ->setDownloads(0)
 			->setHash($hash)
+            ->setSourceId($sourceId)
             ->setStatus(Release::STATUS_ALPHA);
 
         $result = $this->repository->create($release);
@@ -115,41 +126,6 @@ class ReleaseManager extends Manager
 
         return $result;
 	}
-
-	/**
-	 * Create a new release file and attach it to the CS-Cart product.
-	 *
-	 * @param $productId
-	 * @param $params
-	 * @return bool|int
-	 */
-//	public function createFile($productId, $params)
-//	{
-//		$filename = $params['filename'];
-//        $file = array(
-//            'product_id' => $productId,
-//            'file_name' => $filename,
-//            'position' => 0,
-//            'folder_id' => null,
-//            'activation_type' => 'M',
-//            'max_downloads' => 0,
-//            'license' => '',
-//            'agreement' => 'Y',
-//            'readme' => '',
-//        );
-//        $fileId = 0;
-//		$file['file_name'] = $filename;
-//
-//		$_REQUEST['file_base_file'] = array(
-//			$fileId => $params['archiveUrl']
-//		);
-//		$_REQUEST['type_base_file'] = array(
-//			$fileId => 'url'
-//		);
-//		$fileId = fn_update_product_file($file, $fileId);
-//
-//		return $fileId;
-//	}
 
     /**
      * @TODO: releases are linked with products, discard these 2 custom product fields
@@ -225,12 +201,28 @@ class ReleaseManager extends Manager
 	}
 
     /**
+     * @param $productSlug
+     * @param Release $release
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getReleasePath($productSlug, Release $release)
+    {
+        $source = SourceRepository::instance()->findOneById($release->getSourceId());
+        $platform = PlatformRepository::instance()->findOneById($source->getPlatformId());
+
+        return SourceFileRepository::getReleasePath($productSlug, $platform->getSlug(), $release->getVersion());
+    }
+
+    /**
      * @param $userId
      * @param $product
      *
      * @param int $itemsPerPage
      *
      * @return mixed
+     * @throws \Exception
      */
     public function getOrderItemReleases($userId, $product, $itemsPerPage = 1)
     {
@@ -247,17 +239,16 @@ class ReleaseManager extends Manager
 	            'items_per_page' => $itemsPerPage
             ));
         }
-
         if (!empty($releases)) {
-            $developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
-            $technicalProduct = ProductManager::instance()->getProductById($productId);
-            $addonId = $technicalProduct['adls_addon_id'];
+            $technicalProduct = ProductRepository::instance()->findOneById($productId);
+            $productSlug = $technicalProduct['adls_slug'];
+
             /**
              * @var integer $k
              * @var Release $release
              */
             foreach ($releases as $k => $release) {
-                $filePath = $developerReleaseManager->getOutputPath($addonId, $release->getFileName());
+                $filePath = $this->getReleasePath($productSlug, $release);
                 if (!file_exists($filePath)) {
                     error_log("Release file not found: " . $filePath);
                     unset($releases[$k]);
@@ -265,51 +256,47 @@ class ReleaseManager extends Manager
             }
         }
 
-
         return $releases;
     }
 
-	/**
-	 * @param Release $release
-	 *
-	 * @return bool
-	 */
+    /**
+     * @param Release $release
+     *
+     * @return bool
+     * @throws \Exception
+     */
 	public function prepareForDownload(Release $release)
 	{
-		$developerReleaseManager = \HeloStore\Developer\ReleaseManager::instance();
-        $product = ProductManager::instance()->getProductById($release->getProductId());
-        $addonId = $product['adls_addon_id'];
-		$filePath = $developerReleaseManager->getOutputPath($addonId, $release->getFileName());
-
+        $product = ProductRepository::instance()->findOneById($release->getProductId());
+        $productSlug = $product['adls_slug'];
+        $filePath = $this->getReleasePath($productSlug, $release);
 		$release->download();
 		$this->repository->update($release);
 
 		return $filePath;
 	}
 
-	/**
-	 * @param Release $release
-	 *
-	 * @return bool
-	 */
+    /**
+     * @param Release $release
+     *
+     * @return bool
+     * @throws \Exception
+     */
     public function download(Release $release)
     {
         return fn_get_file($this->prepareForDownload($release));
     }
 
-
-//	public function removeUserLinks($userId, $productId, $startDate = null, $endDate = null) {
-//		if ( empty( $startDate ) && empty( $endDate ) ) {
-//			return;
-//		}
-//		list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
-//		list($latestReleases, ) = ReleaseRepository::instance()->findLatestByProduct($productId, $endDate);
-//		$releases += $latestReleases;
-//		foreach ( $releases as $release ) {
-//			ReleaseAccessRepository::instance()->removeLink($userId, $release->getId());
-//		}
-//	}
-
+    /**
+     * @param $userId
+     * @param $productId
+     * @param null $licenseId
+     * @param null $subscriptionId
+     * @param null $startDate
+     * @param null $endDate
+     *
+     * @throws \Exception
+     */
     public function addUserLinks($userId, $productId, $licenseId = null, $subscriptionId = null, $startDate = null, $endDate = null) {
         $releases = array();
 	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
@@ -337,6 +324,11 @@ class ReleaseManager extends Manager
 	    }
 	}
 
+    /**
+     * @param Release $release
+     *
+     * @return array
+     */
 	public function unpublish(Release $release) {
 		list ($links, ) = ReleaseAccessRepository::instance()->findByRelease($release);
 		$premium = 0;
@@ -353,6 +345,11 @@ class ReleaseManager extends Manager
 		return array($premium, $free);
 	}
 
+    /**
+     * @param Release $release
+     *
+     * @return array
+     */
 	public function publish(Release $release) {
 		$a = $this->publishPremium( $release );
 		$b = $this->publishFree( $release );
