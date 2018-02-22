@@ -13,7 +13,7 @@
                 {/foreach}
             </ul>
         </div>
-        <p>Or <a class="ty-btn ty-tertiary" href="{"adls_releases.view?product_id=`$product.product_id`"|fn_url}">view detailed releases</a> (as compatibility with various CS-Cart versions)</p>
+        <p>Or <a class="ty-btn ty-tertiary" href="{"adls_releases.view?product_id=`$product.product_id`"|fn_url}">view detailed releases</a></p>
     </div>
 {else}
     Downloads not ready, yet.
