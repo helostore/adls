@@ -51,7 +51,14 @@
                 {$hasOther = false}
                 {if !empty($license->otherReleases)}{$hasOther = true}{/if}
 
-                <a class="ty-btn ty-btn__primary ty-btn {if $hasLatest}_cm-post _cm-ajax{else}ui-state-disabled{/if}" {if $hasLatest}href="{"adls_releases.download?hash={$license->latestRelease->getHash()}"|fn_url}"{/if}>Latest</a>
+                {if $hasLatest}
+                    {include file="addons/adls/views/adls_releases/components/download_button.tpl" release=$license->latestRelease buttonText="Latest"}
+                {/if}
+
+
+                {*<a class="ty-btn ty-btn__primary ty-btn {if $hasLatest}_cm-post _cm-ajax{else}ui-state-disabled{/if}" {if $hasLatest}href="{"adls_releases.download?hash={$license->latestRelease->getHash()}"|fn_url}"{/if}>Latest</a>*}
+
+
                 <a class="ty-btn ty-btn__secondary ty-btn {if $hasOther}_cm-post _cm-ajax{else}ui-state-disabled{/if}" {if $hasOther}href="{"adls_releases.view?product_id={$license->getProductId()}"|fn_url}"{/if}>Other</a>
             </td>
         </tr>

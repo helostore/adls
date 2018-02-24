@@ -71,10 +71,10 @@
             <td>{$release->getFileName()}</td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>
-                <a class="ty-btn ty-btn__primary ty-btn"
-                   href="{"adls_releases.download?hash={$release->getHash()}"|fn_url}">Download</a>
+                {include file="addons/adls/views/adls_releases/components/download_button.tpl" release=$release}
+
                 {if !isset($smarty.request.product_id)}
-                    <a class="ty-btn ty-btn__primary ty-btn"
+                    <a class="ty-btn ty-btn__secondary ty-btn"
                        href="{"adls_releases.view?product_id={$release->getProductId()}"|fn_url}">View all</a>
                 {/if}
             </td>
