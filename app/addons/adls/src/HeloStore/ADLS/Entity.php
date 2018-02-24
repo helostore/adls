@@ -8,8 +8,9 @@
 
 namespace HeloStore\ADLS;
 
+use JsonSerializable;
 
-abstract class Entity
+abstract class Entity implements JsonSerializable
 {
     /**
      * Keep here the entity$prop variables for now
@@ -33,33 +34,33 @@ abstract class Entity
         }
     }
 
-	/**
-	 * @param $key
-	 *
-	 * @return mixed|null
-	 */
-	public function getExtra( $key ) {
-		if ( isset( $this->extra[ $key ] ) ) {
-			return $this->extra[ $key ];
-		}
+    /**
+     * @param $key
+     *
+     * @return mixed|null
+     */
+    public function getExtra( $key ) {
+        if ( isset( $this->extra[ $key ] ) ) {
+            return $this->extra[ $key ];
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * @param $key
-	 * @param $value
-	 *
-	 * @return mixed|null
-	 */
-	public function setExtra( $key, $value ) {
-		if (! isset( $this->extra[ $key ] ) ) {
-			return false;
-		}
-		$this->extra[ $key ] = $value;
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return mixed|null
+     */
+    public function setExtra( $key, $value ) {
+        if (! isset( $this->extra[ $key ] ) ) {
+            return false;
+        }
+        $this->extra[ $key ] = $value;
 
-		return null;
-	}
+        return null;
+    }
 
     /**
      * @return array
@@ -106,6 +107,7 @@ abstract class Entity
                 $this->extra[$field] = $v;
                 continue;
             }
+
             if (!empty($this->_fieldsMap)) {
                 $field = str_replace(array_keys($this->_fieldsMap), array_values($this->_fieldsMap), $field);
             }
@@ -129,5 +131,16 @@ abstract class Entity
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize() {
+        $json = array();
+        foreach($this as $key => $value) {
+            $json[$key] = $value;
+        }
+        return $json;
     }
 }

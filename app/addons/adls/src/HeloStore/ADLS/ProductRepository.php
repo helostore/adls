@@ -67,6 +67,9 @@ class ProductRepository extends EntityRepository
             $condition[] = db_quote('source.platformId = ?i', $params['sourcePlatformId']);
 //            $fields[] = 'productDesc.product AS productDesc$name';
         }
+        if (isset($params['ids'])) {
+            $condition[] = db_quote('product.product_id IN (?a)', $params['ids']);
+        }
         if (isset($params['id'])) {
             $condition[] = db_quote('product.product_id = ?i', $params['id']);
         }
@@ -90,7 +93,12 @@ class ProductRepository extends EntityRepository
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
         $query = db_quote('SELECT ?p FROM ?p AS product ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
-        $items = db_get_array($query);
+
+        if ( ! empty($params['hashArray'])) {
+            $items = db_get_hash_array($query, $params['hashArray']);
+        } else {
+            $items = db_get_array($query);
+        }
 //        if (!empty($items)) {
 //            foreach ($items as $k => $v) {
 //                $items[$k] = new Source($v);
@@ -104,6 +112,19 @@ class ProductRepository extends EntityRepository
         }
 
         return array($items, $params);
+    }
+
+    /**
+     * @param $ids
+     * @param array $params
+     *
+     * @return array|null
+     * @throws \Exception
+     */
+    public function findById($ids, $params = array()) {
+        $params['ids'] = $ids;
+
+        return $this->find($params);
     }
 
     /**

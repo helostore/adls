@@ -117,8 +117,10 @@ class Utils extends Singleton
 
 	public static function validateHostname($hostname, $type = License::DOMAIN_TYPE_DEVELOPMENT) {
 		$flags = (Hostname::ALLOW_LOCAL | Hostname::ALLOW_IP);
+
+		$isStrict = ! defined('ADLS_SKIP_STRICT_DOMAIN_VALIDATION');
 		
-		if ($type == License::DOMAIN_TYPE_PRODUCTION) {
+		if ($type == License::DOMAIN_TYPE_PRODUCTION && $isStrict) {
 			$flags = (Hostname::ALLOW_DNS);
 		}
 		$chain = new ValidatorChain();
@@ -126,7 +128,7 @@ class Utils extends Singleton
 
 		// Validate the $hostname
 		if ($chain->isValid($hostname)) {
-			if ($type == License::DOMAIN_TYPE_PRODUCTION) {
+			if ($type == License::DOMAIN_TYPE_PRODUCTION && $isStrict) {
 				$ip = gethostbyname($hostname);
 				if ($ip == $hostname) {
 					return array(
