@@ -13,6 +13,7 @@
  */
 
 use HeloStore\ADLS\LicenseRepository;
+use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use Tygh\Registry;
 
@@ -58,10 +59,13 @@ if ( $mode === 'manage' ) {
 		}
 		$tmp[ $pid ][] = $release;
 	}
+    foreach ($tmp as $productId => $releases) {
+        ReleaseManager::instance()->checkFileIntegrity($releases);
+    }
 	$releases = $tmp;
-	Tygh::$app['view']->assign('releases', $releases);
+    Tygh::$app['view']->assign('releases', $releases);
 
-	if ( ! empty( $licenses ) ) {
+    if ( ! empty( $licenses ) ) {
 		foreach ( $licenses as $license ) {
 			$pid = $license->getProductId();
 			$license->latestRelease = null;

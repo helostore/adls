@@ -112,6 +112,11 @@ class Release extends Entity
      * Non-stored fields
      */
 
+    /**
+     * @var bool
+     */
+    private $_fileFound = true;
+
 
 
 
@@ -469,6 +474,26 @@ class Release extends Entity
     public function setSourceId($sourceId)
     {
         $this->sourceId = $sourceId;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFileFound()
+    {
+        return $this->_fileFound;
+    }
+
+    /**
+     * @param bool $fileFound
+     *
+     * @return Release
+     */
+    public function setFileFound($fileFound)
+    {
+        $this->_fileFound = $fileFound;
 
         return $this;
     }

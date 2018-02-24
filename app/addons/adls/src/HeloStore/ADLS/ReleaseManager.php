@@ -239,20 +239,45 @@ class ReleaseManager extends Manager
 	            'items_per_page' => $itemsPerPage
             ));
         }
-        if (!empty($releases)) {
-            $technicalProduct = ProductRepository::instance()->findOneById($productId);
-            $productSlug = $technicalProduct['adls_slug'];
+        if (empty($releases)) {
+            return array();
+        }
 
-            /**
-             * @var integer $k
-             * @var Release $release
-             */
-            foreach ($releases as $k => $release) {
-                $filePath = $this->getReleasePath($productSlug, $release);
-                if (!file_exists($filePath)) {
-                    error_log("Release file not found: " . $filePath);
-                    unset($releases[$k]);
-                }
+        return $releases;
+    }
+
+    /**
+     * @param Release[] $releases
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function checkFileIntegrity($releases)
+    {
+        if (empty($releases)) {
+            return array();
+        }
+        $productIds = array();
+        foreach ($releases as $k => $release) {
+            if ( ! in_array($release->getProductId(), $productIds)) {
+                $productIds[] = $release->getProductId();
+            }
+        }
+
+        list($technicalProducts, ) = ProductRepository::instance()->findById($productIds, array(
+            'hashArray' => 'product_id'
+        ));
+
+        /**
+         * @var integer $k
+         * @var Release $release
+         */
+        foreach ($releases as $k => $release) {
+            $productSlug = $technicalProducts[$release->getProductId()]['adls_slug'];
+            $filePath = $this->getReleasePath($productSlug, $release);
+            $release->setFileFound(file_exists($filePath));
+            if (!file_exists($filePath)) {
+                error_log("Release file not found: " . $filePath);
             }
         }
 

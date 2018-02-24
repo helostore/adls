@@ -160,10 +160,11 @@ if ($mode == 'details') {
         $changed = false;
         foreach ($order['products'] as &$product) {
             if (!fn_is_adls_product($product)) {
+
                 continue;
             }
             $product['releases'] = $releaseManager->getOrderItemReleases($order['user_id'], $product);
-
+            $releaseManager->checkFileIntegrity($product['releases']);
             $changed = true;
         }
         unset($product);

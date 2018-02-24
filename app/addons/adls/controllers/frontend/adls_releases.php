@@ -73,6 +73,8 @@ if ($mode == 'view') {
         list( $releases, $search ) = ReleaseRepository::instance()->findLatest( $params );
     }
 
+    ReleaseManager::instance()->checkFileIntegrity($releases);
+
     /** @var \HeloStore\ADLS\Release $release */
     foreach ($releases as $release) {
 
