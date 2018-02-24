@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.44",
+        "releaseDate": "2018-02-24 10:59:48",
+        "releaseTimestamp": "1519469988",
+        "hash": "e8b7844fe3aabea5fdecded2c23bf942c5a9666e",
+        "commits": [
+            "[2018-02-24] Bumped version to 0.2.44",
+            "[2018-02-24]\tAdd release file integrity check"
+        ]
+    },
+    {
         "version": "0.2.43",
         "releaseDate": "2018-02-24 10:57:55",
         "releaseTimestamp": "1519469875",
@@ -25,17 +35,6 @@
         "hash": "4ec8a62d0cac1ffe3d59ccd8b1216097f5d65047",
         "commits": [
             "[2018-02-21] Bumped version to 0.2.41"
-        ]
-    },
-    {
-        "version": "0.2.40",
-        "releaseDate": "2018-02-21 01:06:57",
-        "releaseTimestamp": "1519218417",
-        "hash": "acc80697820b2f46ea12510e7bfc95a9d3e4c73a",
-        "commits": [
-            "[2018-02-21] Bumped version to 0.2.40",
-            "[2018-02-21]\tMerge branch 'feature\/multiplatform'",
-            "[2018-02-20]\tAdd product slug; deprecate adls_addon_id field"
         ]
     }
 ]
