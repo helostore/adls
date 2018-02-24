@@ -75,10 +75,14 @@ class ReleaseManager extends Manager
             $fileSize = filesize($params['archivePath']);
         }
         $platform = PlatformRepository::instance()->findDefault();
-        $source = SourceRepository::instance()->find(array(
+        $source = SourceRepository::instance()->findOne(array(
             'platformId' => $platform->getId(),
             'productId' => $productId
         ));
+
+        if (empty($source)) {
+            throw new \Exception('Source not found by platform: ' . $platform->getId() .  ', product:  ' . $productId);
+        }
 
         $releaseId = $this->createRelease($productId, $version, $fileName, $fileSize, $source->getId());
 
