@@ -242,7 +242,12 @@ function fn_adls_validate_product_options($product_options)
  */
 function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 {
-    if (defined('ORDER_MANAGEMENT')) {
+    $controller = Registry::get('runtime.controller');
+    // For now, we don't want to go any further if there's an admin editing an order
+    // @see app/addons/paypal/controllers/common/payment_notification.post.php:37
+    $isHumanOrderManagement = (defined('ORDER_MANAGEMENT') && $controller !== 'payment_notification');
+
+    if ($isHumanOrderManagement) {
         return false;
     }
 
@@ -297,11 +302,11 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                 }
             } else {
 
+
                 // @TODO move this into an option per product, eg. "This product generates license keys"
                 // if is sidekick, don't generate license
                 $isSidekick = ($productId == 5);
                 $hasSubscription = ! empty($product['subscription']) || ! empty($product['adls_subscription_setup_pending']);
-
 	            if (!$isSidekick && $hasSubscription ) {
 		            $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 		            if ($licenseId) {
@@ -572,7 +577,8 @@ function fn_adls_adlss_get_subscriptions_post(&$items , $params ) {
 			if ( $subscription->isNew() ) {
 				continue;
 			}
-			throw new \Exception( 'Subscription has no license ID (subscription #' . $subscription->getId() . ')' );
+            error_log('Subscription has no license ID (subscription #' . $subscription->getId() . ')');
+//			throw new \Exception( 'Subscription has no license ID (subscription #' . $subscription->getId() . ')' );
 		}
 
 		$data = array(
