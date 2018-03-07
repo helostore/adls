@@ -510,7 +510,6 @@ class ProductManager extends Singleton
         }
         // There is a newer release to which user has NO access to
         if ($latestRelease->isNewerThan($latestUserRelease)) {
-
             if (empty($subscription)) {
                 throw new \Exception('Subscription not found', LicenseClient::CODE_ERROR_ALIEN);
             }
