@@ -327,7 +327,7 @@ class ProductManager extends Singleton
      */
     public function getProductUpdate($productCode, $customerProduct, $storeProduct, $userId = 0, $request = null)
     {
-        $licenseKey   = $customerProduct['license'];
+        $licenseKey   = !empty($customerProduct['license']) ? $customerProduct['license'] : '';
         $license      = null;
         $subscription = null;
         $productId    = 0;
