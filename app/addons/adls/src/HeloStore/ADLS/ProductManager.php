@@ -187,7 +187,6 @@ class ProductManager extends Singleton
         if ( ! empty($product['builds'])) {
             $product['latestBuild'] = end($product['builds']);
         }
-
         // Check if there's unreleased builds
         $product['has_unreleased_version'] = true;
         if ( ! empty($product['latestBuild']) && ! empty($product['latestRelease'])) {

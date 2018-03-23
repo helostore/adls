@@ -94,14 +94,6 @@ class LicenseServer
             return $response;
         }
 
-        $isMagicLicenseKey = (defined('ADLS_MAGIC_LICENSE_KEY') && $vars['product.license'] == ADLS_MAGIC_LICENSE_KEY);
-        if ($isMagicLicenseKey) {
-            $response['code']    = LicenseClient::CODE_SUCCESS;
-            $response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic key</em>!';
-
-            return $response;
-        }
-
         $productManager = ProductManager::instance();
         $storeProduct = ProductRepository::instance()->findOneBySlug($vars['product.code']);
         if (empty($storeProduct)) {
@@ -123,6 +115,15 @@ class LicenseServer
 
         if ($paidSubscription) {
             $vars = array_merge($vars, $this->requireRequestVariables($request, array('product.license')));
+
+            $isMagicLicenseKey = (defined('ADLS_MAGIC_LICENSE_KEY') && $vars['product.license'] == ADLS_MAGIC_LICENSE_KEY);
+            if ($isMagicLicenseKey) {
+                $response['code']    = LicenseClient::CODE_SUCCESS;
+                $response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic key</em>!';
+
+                return $response;
+            }
+
         }
 
         $requestVersion = $vars['product.version'];
