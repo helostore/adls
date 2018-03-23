@@ -29,6 +29,7 @@ class Logger extends Singleton
 	const TYPE_SUCCESS = 'S';
 	const TYPE_WARNING = 'W';
 	const TYPE_LOG = 'L';
+	const TYPE_DEBUG = 'D';
 
 	const OBJECT_TYPE_REQUEST = 'request';
 	const OBJECT_TYPE_API = 'api';
@@ -63,6 +64,12 @@ class Logger extends Singleton
         return db_query('UPDATE ?:adls_logs SET ?u WHERE id = ?i', $entry, $id);
 
 	}
+
+    public function debug()
+    {
+        $content = json_encode(func_get_args());
+        return $this->add(Logger::TYPE_DEBUG, $_REQUEST, $_SERVER, '', '', $content, '');
+    }
 	public function add($type, $request, $server, $objectType = '', $objectAction = '', $content = '', $backtrace = '')
 	{
 		$entry = array();

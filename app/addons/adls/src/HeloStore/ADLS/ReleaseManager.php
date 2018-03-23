@@ -395,6 +395,7 @@ class ReleaseManager extends Manager
 	 */
 	public function publishPremium(Release $release) {
 
+	    // @TODO: decouple from publishing from subscriptions
 		list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
 			'extended' => true,
 			'status' => Subscription::STATUS_ACTIVE,
