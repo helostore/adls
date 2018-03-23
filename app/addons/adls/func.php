@@ -282,7 +282,10 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 	    $notificationState = (AREA == 'A' ? 'I' : 'K');
 
         if ($isPaidStatus) {
-            $domainOptions = Utils::filterDomainProductOptions($product['product_options']);
+            $domainOptions = array();
+            if ( ! empty($product['product_options'])) {
+                $domainOptions = Utils::filterDomainProductOptions($product['product_options']);
+            }
 
             if (!empty($licenseId)) {
                 Utils::updateLicenseDomainsFromProductOptions($licenseId, $domainOptions);
@@ -387,6 +390,9 @@ function fn_adls_get_product_options($product)
 }
 function fn_is_adls_product($product)
 {
+    if ( ! isset($product['product_id'])) {
+        error_log('Invalid product/cart-item: ' . json_encode($product));
+    }
     $productId = $product['product_id'];
     $productType = !empty($product['product_type']) ? $product['product_type'] : db_get_field('SELECT product_type FROM ?:products WHERE product_id = ?i', $productId);
 
