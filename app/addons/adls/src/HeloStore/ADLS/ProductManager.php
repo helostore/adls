@@ -15,6 +15,8 @@
 namespace HeloStore\ADLS;
 
 
+use HeloStore\ADLS\Compatibility\CompatibilityManager;
+use HeloStore\ADLS\Compatibility\CompatibilityRepository;
 use HeloStore\ADLS\Platform\Platform;
 use HeloStore\ADLS\Platform\PlatformEditionRepository;
 use HeloStore\ADLS\Platform\PlatformRepository;
@@ -30,8 +32,21 @@ use Tygh\Registry;
  *
  * @package HeloStore\ADLS
  */
-class ProductManager extends Singleton
+class ProductManager extends Manager
 {
+    /**
+     * @var ProductRepository
+     */
+    protected $repository;
+
+    /**
+     * ReleaseManager constructor.
+     */
+    public function __construct()
+    {
+        $this->setRepository(ProductRepository::instance());
+    }
+
     public function getReviewUrl($key)
     {
         static $map = array(
@@ -304,6 +319,43 @@ class ProductManager extends Singleton
             if (empty($storeProduct)) {
                 continue;
             }
+
+            $update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId, $request);
+            if ( ! empty($update)) {
+                $updates[$productCode] = $update;
+            }
+
+        }
+
+        return $updates;
+    }
+
+    /**
+     * @param array $customerProducts
+     * @param int $userId
+     * @param null $request
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function checkUpdatesUniversal($customerProducts, $userId = 0, $request = null)
+    {
+        $updates = array();
+
+        $platform = PlatformRepository::instance()->findDefault();
+        if ( ! empty($request['platform'])) {
+            $platform = PlatformRepository::instance()->findOneByName($request['platform']['name']);
+        }
+
+        foreach ($customerProducts as $productCode => $customerProduct) {
+            $storeProduct = $this->repository->findOneBySlug($productCode);
+            if (empty($storeProduct)) {
+                continue;
+            }
+            $this->hydrateProductWithReleases($storeProduct, $platform);
+
+//            Logger::instance()->debug($storeProduct);
+
             $update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId, $request);
             if ( ! empty($update)) {
                 $updates[$productCode] = $update;
@@ -344,9 +396,8 @@ class ProductManager extends Singleton
 //		$product = $this->getProductById( $productId );
         $customerVersion = ! empty($customerProduct['version']) ? $customerProduct['version'] : '';
 
-        $productData      = ProductManager::instance()->getProductByAddonId($productCode);
-        $freeSubscription = $this->isFreeSubscription($productData['adls_subscription_id']);
-        $paidSubscription = $this->isPaidSubscription($productData['adls_subscription_id']);
+        $freeSubscription = $this->isFreeSubscription($storeProduct['adls_subscription_id']);
+        $paidSubscription = $this->isPaidSubscription($storeProduct['adls_subscription_id']);
 
 
         if ($paidSubscription) {
@@ -379,12 +430,15 @@ class ProductManager extends Singleton
             ));
         }
 
+        $platform          = null;
         $platformId        = null;
         $platformEditionId = null;
+        $platformVersion   = null;
         $platformVersionId = null;
         if ( ! empty($request) && ! empty($request['platform'])) {
             if ( ! empty($request['platform']['name'])) {
                 $platform = PlatformRepository::instance()->findOneByName($request['platform']['name']);
+
                 if ( ! empty($platform)) {
                     $platformId = $platform->getId();
                 }
@@ -402,6 +456,9 @@ class ProductManager extends Singleton
                 }
             }
         }
+        if ($platform === null) {
+            throw new \Exception('Your request has not provided us with your platform details. Please contact us.', LicenseClient::CODE_ERROR_ALIEN);
+        }
 
         /** @var Release $latestRelease */
         $latestRelease = $releaseRepository->find(array(
@@ -411,6 +468,7 @@ class ProductManager extends Singleton
             'compatibilityPlatformEditionId' => $platformEditionId,
             'compatibilityPlatformVersionId' => $platformVersionId
         ));
+
 
         if (empty($latestRelease)) {
 //			throw new \Exception('Latest release not found for ' . $productCode, LicenseClient::CODE_ERROR_ALIEN);
@@ -483,10 +541,65 @@ class ProductManager extends Singleton
 
         // There is a newer release to which user has access to
         if ($latestUserRelease->isNewerThan($currentUserRelease)) {
+
+            if ($platform->isCSCart()) {
+                $licenseClient = LicenseClientFactory::buildCSCart();
+            } elseif ($platform->isWordPress()) {
+                $licenseClient = LicenseClientFactory::buildCSCart();
+            } else {
+                throw new \Exception('Your platform is not yet supported. Please contact us.', LicenseClient::CODE_ERROR_ALIEN);
+            }
+
+
+            $_args = array(
+                'server' => $request['server'],
+                'platform' => $request['platform'],
+                'language' => $request['language'],
+                'product' => array(
+                    'code' => $customerProduct['code'],
+                    'license' => $customerProduct['license'],
+                    'version' => $customerProduct['version'],
+                ),
+                'email' => $customerProduct['email'],
+                'token' => $request['token'],
+                'context' => LicenseClient::CONTEXT_UPDATE_DOWNLOAD
+            );
+
+            $updateUrl = $licenseClient->formatApiUrl(LicenseClient::CONTEXT_UPDATE_DOWNLOAD, $_args);
             $message = __('adls.api.update.message', array(
                 '[addon]'          => $productName,
                 '[currentVersion]' => $currentUserRelease->getVersion(),
-                '[nextVersion]'    => $latestRelease->getVersion()
+                '[nextVersion]'    => $latestRelease->getVersion(),
+                '[updateUrl]'    => $updateUrl,
+            ));
+
+            // Response for WordPress platforms
+            if ($platform->isWordPress()) {
+                $icons = $this->fetchIcons($productCode, $platform);
+                $compatibility = CompatibilityRepository::instance()->findMinMax($productId, $platform->getId());
+
+                if ( ! empty($compatibility) && !empty($compatibility['max'])) {
+                    $tested = $compatibility['max']->getPlatformVersion();
+                }
+
+                return array(
+                    'version'       => $latestUserRelease->getVersion(),
+                    'userVersion'   => $customerVersion,
+                    'releaseId'     => $latestUserRelease->getId(),
+                    'code'          => $productCode,
+                    'updateUrl'     => $updateUrl,
+                    'icons'         => $icons,
+                    'tested'         => $tested,
+//                    'upgradeNotice' => 'hellowwwwwwwwwwwwwwwwwwww',
+//                    'reviewMessage' => $this->getReviewMessage($productCode),
+                );
+            }
+
+            // Response for CS-Cart platforms
+            $message = __('adls.api.update.message', array(
+                '[addon]'          => $productName,
+                '[currentVersion]' => $currentUserRelease->getVersion(),
+                '[nextVersion]'    => $latestRelease->getVersion(),
             ));
 
             return array(
@@ -506,6 +619,8 @@ class ProductManager extends Singleton
                     )
                 )
             );
+
+
         }
         // There is a newer release to which user has NO access to
         if ($latestRelease->isNewerThan($latestUserRelease)) {
@@ -627,5 +742,42 @@ class ProductManager extends Singleton
         }
 
         return null;
+    }
+
+
+    public function copyAssets($productSlug, $platformSlug)
+    {
+        // Copy release assets to public directory
+        $assetsPath = SourceFileRepository::getSourcePath($productSlug, $platformSlug) . '/assets';
+
+        if (!file_exists($assetsPath)) {
+            return false;
+        }
+
+        fn_mkdir(DIR_ROOT . '/assets/');
+        fn_copy($assetsPath, DIR_ROOT . '/assets/' . $productSlug, true);
+
+        return true;
+    }
+    public function fetchIcons($productCode, Platform $platform)
+    {
+//        $preferred_icons = array( 'svg', '1x', '2x', 'default' );
+        $sourcePath = SourceFileRepository::instance()->getSourcePath($productCode, $platform->getSlug());
+        $iconPaths = array(
+            'svg' => $sourcePath . '/assets/images/logo.svg'
+        );
+
+
+        $protocol = (defined('SIDEKICK_NO_HTTPS') ? 'http' : 'https');
+        $url      = $protocol . '://' . (defined('WS_DEBUG') ? 'local.' : '') . 'helostore.com/assets/' . $productCode . '/images';
+
+        $availableIcons = array();
+        foreach ($iconPaths as $key => $path) {
+            if (file_exists($path)) {
+                $availableIcons[$key] = $url . '/' . basename($path);
+            }
+        }
+
+        return $availableIcons;
     }
 }

@@ -138,6 +138,22 @@ class Compatibility extends Entity
     }
 
     /**
+     * @return mixed|null
+     */
+    public function getPlatformName()
+    {
+        return $this->getExtra('platform$name');
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getPlatformVersion()
+    {
+        return $this->getExtra('platform$version');
+    }
+
+    /**
      * @return string
      */
     public function __toString()

@@ -15,12 +15,14 @@
 namespace HeloStore\ADLS\Compatibility;
 
 
+use HeloStore\ADLS\Platform\Platform;
 use HeloStore\ADLS\Platform\PlatformVersion;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\Singleton;
 
 /**
  * Class CompatibilityManager
- * 
+ *
  * @package HeloStore\ADLS
  */
 class CompatibilityManager extends Singleton

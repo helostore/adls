@@ -200,4 +200,24 @@ class CompatibilityRepository extends EntityRepository
 
         return ['min' => $min, 'max' => $max];
     }
+
+//    /**
+//     *
+//     * @param Release $release
+//     * @param $platformId
+//     * @param array $params
+//     *
+//     * @return Compatibility|null
+//     */
+//    public function findForRelease(Release $release, $platformId, $params = array()) {
+//        $params['releaseId'] = $release->getId();
+//        $params['productId'] = $release->getProductId();
+//        $params['platformId'] = $platformId;
+//        $params['releaseStatus'] = Release::STATUS_PRODUCTION;
+//        $params['sort_by'] = 'platformVersion';
+//        $params['sort_order'] = 'desc';
+//        $params['page'] = 'desc';
+//
+//        return $this->find($params);
+//    }
 }

@@ -103,5 +103,15 @@
     "version": "4.9.2",
     "date": "2018-01-16 12:00:00",
     "description": "WordPress 4.9.2 Security and Maintenance Release"
+  },
+  {
+    "version": "4.9.3",
+    "date": "2018-02-05 12:00:00",
+    "description": "WordPress 4.9.3 Maintenance Release"
+  },
+  {
+    "version": "4.9.4",
+    "date": "2018-02-06 12:00:00",
+    "description": "WordPress 4.9.4 Maintenance Release"
   }
 ]
