@@ -116,8 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $compatiblePlatformVersions = $_POST['compatibility'];
         }
 
-        $platform = $platformRepository->findDefault();
-
         list($previousCompatibilities,) = CompatibilityRepository::instance()->find(array(
             'releaseId'  => $release->getId(),
             'platformId' => $platform->getId()
@@ -144,6 +142,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             CompatibilityRepository::instance()->assign($productId, $releaseId,
                 $platformVersion);
         }
+
+        // Copy release assets to public directory
+        $productManager->copyAssets($product['adls_slug'], $platform->getSlug());
 
         return [CONTROLLER_STATUS_REDIRECT, 'releases.update?release_id=' . $releaseId];
     }

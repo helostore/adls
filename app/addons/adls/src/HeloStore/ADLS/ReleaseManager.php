@@ -21,7 +21,7 @@ use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 
 /**
  * Class ReleaseManager
- * 
+ *
  * @package HeloStore\ADLS
  */
 class ReleaseManager extends Manager

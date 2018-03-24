@@ -134,10 +134,13 @@ class LicenseServer
         }
 
         // Check if version is valid
-        if ( ! ReleaseManager::instance()->isValidVersion($productId, $requestVersion)) {
-            throw new \Exception('Invalid product version requested',
-                LicenseClient::CODE_ERROR_PRODUCT_INVALID_VERSION);
+        if ( ! defined('ADLS_SKIP_PRODUCT_VERSION_VALIDATION')) {
+            if ( ! ReleaseManager::instance()->isValidVersion($productId, $requestVersion)) {
+                throw new \Exception('Invalid product version requested',
+                    LicenseClient::CODE_ERROR_PRODUCT_INVALID_VERSION);
+            }
         }
+
 
         // We can now control for newer Sidekick versions here, > v0.1.100
         if ( ! empty($request['licenseClient'])) {
@@ -469,14 +472,18 @@ class LicenseServer
         $customerProducts = $request['products'];
         $productManager   = ProductManager::instance();
 //		$storeProducts = $productManager->getStoreProducts();
-        $storeProducts = $productManager->getStoreProductsData();
+//        $storeProducts = $productManager->getStoreProductsData();
+//        $storeProducts = $productManager->getProducts();
+//        Logger::instance()->debug($storeProducts);
 
-        $requestSidekick = null;
-        if ( ! empty($request['licenseClient'])) {
-            $requestSidekick = $request['licenseClient'];
-        }
+//        $requestSidekick = null;
+//        if ( ! empty($request['licenseClient'])) {
+//            $requestSidekick = $request['licenseClient'];
+//        }
 
-        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId, $request);
+//        Logger::dump($request);
+
+        $response['updates'] = $productManager->checkUpdatesUniversal($customerProducts, $userId, $request);
 
         if (empty($response['updates'])) {
             $response['code'] = LicenseClient::CODE_NOTIFICATION_NO_UPDATES_AVAILABLE;
@@ -507,8 +514,9 @@ class LicenseServer
         if ( ! empty($request['auth']) && ! empty($request['auth']['user_id'])) {
             $userId = $request['auth']['user_id'];
         }
-        $storeProducts       = $productManager->getStoreProducts();
-        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId, $request);
+//        $storeProducts       = $productManager->getStoreProducts();
+//        $response['updates'] = $productManager->checkUpdates($customerProducts, $storeProducts, $userId, $request);
+        $response['updates'] = $productManager->checkUpdatesUniversal($customerProducts, $userId, $request);
 
         return $response;
     }
@@ -527,6 +535,7 @@ class LicenseServer
     {
         $response = array(
             'code' => LicenseClient::CODE_ERROR_ALIEN,
+//            'message' => 'Unknown error'
         );
         if (empty($request) || empty($request['product'])) {
             return $response;
@@ -544,8 +553,10 @@ class LicenseServer
         }
         $productCode    = $requestProduct['code'];
         $productManager = ProductManager::instance();
-        $storeProduct   = $productManager->getStoreProduct($productCode);
+        $storeProduct   = ProductRepository::instance()->findOneBySlug($productCode);
+//        $storeProduct   = $productManager->getStoreProduct($productCode);
         if (empty($storeProduct) || empty($storeProduct['product_id'])) {
+            $response['message'] = 'Product not found';
             return $response;
         }
 //		list($files, ) = fn_get_product_files(array(
@@ -554,7 +565,7 @@ class LicenseServer
 //		));
 
         $updateData = $productManager->getProductUpdate($productCode, $requestProduct, $storeProduct,
-            $request['auth']['user_id']);
+            $request['auth']['user_id'], $request);
         if (empty($updateData) || empty($updateData['releaseId'])) {
             $response['code'] = LicenseClient::CODE_ERROR_UPDATE_FAILED_RELEASE_NOT_FOUND;
 
@@ -570,7 +581,9 @@ class LicenseServer
 //		$path = Storage::instance('downloads')->getAbsolutePath($file['product_id'] . '/' . $file['file_path']);
         $path = ReleaseManager::instance()->prepareForDownload($release);
 
+
         if (empty($path)) {
+//            return array('xxxx' => __LINE__);
             return $response;
         }
 

@@ -1,5 +1,16 @@
 [
     {
+        "version": "0.2.49",
+        "releaseDate": "2018-03-23 02:31:31",
+        "releaseTimestamp": "1521815491",
+        "hash": "78e362e434094572dbe47c52f1089bc94391963a",
+        "commits": [
+            "[2018-03-24] Bumped version to 0.2.49",
+            "[2018-03-23]\tFIx merge",
+            "[2018-03-23]\tBumped version to 0.2.47"
+        ]
+    },
+    {
         "version": "0.2.48",
         "releaseDate": "2018-03-14 10:37:58",
         "releaseTimestamp": "1521023878",
@@ -27,15 +38,6 @@
             "[2018-03-07] Bumped version to 0.2.46",
             "[2018-03-07]\tMerge branch 'hotfix\/license-not-created-due-paypal-issue'",
             "[2018-03-07]\tPaypal defined ORDER_MANAGEMENT const, which had a special meaning for ADLS"
-        ]
-    },
-    {
-        "version": "0.2.45",
-        "releaseDate": "2018-02-24 10:59:51",
-        "releaseTimestamp": "1519469991",
-        "hash": "5f2bdd86629fe38a2f905770ff42a38018f4d01a",
-        "commits": [
-            "[2018-02-24] Bumped version to 0.2.45"
         ]
     }
 ]
