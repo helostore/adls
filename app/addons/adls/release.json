@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.51",
+        "releaseDate": "2018-03-26 05:21:27",
+        "releaseTimestamp": "1522084887",
+        "hash": "181e772b1420b533a46d547362ec13c3374df5fc",
+        "commits": [
+            "[2018-03-26] Bumped version to 0.2.51"
+        ]
+    },
+    {
         "version": "0.2.50",
         "releaseDate": "2018-03-26 05:21:23",
         "releaseTimestamp": "1522084883",
@@ -27,16 +36,6 @@
         "hash": "356e6c8e7c6874a82e00f6abdbf3946b0ddf34c7",
         "commits": [
             "[2018-03-14] Bumped version to 0.2.48"
-        ]
-    },
-    {
-        "version": "0.2.47",
-        "releaseDate": "2018-03-14 10:37:49",
-        "releaseTimestamp": "1521023869",
-        "hash": "1badac58fd153f07aaf991073bfd4eb1c0925c98",
-        "commits": [
-            "[2018-03-14] Bumped version to 0.2.47",
-            "[2018-03-14]\tMinor bugfix with PHP warnings{"
         ]
     }
 ]
