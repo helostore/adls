@@ -39,6 +39,10 @@ class Logger extends Singleton
     public static function dump()
     {
         self::instance()->debug(func_get_args());
+
+        if (function_exists('ws_log_file')) {
+            ws_log_file(var_export(func_get_args(), true), 'var/log/adls.log');
+        }
     }
 
     public function success($request, $server, $objectType = '', $objectAction = '', $content = '')
