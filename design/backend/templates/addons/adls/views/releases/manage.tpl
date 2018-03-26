@@ -15,7 +15,6 @@
 {/if}
 
 {capture name="mainbox"}
-    {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases}
     {if $product.has_unreleased_version}
         <p style="color: red;">Note: there is at least one un-released version:
             {if !empty($product.latestBuild)}
@@ -25,7 +24,7 @@
             {/if}
         </p>
     {/if}
-
+    {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases}
     {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
     {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
 
