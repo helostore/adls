@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.50",
+        "releaseDate": "2018-03-26 05:21:23",
+        "releaseTimestamp": "1522084883",
+        "hash": "da6eda5b9cad646904475269b13459b5e6d17352",
+        "commits": [
+            "[2018-03-26] Bumped version to 0.2.50",
+            "[2018-03-26]\tFix bug when requesting update check, platform version ID for CS-Cart was retrieved for WordPress by mistake"
+        ]
+    },
+    {
         "version": "0.2.49",
         "releaseDate": "2018-03-23 02:31:31",
         "releaseTimestamp": "1521815491",
@@ -27,17 +37,6 @@
         "commits": [
             "[2018-03-14] Bumped version to 0.2.47",
             "[2018-03-14]\tMinor bugfix with PHP warnings{"
-        ]
-    },
-    {
-        "version": "0.2.46",
-        "releaseDate": "2018-03-07 04:56:59",
-        "releaseTimestamp": "1520441819",
-        "hash": "8b28e72e67b19ff4eb297b2e08360c7cab48061f",
-        "commits": [
-            "[2018-03-07] Bumped version to 0.2.46",
-            "[2018-03-07]\tMerge branch 'hotfix\/license-not-created-due-paypal-issue'",
-            "[2018-03-07]\tPaypal defined ORDER_MANAGEMENT const, which had a special meaning for ADLS"
         ]
     }
 ]
