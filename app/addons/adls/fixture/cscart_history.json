@@ -368,5 +368,10 @@
     "version": "4.7.1",
     "date": "2017-12-20 12:00:00",
     "description": "This update has a lot of new features for order management and export/import. Also, Multi-Vendor features Stripe Connect and a Customer-to-vendor communication system. Plus, we improved store usability."
+  },
+  {
+    "version": "4.7.2",
+    "date": "2018-02-15 12:00:00",
+    "description": "We’re happy to announce the release of CS-Cart & Multi-Vendor 4.7.2. Even though patch releases mostly contain bug fixes, there are reasons to be excited about 4.7.2."
   }
 ]

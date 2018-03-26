@@ -450,7 +450,7 @@ class ProductManager extends Manager
                 }
             }
             if ( ! empty($request['platform']['version'])) {
-                $platformVersion = PlatformVersionRepository::instance()->findOneByVersion($request['platform']['version']);
+                $platformVersion = PlatformVersionRepository::instance()->findOneByVersion($platformId, $request['platform']['version']);
                 if ( ! empty($platformVersion)) {
                     $platformVersionId = $platformVersion->getId();
                 }
