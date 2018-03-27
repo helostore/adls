@@ -653,8 +653,17 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	if ( AREA != 'C' ) {
 		return;
 	}
-	$releaseCount = ReleaseRepository::instance()->countByProductId($product['product_id']);
-	if ( empty( $releaseCount ) ) {
+
+	$params = array(
+		'userId'     => $auth['user_id'],
+		'productId'  => $product['product_id'],
+		'extended'   => true,
+		'compatibilities'   => true,
+	);
+
+	list($releases, ) = ReleaseRepository::instance()->find($params);
+
+	if ( empty( $releases ) ) {
 
 //		$product['out_of_stock_actions'] = 'S';
 //		$product['tracking'] = 'B';

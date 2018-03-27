@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.53",
+        "releaseDate": "2018-03-27 11:51:04",
+        "releaseTimestamp": "1522151464",
+        "hash": "621a5ac2a37556907e324251fa0be6d3865f0fa7",
+        "commits": [
+            "[2018-03-27] Bumped version to 0.2.53"
+        ]
+    },
+    {
         "version": "0.2.52",
         "releaseDate": "2018-03-26 05:41:18",
         "releaseTimestamp": "1522086078",
@@ -25,17 +34,6 @@
         "commits": [
             "[2018-03-26] Bumped version to 0.2.50",
             "[2018-03-26]\tFix bug when requesting update check, platform version ID for CS-Cart was retrieved for WordPress by mistake"
-        ]
-    },
-    {
-        "version": "0.2.49",
-        "releaseDate": "2018-03-23 02:31:31",
-        "releaseTimestamp": "1521815491",
-        "hash": "78e362e434094572dbe47c52f1089bc94391963a",
-        "commits": [
-            "[2018-03-24] Bumped version to 0.2.49",
-            "[2018-03-23]\tFIx merge",
-            "[2018-03-23]\tBumped version to 0.2.47"
         ]
     }
 ]
