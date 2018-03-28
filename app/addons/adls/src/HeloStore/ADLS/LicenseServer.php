@@ -153,7 +153,7 @@ class LicenseServer
             $manager = LicenseManager::instance();
             $license = LicenseRepository::instance()->findOneByKey($vars['product.license']);
             $domain  = $vars['server.hostname'];
-            $domain  = Utils::stripDomainWWW($domain);
+//            $domain  = Utils::stripDomainWWW($domain);
             if (empty($license)) {
                 throw new \Exception('Invalid license or domain', LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
             }
