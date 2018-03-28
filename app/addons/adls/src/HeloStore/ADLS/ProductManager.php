@@ -543,9 +543,9 @@ class ProductManager extends Manager
         if ($latestUserRelease->isNewerThan($currentUserRelease)) {
 
             if ($platform->isCSCart()) {
-                $licenseClient = LicenseClientFactory::buildCSCart();
+//                $licenseClient = LicenseClientFactory::buildCSCart();
             } elseif ($platform->isWordPress()) {
-                $licenseClient = LicenseClientFactory::buildCSCart();
+                $licenseClient = LicenseClientFactory::buildWordPress();
             } else {
                 throw new \Exception('Your platform is not yet supported. Please contact us.', LicenseClient::CODE_ERROR_ALIEN);
             }
@@ -565,16 +565,18 @@ class ProductManager extends Manager
                 'context' => LicenseClient::CONTEXT_UPDATE_DOWNLOAD
             );
 
-            $updateUrl = $licenseClient->formatApiUrl(LicenseClient::CONTEXT_UPDATE_DOWNLOAD, $_args);
-            $message = __('adls.api.update.message', array(
-                '[addon]'          => $productName,
-                '[currentVersion]' => $currentUserRelease->getVersion(),
-                '[nextVersion]'    => $latestRelease->getVersion(),
-                '[updateUrl]'    => $updateUrl,
-            ));
+
 
             // Response for WordPress platforms
             if ($platform->isWordPress()) {
+	            $updateUrl = $licenseClient->formatApiUrl(LicenseClient::CONTEXT_UPDATE_DOWNLOAD, $_args);
+	            $message = __('adls.api.update.message', array(
+		            '[addon]'          => $productName,
+		            '[currentVersion]' => $currentUserRelease->getVersion(),
+		            '[nextVersion]'    => $latestRelease->getVersion(),
+		            '[updateUrl]'    => $updateUrl,
+	            ));
+
                 $icons = $this->fetchIcons($productCode, $platform);
                 $compatibility = CompatibilityRepository::instance()->findMinMax($productId, $platform->getId());
 
