@@ -655,14 +655,14 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	}
 
 	$params = array(
-		'userId'     => $auth['user_id'],
+//		'userId'     => $auth['user_id'],
 		'productId'  => $product['product_id'],
+		'status'  => Release::STATUS_PRODUCTION,
 		'extended'   => true,
 		'compatibilities'   => true,
 	);
 
 	list($releases, ) = ReleaseRepository::instance()->find($params);
-
 	if ( empty( $releases ) ) {
 
 //		$product['out_of_stock_actions'] = 'S';
