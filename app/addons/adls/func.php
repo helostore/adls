@@ -666,14 +666,39 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	}
 	list($releases, ) = ReleaseRepository::instance()->find($params);
 	if ( empty( $releases ) ) {
-
 //		$product['out_of_stock_actions'] = 'S';
 //		$product['tracking'] = 'B';
 //		$product['amount'] = 0;
 		$product['price'] = 0;
 		$product['zero_price_action'] = 'R';
-		$product['full_description'] .= '<h2>This product has not been released yet.</h2>';
+		$product['full_description'] .= __('adls.product.not_released_yet');
+
+		list($betaReleases, ) = ReleaseRepository::instance()->find(array(
+			'productId'  => $product['product_id'],
+			'status' => Release::STATUS_BETA,
+			'extended'   => true,
+			'compatibilities'   => true,
+		));
+		if ( ! empty( $betaReleases ) ) {
+
+			$product['full_description'] .= __('adls.product.beta_testing_sign_up_text');
+
+			list( $pages, ) = fn_get_pages( array(
+				'tag' => 'beta-testing-agreement'
+			), 1);
+			if ( ! empty( $pages ) ) {
+				$agreementPage = reset( $pages );
+			}
+			if ( ! empty( $agreementPage ) ) {
+				$url = fn_url( 'pages.view?page_id=' . $agreementPage['page_id'] );
+				$product['full_description'] .= __('adls.product.beta_testing_agreement_text', array('[url]' => $url));
+			}
+
+
+		}
 	}
+
+
 }
 
 /**
