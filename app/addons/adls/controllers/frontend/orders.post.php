@@ -156,6 +156,13 @@ if ($mode == 'details') {
     $releaseRepository = \HeloStore\ADLS\ReleaseRepository::instance();
     $releaseManager = \HeloStore\ADLS\ReleaseManager::instance();
 
+
+	$params = array();
+
+	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+		$params['status'] = $auth['release_status'];
+	}
+
     if (!empty($order) && !empty($order['products'])) {
         $changed = false;
         foreach ($order['products'] as &$product) {
@@ -163,7 +170,7 @@ if ($mode == 'details') {
 
                 continue;
             }
-            $product['releases'] = $releaseManager->getOrderItemReleases($order['user_id'], $product);
+            $product['releases'] = $releaseManager->getOrderItemReleases($order['user_id'], $product, $params);
             $releaseManager->checkFileIntegrity($product['releases']);
             $changed = true;
         }

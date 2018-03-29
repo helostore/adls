@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.57</version>
+    <version>0.2.58</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -125,6 +125,9 @@
             )
         </item>
 
+        <item for="install">ALTER TABLE `?:usergroups`
+            ADD COLUMN `release_status`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '';</item>
+
         <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_date` INT(11);</item>
@@ -137,6 +140,7 @@
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_date`;</item>
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_version`;</item>
         <item for="___uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
+        <item for="___uninstall">ALTER TABLE `?:usergroups` DROP `release_status`;</item>
 
     </queries>
     <settings edition_type="ROOT">

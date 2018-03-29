@@ -88,6 +88,7 @@ class ReleaseRepository extends EntityRepository
 	 * @param array $params
 	 *
 	 * @return array|null
+	 * @throws \Exception
 	 */
 	public function find($params = array())
 	{
@@ -132,12 +133,25 @@ class ReleaseRepository extends EntityRepository
         if (!empty($params['productId'])) {
             $condition[] = db_quote('releases.productId = ?n', $params['productId']);
         }
-        if (!empty($params['status'])) {
-            $condition[] = db_quote('releases.status = ?s', $params['status']);
-        }
+
+		$status = array();
         if (AREA === 'C') {
-            $condition[] = db_quote('releases.status = ?s', Release::STATUS_PRODUCTION);
+	        $status[] = Release::STATUS_PRODUCTION;
         }
+		if (!empty($params['status'])) {
+			if ( is_array( $params['status'] ) ) {
+				$status = array_merge( $status, $params['status'] );
+			} else {
+				$status[] = $params['status'];
+			}
+		}
+		if ( ! empty( $params['auth'] ) && ! empty( $params['auth']['release_status'] ) ) {
+			$status = array_merge( $status, $params['auth']['release_status'] );
+		}
+		if (!empty($status)) {
+			$status = array_unique( $status );
+			$condition[] = db_quote('releases.status IN (?a)', $status);
+		}
 
         if ( ! empty($params['compatibilityPlatformId'])
              || ! empty($params['compatibilityPlatformVersionId'])
@@ -281,7 +295,7 @@ class ReleaseRepository extends EntityRepository
 
     public function findProduction($params = array())
     {
-        $params['status'] = Release::STATUS_PRODUCTION;
+	    $this->forceProductionStatus($params);
 
         return $this->find($params);
     }
@@ -347,7 +361,7 @@ class ReleaseRepository extends EntityRepository
         \DateTime $endDate = null,
         $params = array()
     ) {
-        $params['status'] = Release::STATUS_PRODUCTION;
+    	$this->forceProductionStatus($params);
 
         return $this->findByProductInRange($productId, $startDate, $endDate, $params);
     }
@@ -380,7 +394,7 @@ class ReleaseRepository extends EntityRepository
      */
     public function findProductionOneLatestByProduct($productId, \DateTime $endDate = null, $params = array())
     {
-        $params['status'] = Release::STATUS_PRODUCTION;
+	    $this->forceProductionStatus($params);
 
         return $this->findOneLatestByProduct($productId, $endDate, $params);
     }
@@ -421,15 +435,18 @@ class ReleaseRepository extends EntityRepository
 //        );
     }
 
-    /**
-     * @param Subscription $subscription
-     * @param $version
-     * @return array|null
-     */
-    public function findBySubscriptionAndVersion(Subscription $subscription, $version)
+	/**
+	 * @param Subscription $subscription
+	 * @param $version
+	 * @param array $auth
+	 *
+	 * @return array|null
+	 */
+    public function findBySubscriptionAndVersion(Subscription $subscription, $version, $auth = array())
     {
         return $this->findBySubscription($subscription, array(
-            'version' => $version
+            'version' => $version,
+	        'auth' => $auth
         ));
     }
 
@@ -500,15 +517,16 @@ class ReleaseRepository extends EntityRepository
 	/**
 	 * @param $hash
 	 * @param $userId
+	 * @param array $params
 	 *
 	 * @return Release|null
 	 */
-	public function findOneByHashUser($hash, $userId)
+	public function findOneByHashUser($hash, $userId, $params = array())
 	{
-		return $this->findOne(array(
-			'hash' => $hash,
-			'userId' => $userId
-		));
+		$params['hash'] = $hash;
+		$params['userId'] = $userId;
+
+		return $this->findOne($params);
 	}
 
 	/**
@@ -518,5 +536,18 @@ class ReleaseRepository extends EntityRepository
 	 */
 	public function countByProductId($productId) {
 		return db_get_field( 'SELECT COUNT(*) FROM ' . $this->table . ' WHERE productId = ?i', $productId );
+	}
+
+	public function forceProductionStatus(&$params) {
+		if ( ! isset( $params['status'] ) ) {
+			$params['status'] = Release::STATUS_PRODUCTION;
+		} else {
+			if (is_array($params['status']) && ! in_array(Release::STATUS_PRODUCTION, $params['status']) ) {
+				$params['status'][] = Release::STATUS_PRODUCTION;
+			}
+			if (is_string($params['status']) && $params['status'] != Release::STATUS_PRODUCTION) {
+				$params['status'] = array(Release::STATUS_PRODUCTION);
+			}
+		}
 	}
 }

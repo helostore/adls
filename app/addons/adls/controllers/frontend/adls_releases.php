@@ -67,6 +67,10 @@ if ($mode == 'view') {
         $params['sort_by'] = $_REQUEST['sort_by'];
     }
 
+	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+		$params['status'] = $auth['release_status'];
+	}
+
     if ( ! empty( $productId ) ) {
         list( $releases, $search ) = ReleaseRepository::instance()->find( $params );
     } else {
@@ -97,7 +101,14 @@ if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     $releaseRepository = ReleaseRepository::instance();
     $subscriptionRepository = SubscriptionRepository::instance();
     $hash = strval($_REQUEST['hash']);
-	$release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'] );
+
+    $params = array();
+
+	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+		$params['status'] = $auth['release_status'];
+	}
+
+	$release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'], $params );
     if (empty($release)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
