@@ -257,6 +257,10 @@ msgctxt "Languages::adls.api.update.title"
 msgid ""
 msgstr "Fresh code"
 
+msgctxt "Languages::adls.usergroup.release_status_access"
+msgid ""
+msgstr "Release access"
+
 
 msgctxt "Languages::adls.api.update.upsell.message"
 msgid ""

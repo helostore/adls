@@ -183,8 +183,9 @@ class LicenseServer
                     /** @var Subscription $subscription */
                     $subscription = SubscriptionRepository::instance()->findOneByOrderItem($orderId, $orderItemId);
                     if ( ! empty($subscription)) {
+                    	$auth = !empty($request['auth']) ? $request['auth'] : array();
                         if ( ! ReleaseManager::instance()->isVersionAvailableToSubscription($subscription,
-                            $requestVersion)) {
+                            $requestVersion, $auth)) {
                             throw new \Exception('The subscription attached to this license must be re-newed in order to use the new version of this product',
                                 LicenseClient::CODE_ERROR_ACTIVATION_SUBSCRIPTION_NO_ACCESS_TO_RELEASE
                             );
@@ -267,7 +268,8 @@ class LicenseServer
             throw new \Exception('I cannot find you in my records. Please use your customer email at HELOstore.',
                 LicenseClient::CODE_ERROR_INVALID_CUSTOMER_EMAIL);
         }
-        $request['auth'] = $userInfo;
+//        $request['auth'] = $userInfo;
+	    $request['auth'] = $this->fillAuth($userInfo);
 
         return true;
     }
@@ -296,13 +298,26 @@ class LicenseServer
             $userInfo['last_login']);
 
         if ($challengeToken == $vars['token'] || (defined('ADLS_MAGIC_TOKEN') && ADLS_MAGIC_TOKEN == $vars['token'])) {
-            $request['auth'] = $userInfo;
+            $request['auth'] = $this->fillAuth($userInfo);
         } else {
             throw new \Exception('Invalid or expired token', LicenseClient::CODE_ERROR_INVALID_TOKEN);
         }
 
         return true;
     }
+
+	/**
+	 * @param $userInfo
+	 *
+	 * @return array
+	 */
+	public function fillAuth($userInfo) {
+		$auth = fn_fill_auth($userInfo, array());
+		unset( $auth['referer'] );
+		$auth = array_merge( $auth, $userInfo );
+
+		return $auth;
+	}
 
     /**
      * @param $request

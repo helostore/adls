@@ -657,11 +657,13 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	$params = array(
 //		'userId'     => $auth['user_id'],
 		'productId'  => $product['product_id'],
-		'status'  => Release::STATUS_PRODUCTION,
+		'status'  => array(Release::STATUS_PRODUCTION),
 		'extended'   => true,
 		'compatibilities'   => true,
 	);
-
+	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+		$params['status'] = array_merge( $params['status'], $auth['release_status'] );
+	}
 	list($releases, ) = ReleaseRepository::instance()->find($params);
 	if ( empty( $releases ) ) {
 
@@ -695,4 +697,39 @@ function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
             $product['compatibility'][] = $pair;
         }
     }
+}
+
+function fn_adls_get_usergroups_release_status($userGroupIds) {
+	$releaseStatuses = db_get_fields( 'SELECT release_status FROM ?:usergroups WHERE usergroup_id IN (?a) AND release_status IS NOT NULL AND release_status <> \'\'', $userGroupIds);
+	if ( empty( $releaseStatuses ) ) {
+		return array();
+	}
+
+	$array = array();
+	foreach ( $releaseStatuses as $enum ) {
+		$enum = explode( ',', $enum );
+		$array = array_merge( $array, $enum );
+	}
+	$array = array_unique( $array );
+
+	return $array;
+}
+/**
+ * @param $auth
+ * @param $user_data
+ * @param $area
+ * @param $original_auth
+ */
+function fn_adls_fill_auth(&$auth, $user_data, $area, $original_auth) {
+	if ( empty( $auth ) ) {
+		return;
+	}
+	if ( empty( $auth['user_id'] ) ) {
+		return;
+	}
+	if ( empty( $auth['usergroup_ids'] ) ) {
+		return;
+	}
+
+	$auth['release_status'] = fn_adls_get_usergroups_release_status( $auth['usergroup_ids'] );
 }

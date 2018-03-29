@@ -40,4 +40,5 @@ fn_register_hooks(
 	, 'adlss_delete_subscription'
 	, 'gather_additional_product_data_post'
 	, 'get_product_data_post'
+	, 'fill_auth'
 );
