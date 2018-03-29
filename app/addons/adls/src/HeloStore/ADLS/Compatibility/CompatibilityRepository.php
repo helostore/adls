@@ -120,14 +120,42 @@ class CompatibilityRepository extends EntityRepository
             $condition[] = db_quote('compatibility.productId = ?i', $params['productId']);
         }
 
-        if ( ! empty($params['releaseStatus'])) {
-            $joins[] = db_quote('
+//        if ( ! empty($params['releaseStatus'])) {
+//            $joins[] = db_quote('
+//				INNER JOIN ?:adls_releases AS releases
+//                    ON releases.id = compatibility.releaseId
+//                    AND releases.status = ?s
+//                    ',
+//                $params['releaseStatus']);
+//        }
+
+	    $status = array();
+	    if (AREA === 'C') {
+		    $status[] = Release::STATUS_PRODUCTION;
+	    }
+	    if (!empty($params['releaseStatus'])) {
+		    if ( is_array( $params['releaseStatus'] ) ) {
+			    $status = array_merge( $status, $params['releaseStatus'] );
+		    } else {
+			    $status[] = $params['releaseStatus'];
+		    }
+	    }
+	    if ( ! empty( $params['auth'] ) && ! empty( $params['auth']['release_status'] ) ) {
+		    $status = array_merge( $status, $params['auth']['release_status'] );
+	    }
+	    if (!empty($status)) {
+		    $status = array_unique( $status );
+
+		    $joins[] = db_quote('
 				INNER JOIN ?:adls_releases AS releases
                     ON releases.id = compatibility.releaseId
-                    AND releases.status = ?s
+                    AND releases.status IN (?a)
                     ',
-                $params['releaseStatus']);
-        }
+			    $status);
+	    }
+
+
+
 
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'compatibility.*' : implode(', ', $fields);
@@ -183,20 +211,24 @@ class CompatibilityRepository extends EntityRepository
      * @return array
      */
     public function findMinMax($productId, $platformId, $params = array()) {
-        $min = $this->findOne([
-            'productId' => $productId,
-            'platformId' => $platformId,
-            'releaseStatus' => Release::STATUS_PRODUCTION,
-            'sort_by' => 'platformVersion',
-            'sort_order' => 'asc'
-        ]);
-        $max = $this->findOne([
-            'productId' => $productId,
-            'platformId' => $platformId,
-            'releaseStatus' => Release::STATUS_PRODUCTION,
-            'sort_by' => 'platformVersion',
-            'sort_order' => 'desc'
-        ]);
+
+	    $pMin = array_merge( $params, [
+		    'productId'     => $productId,
+		    'platformId'    => $platformId,
+		    'releaseStatus' => Release::STATUS_PRODUCTION,
+		    'sort_by'       => 'platformVersion',
+		    'sort_order'    => 'asc'
+	    ] );
+        $min = $this->findOne($pMin);
+
+	    $pMax = array_merge( $params, [
+		    'productId' => $productId,
+		    'platformId' => $platformId,
+		    'releaseStatus' => Release::STATUS_PRODUCTION,
+		    'sort_by' => 'platformVersion',
+		    'sort_order' => 'desc'
+	    ]);
+        $max = $this->findOne($pMax);
 
         return ['min' => $min, 'max' => $max];
     }
