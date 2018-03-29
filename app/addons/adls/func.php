@@ -683,7 +683,10 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 		));
 		if ( ! empty( $betaReleases ) ) {
 
-			$product['full_description'] .= __('adls.product.beta_testing_sign_up_text');
+			$product['full_description'] .= __('adls.product.beta_testing_sign_up_text', array(
+				'[login_url]' => fn_url('auth.login_form'),
+				'[register_url]' => fn_url('profiles.add'),
+			));
 
 			list( $pages, ) = fn_get_pages( array(
 				'tag' => 'beta-testing-agreement'
