@@ -670,6 +670,8 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 //		$product['tracking'] = 'B';
 //		$product['amount'] = 0;
 		$product['price'] = 0;
+		$product['product_options'] = array();
+		$product['has_options'] = false;
 		$product['zero_price_action'] = 'R';
 		$product['full_description'] .= __('adls.product.not_released_yet');
 
