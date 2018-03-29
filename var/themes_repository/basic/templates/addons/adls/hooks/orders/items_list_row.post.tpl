@@ -45,7 +45,7 @@
                                 {/foreach}
                                 <div class="adls-license-status">
                                     {if !fn_adls_license_is_disabled($product.license->getStatus()) && empty($product.license->hasAllDomainsDisabled())}
-                                        {include file="buttons/button.tpl" but_text=__("update") but_id="adls_domains_update_button_`$product.product_id`" but_meta="ty-btn__secondary" but_name="dispatch[orders.details]" but_role="action" obj_id=$product.product_id}
+                                        {include file="buttons/button.tpl" but_text=__("adls.domains.update") but_id="adls_domains_update_button_`$product.product_id`" but_meta="ty-btn__secondary" but_name="dispatch[orders.details]" but_role="action" obj_id=$product.product_id}
                                     {/if}
                                 </div>
                             </form>
