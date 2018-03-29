@@ -9,20 +9,21 @@
 (function(_, $) {
 
     $(document).ready(function(){
-        
+
         var clipboards = new Clipboard('.adls-clipboard');
+        var fadeDelay = 100;
         clipboards.on('success', function(event) {
             var $button = $(event.trigger);
             var $successIcon = $button.find('.icon');
             var $clipboardIcon = $button.find('.fa');
-            $clipboardIcon.fadeOut();
-            $successIcon.addClass('icon--order-success').fadeIn();
+            $clipboardIcon.fadeOut(fadeDelay);
+            $successIcon.addClass('icon--order-success').fadeIn(fadeDelay);
             setTimeout(function() {
-                $successIcon.removeClass('icon--order-success').fadeOut();
-                $clipboardIcon.fadeIn();
-            }, 2000);
+                $successIcon.removeClass('icon--order-success').fadeOut(fadeDelay);
+                $clipboardIcon.fadeIn(fadeDelay);
+            }, 1000);
         });
-        
+
         // Hostname validator
         $('.adls-license-domains').on('change', '.adls-hostname', function () {
             var $this = $(this);
