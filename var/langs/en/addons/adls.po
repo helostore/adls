@@ -24,6 +24,11 @@ msgctxt "Languages::adls.domains"
 msgid "adls.domains"
 msgstr "Domains"
 
+msgctxt "Languages::adls.domains.update"
+msgid ""
+msgstr "Update domains"
+
+
 msgctxt "Languages::adls"
 msgid "adls"
 msgstr "ADLS"
