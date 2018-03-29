@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.60",
+        "releaseDate": "2018-03-29 11:29:42",
+        "releaseTimestamp": "1522322982",
+        "hash": "f386f11a860cc247180ec8377a4f905894441c85",
+        "commits": [
+            "[2018-03-29] Bumped version to 0.2.60",
+            "[2018-03-29]\tAdd beta testing sign up text on products + disclaimer agreement if available"
+        ]
+    },
+    {
         "version": "0.2.59",
         "releaseDate": "2018-03-29 10:39:07",
         "releaseTimestamp": "1522319947",
@@ -24,16 +34,6 @@
         "hash": "1aca14710451460fd13740b883ab034563d384a2",
         "commits": [
             "[2018-03-28] Bumped version to 0.2.57"
-        ]
-    },
-    {
-        "version": "0.2.56",
-        "releaseDate": "2018-03-28 02:37:52",
-        "releaseTimestamp": "1522247872",
-        "hash": "43194ffc0dd3016c2ef359d6f2ebf79b986bf203",
-        "commits": [
-            "[2018-03-28] Bumped version to 0.2.56",
-            "[2018-03-28]\tDisable packing on release via Developer tools add-ons"
         ]
     }
 ]
