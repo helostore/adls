@@ -722,7 +722,9 @@ function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
     }
     $product['compatibility'] = array();
     foreach ($platforms as $platform) {
-        $pair = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId, $platform->getId());
+        $pair = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId, $platform->getId(), array(
+        	'auth' => $auth
+        ));
         if (!empty($pair['min']) && !empty($pair['max'])) {
             $product['compatibility'][] = $pair;
         }
