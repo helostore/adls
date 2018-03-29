@@ -265,3 +265,17 @@ msgstr "Release access"
 msgctxt "Languages::adls.api.update.upsell.message"
 msgid ""
 msgstr "There is a new version of <b>[addon]</b> add-on, but you first need to renew your subscription in order to upgrade. <a href='[updateUrl]' target='_bl'>Click here to renew</a> (your version: [currentVersion], latest version: [nextVersion])"
+
+msgctxt "Languages::adls.product.not_released_yet"
+msgid ""
+msgstr "<h2>This product has not been released yet.</h2>"
+
+msgctxt "Languages::adls.product.beta_testing_sign_up_text"
+msgid ""
+msgstr "<hr><p>There is <strong>\"Beta Testing\" group </strong> you can sign up for, and get <strong>early access</strong> to this product.</p>"
+    "<p>To do so, <a href=\"[register_url]\" target=\"_blank\"><strong>register for a HELOstore account</strong></a> or <a href=\"[login_url]\" target=\"_blank\"><strong>login</strong></a>, and then go to <strong><code>My Account > Profile Details</code></strong> page, and in the <strong>\"User groups\" tab</strong> click <strong>\"Join\"</strong> to the corresponding \"Beta Testing\" group!</p>"
+    "<p>One of our moderators will promptly review your request and welcome you to the \"Beta Testing\" group. <br />Make sure you logout and login again with your HELOstore account after you've received your acceptance email notification.</p>"
+
+msgctxt "adls.product.beta_testing_agreement_text"
+msgid ""
+msgstr "<br /><p>Disclaimer: by signing up to our \"Beta Testing\" group, you implicitly agree with our <a href=\"[url]\" target=\"_blank\">Beta Testing Participant Agreement</a>.</p>"
