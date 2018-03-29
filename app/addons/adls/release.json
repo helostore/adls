@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.64",
+        "releaseDate": "2018-03-29 11:48:43",
+        "releaseTimestamp": "1522324123",
+        "hash": "dfea1d8453a571f8e446a5e791c64186cb173c26",
+        "commits": [
+            "[2018-03-29] Bumped version to 0.2.64"
+        ]
+    },
+    {
         "version": "0.2.63",
         "releaseDate": "2018-03-29 11:38:53",
         "releaseTimestamp": "1522323533",
@@ -24,16 +33,6 @@
         "hash": "e7d81288b8773eba6612d70f7e279904d5fe071e",
         "commits": [
             "[2018-03-29] Bumped version to 0.2.61"
-        ]
-    },
-    {
-        "version": "0.2.60",
-        "releaseDate": "2018-03-29 11:29:42",
-        "releaseTimestamp": "1522322982",
-        "hash": "f386f11a860cc247180ec8377a4f905894441c85",
-        "commits": [
-            "[2018-03-29] Bumped version to 0.2.60",
-            "[2018-03-29]\tAdd beta testing sign up text on products + disclaimer agreement if available"
         ]
     }
 ]
