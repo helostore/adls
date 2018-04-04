@@ -404,6 +404,7 @@ class LicenseServer
 
         $userInfo = db_get_row('SELECT user_id, email, password, salt, last_login FROM ?:users WHERE email = ?s LIMIT 0,1',
             $vars['email']);
+
         if (empty($userInfo)) {
             throw new \Exception('Your email/password combination is incorrect, sorry.',
                 LicenseClient::CODE_ERROR_INVALID_CREDENTIALS_COMBINATION);
@@ -427,7 +428,7 @@ class LicenseServer
             $challengeHash[] = md5($vars['password'] . md5($userInfo['salt']));
         }
         if ( ! in_array($userInfo['password'], $challengeHash)) {
-            throw new \Exception('Your email/password combination is incorrect, sorry.',
+            throw new \Exception('Your email/password combination is incorrect, sorry. (2)',
                 LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
         }
 

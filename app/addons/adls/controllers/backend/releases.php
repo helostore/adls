@@ -281,10 +281,10 @@ if ($mode == 'update' || $mode == 'add') {
 //    }
     Registry::get('view')->assign('product', $product);
 
-    list($availableVersions,) = PlatformVersionRepository::instance()->findByPlatformId($platform->getId(), [
-        'items_per_page' => 35
+    list($availablePlatformVersions,) = PlatformVersionRepository::instance()->findByPlatformId($platform->getId(), [
+        'items_per_page' => 100
     ]);
-    Registry::get('view')->assign('availableVersions', $availableVersions);
+    Registry::get('view')->assign('availablePlatformVersions', $availablePlatformVersions);
     Registry::get('view')->assign('platform', $platform);
 
     $compatibilities = [];

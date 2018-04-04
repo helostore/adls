@@ -198,6 +198,17 @@ class ProductManager extends Manager
 
         // All builds, released or not
         $product['builds']      = SourceFileRepository::instance()->findTags($product, $platform);
+        if (!empty($product['builds']) && !empty($product['releases'])) {
+            $releasedVersions = array();
+            foreach ($product['releases'] as $release) {
+                $releasedVersions[] = $release->getVersion();
+            }
+            foreach ($product['builds'] as &$build) {
+                $build['isReleased'] = in_array($build['version'], $releasedVersions);
+            }
+            unset($build);
+        }
+
         $product['latestBuild'] = null;
         if ( ! empty($product['builds'])) {
             $product['latestBuild'] = end($product['builds']);

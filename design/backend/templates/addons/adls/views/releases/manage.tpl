@@ -33,9 +33,9 @@
 {/capture}
 
 {capture name="adv_buttons"}
-    {if $product.has_unreleased_version}
-        {include file="common/tools.tpl" tool_href="releases.add?productId=`$product.product_id`&platformId=`$platform->getId()`" prefix="top" hide_tools="true" title=__("adls.release.new.title") icon="icon-plus"}
-    {/if}
+    {include file="common/tools.tpl" tool_href="releases.add?productId=`$product.product_id`&platformId=`$platform->getId()`" prefix="top" hide_tools="true" title=__("adls.release.new.title") icon="icon-plus"}
+    {*{if $product.has_unreleased_version}*}
+    {*{/if}*}
 {/capture}
 
 {include file="common/mainbox.tpl"
