@@ -99,9 +99,7 @@ if ($mode == 'view') {
 
 if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     $releaseRepository = ReleaseRepository::instance();
-    $subscriptionRepository = SubscriptionRepository::instance();
     $hash = strval($_REQUEST['hash']);
-
     $params = array();
 
 	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
