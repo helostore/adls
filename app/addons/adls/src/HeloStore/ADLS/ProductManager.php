@@ -188,7 +188,9 @@ class ProductManager extends Manager
 //            $params['compatibilityPlatformId'] = $platform->getId();
             $params['sourcePlatformId'] = $platform->getId();
             list($product['releases'],) = ReleaseRepository::instance()->findByProductId($productId, $params);
-
+            if (!empty($product['releases'])) {
+                ReleaseManager::instance()->checkFileIntegrity($product['releases']);
+            }
             $params2                  = array(
                 'compatibilityPlatformId' => $platform->getId()
             );

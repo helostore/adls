@@ -41,7 +41,11 @@
             <td>{$release->getId()}</td>
             <td>{$release->getVersion()}</td>
             <td>{$release->getCreatedAt()->getTimestamp()|date_format:"`$settings.Appearance.date_format`"}</td>
-            <td>{$release->getFileName()}</td>
+            <td>{$release->getFileName()}
+                {if !$release->isFileFound()}
+                    <span class="alert alert-error">(file not found!)</span>
+                {/if}
+            </td>
             <td>{fn_adls_format_size($release->getFileSize())}</td>
             <td>{$release->getExtra('releaseAccess$userCount')}</td>
             <td>
