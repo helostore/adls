@@ -1,11 +1,12 @@
 [
     {
         "version": "0.2.73",
-        "releaseDate": "2018-04-07 11:52:47",
-        "releaseTimestamp": "1523101967",
-        "hash": "006409940ab1e079270d015ee14557d24f68162e",
+        "releaseDate": "2018-04-07 11:53:57",
+        "releaseTimestamp": "1523102037",
+        "hash": "095e17c34d4c6306ac4d81832ca0fdfb331f87f3",
         "commits": [
-            "[2018-04-07] Bumped version to 0.2.73"
+            "[2018-04-07] Bumped version to 0.2.73",
+            "[2018-04-07]\tBumped version to 0.2.73"
         ]
     },
     {
