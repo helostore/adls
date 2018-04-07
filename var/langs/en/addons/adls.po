@@ -12,6 +12,18 @@ msgctxt "Addons::description::adls"
 msgid "Manages your digital licenses"
 msgstr "Manages your digital licenses"
 
+msgctxt "SettingsOptions::adls::email"
+msgid "HELOstore email"
+msgstr "HELOstore email"
+
+msgctxt "SettingsOptions::adls::password"
+msgid "HELOstore password"
+msgstr "HELOstore password"
+
+msgctxt "SettingsOptions::adls::license"
+msgid "License key"
+msgstr "License key"
+
 msgctxt "Languages::adls.copy_to_clipboard"
 msgid "adls.copy_to_clipboard"
 msgstr "Copy to clipboard"
