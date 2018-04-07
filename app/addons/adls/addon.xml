@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.69</version>
+    <version>0.2.70</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -48,6 +48,8 @@
             `country` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `backtrace` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            `server` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            `request` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
