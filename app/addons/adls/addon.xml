@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.71</version>
+    <version>0.2.72</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -136,6 +136,7 @@
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_version` VARCHAR(16);</item>
         <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
         <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_slug` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL AFTER `adls_subscription_id`</item>
+        <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_licenseable` tinyint(1) UNSIGNED NOT NULL DEFAULT 0</item>
 
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
         <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
@@ -154,6 +155,9 @@
                     </item>
                     <item id="password">
                         <type>password</type>
+                    </item>
+                    <item id="license">
+                        <type>input</type>
                     </item>
                     <item id="info">
                         <type>info</type>

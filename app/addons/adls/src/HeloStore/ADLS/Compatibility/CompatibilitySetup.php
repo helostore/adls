@@ -23,7 +23,7 @@ use HeloStore\ADLS\Singleton;
 
 /**
  * Class CompatibilitySetup
- * 
+ *
  * @package HeloStore\ADLS
  */
 class CompatibilitySetup extends Singleton
@@ -32,7 +32,11 @@ class CompatibilitySetup extends Singleton
     {
         // Add platforms
         $platformRepository = PlatformRepository::instance();
-        $platforms = ['CS-Cart', 'WordPress', 'Magento'];
+        $platforms = [
+            ['name' => 'CS-Cart', 'slug' => 'cscart'],
+            ['name' => 'WordPress', 'slug' => 'wordpress'],
+            ['name' => 'Magento', 'slug' => 'magento'],
+        ];
         foreach ($platforms as $name) {
             $platform = $platformRepository->findOneByName($name);
             if (!empty($platform)) {

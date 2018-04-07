@@ -169,7 +169,7 @@ class LicenseManager extends Manager
 
 		return db_get_row($query);
 	}
-	
+
 	public function getLicenses($params)
 	{
 		$conditions = array();
@@ -197,7 +197,7 @@ class LicenseManager extends Manager
 			$conditions[] = db_quote('al.productId = ?i', $params['productId']);
 		}
 		if (!empty($params['orderItemId'])) {
-			$conditions[] = db_quote('al.orderItemId = ?i', $params['orderItemId']);
+			$conditions[] = db_quote('al.orderItemId = ?s', $params['orderItemId']);
 		}
 		if (!empty($params['orderId'])) {
 			$conditions[] = db_quote('al.orderId = ?i', $params['orderId']);

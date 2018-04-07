@@ -40,6 +40,7 @@
                 </select>
             </div>
         </div>
+
         <div class="control-group">
             <label class="control-label" for="subscription_type">{__("adls.subscription_type")}:</label>
             <div class="controls">
@@ -53,6 +54,16 @@
                         <option value="{$key}" {$selected}>{$label}</option>
                     {/foreach}
                 </select>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="adls_licenseable">{__("adls.licenseable")}:</label>
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="hidden" name="product_data[adls_licenseable]" value="0" />
+                    <input type="checkbox" name="product_data[adls_licenseable]" value="1" {if $product_data.adls_licenseable == "1"}checked="checked"{/if}/>
+                </label>
             </div>
         </div>
 

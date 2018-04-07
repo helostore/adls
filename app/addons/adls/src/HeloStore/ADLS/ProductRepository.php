@@ -56,6 +56,7 @@ class ProductRepository extends EntityRepository
         $fields[] = 'product.adls_release_date';
         $fields[] = 'product.adls_subscription_id';
         $fields[] = 'product.adls_slug';
+        $fields[] = 'product.adls_licenseable';
         $group = 'product.product_id';
 
         $joins[] = db_quote('LEFT JOIN ?:product_descriptions AS productDesc ON productDesc.product_id = product.product_id');

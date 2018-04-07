@@ -51,8 +51,6 @@ class SourceFileRepository extends Singleton
         foreach ($dirs as $dir) {
 
         }
-        aa($dirs, 1);
-
     }
 
     public function findTags($product, Platform $platform)

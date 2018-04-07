@@ -401,32 +401,36 @@ class ReleaseManager extends Manager
 	 */
 	public function publishPremium(Release $release) {
 
-	    // @TODO: decouple from publishing from subscriptions
-		list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
-			'extended' => true,
-			'status' => Subscription::STATUS_ACTIVE,
-			'productId' => $release->getProductId()
-		));
+        if (class_exists('\HeloStore\ADLSS\Subscriptio\SubscriptionRepository')) {
+            // @TODO: decouple from publishing from subscriptions
+            list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
+                'extended' => true,
+                'status' => Subscription::STATUS_ACTIVE,
+                'productId' => $release->getProductId()
+            ));
 
-		$count = 0;
-		if ( ! empty( $subscriptions ) ) {
-			/** @var Subscription $subscription */
-			foreach ( $subscriptions as $subscription ) {
-				$license = $subscription->getLicense();
-				$licenseId = !empty($license) ? $license->getId() : null;
-				$result = ReleaseAccessRepository::instance()->addLink(
-					$subscription->getUserId(),
-					$release->getProductId(),
-					$release->getId(),
-					$licenseId,
-					$subscription->getId()
-				);
-				if ( $result ) {
-					$count++;
-				}
-			}
-		}
-		return $count;
+            $count = 0;
+            if ( ! empty( $subscriptions ) ) {
+                /** @var Subscription $subscription */
+                foreach ( $subscriptions as $subscription ) {
+                    $license = $subscription->getLicense();
+                    $licenseId = !empty($license) ? $license->getId() : null;
+                    $result = ReleaseAccessRepository::instance()->addLink(
+                        $subscription->getUserId(),
+                        $release->getProductId(),
+                        $release->getId(),
+                        $licenseId,
+                        $subscription->getId()
+                    );
+                    if ( $result ) {
+                        $count++;
+                    }
+                }
+            }
+            return $count;
+        }
+
+        return false;
 	}
 
 	/**
