@@ -16,6 +16,7 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\ProductRepository;
 use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseAccessRepository;
 use HeloStore\ADLS\ReleaseManager;
@@ -304,13 +305,10 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                     }
                 }
             } else {
-
-
-                // @TODO move this into an option per product, eg. "This product generates license keys"
-                // if is sidekick, don't generate license
-                $isSidekick = ($productId == 5);
+                $storeProduct = ProductRepository::instance()->findOneById($productId);
                 $hasSubscription = ! empty($product['subscription']) || ! empty($product['adls_subscription_setup_pending']);
-	            if (!$isSidekick && $hasSubscription ) {
+                $isLicenseable = ! empty($storeProduct['adls_licenseable']) && $storeProduct['adls_licenseable'] == 1;
+	            if ($hasSubscription || $isLicenseable) {
 		            $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 		            if ($licenseId) {
 			            fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);

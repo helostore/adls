@@ -299,3 +299,16 @@ msgstr "<br /><p>Disclaimer: by signing up to our \"Beta Testing\" group, you im
 msgctxt "Languages::adls.platforms"
 msgid ""
 msgstr "Platforms"
+
+msgctxt "Languages::adls.sources"
+msgid ""
+msgstr "Sources"
+
+msgctxt "Languages::adls.source.add"
+msgid ""
+msgstr "Add source"
+
+msgctxt "Languages::adls.licenseable"
+msgid ""
+msgstr "Licenseable"
+
