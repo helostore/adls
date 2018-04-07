@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.73",
+        "releaseDate": "2018-04-07 11:52:47",
+        "releaseTimestamp": "1523101967",
+        "hash": "006409940ab1e079270d015ee14557d24f68162e",
+        "commits": [
+            "[2018-04-07] Bumped version to 0.2.73"
+        ]
+    },
+    {
         "version": "0.2.72",
         "releaseDate": "2018-04-07 11:02:56",
         "releaseTimestamp": "1523098976",
@@ -24,16 +33,6 @@
         "hash": "74a7f32d412b06e74871d0d6bea6091b551c8ebc",
         "commits": [
             "[2018-04-07] Bumped version to 0.2.70"
-        ]
-    },
-    {
-        "version": "0.2.69",
-        "releaseDate": "2018-04-07 10:52:37",
-        "releaseTimestamp": "1523098357",
-        "hash": "476f0d8528472bc5dcfdd64df49e8f9ab34863e5",
-        "commits": [
-            "[2018-04-07] Bumped version to 0.2.69",
-            "[2018-04-07]\tAdd add-on icon image"
         ]
     }
 ]
