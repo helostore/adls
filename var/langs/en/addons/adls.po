@@ -266,7 +266,6 @@ msgctxt "Languages::adls.usergroup.release_status_access"
 msgid ""
 msgstr "Release access"
 
-
 msgctxt "Languages::adls.api.update.upsell.message"
 msgid ""
 msgstr "There is a new version of <b>[addon]</b> add-on, but you first need to renew your subscription in order to upgrade. <a href='[updateUrl]' target='_bl'>Click here to renew</a> (your version: [currentVersion], latest version: [nextVersion])"
@@ -284,3 +283,7 @@ msgstr "<hr><p>There is <strong>\"Beta Testing\" group </strong> you can sign up
 msgctxt "adls.product.beta_testing_agreement_text"
 msgid ""
 msgstr "<br /><p>Disclaimer: by signing up to our \"Beta Testing\" group, you implicitly agree with our <a href=\"[url]\" target=\"_blank\">Beta Testing Participant Agreement</a>.</p>"
+
+msgctxt "Languages::adls.platforms"
+msgid ""
+msgstr "Platforms"
