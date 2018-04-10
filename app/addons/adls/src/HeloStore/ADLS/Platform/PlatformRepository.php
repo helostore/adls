@@ -27,14 +27,16 @@ class PlatformRepository extends EntityRepository
     /**
      * @param $name
      *
+     * @param $slug
      * @return mixed
      */
-    public function add($name)
+    public function add($name, $slug)
     {
         $query = db_quote('INSERT INTO ?p ?e',
             $this->table,
             array(
                 'name' => $name,
+                'slug' => $slug,
             ));
 
         return db_query($query);

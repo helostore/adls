@@ -373,5 +373,10 @@
     "version": "4.7.2",
     "date": "2018-02-15 12:00:00",
     "description": "We’re happy to announce the release of CS-Cart & Multi-Vendor 4.7.2. Even though patch releases mostly contain bug fixes, there are reasons to be excited about 4.7.2."
+  },
+  {
+    "version": "4.7.3",
+    "date": "2018-03-28 12:00:00",
+    "description": "We have released CS-Cart and Multi-Vendor 4.7.3. This version is a patch release, so it mostly contains bug fixes. However, there are also some interesting changes."
   }
 ]
