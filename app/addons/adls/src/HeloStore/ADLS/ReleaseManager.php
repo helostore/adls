@@ -401,7 +401,7 @@ class ReleaseManager extends Manager
 	 */
 	public function publishPremium(Release $release) {
 
-        if (class_exists('\HeloStore\ADLSS\Subscriptio\SubscriptionRepository')) {
+        if (class_exists('\HeloStore\ADLSS\Subscription\SubscriptionRepository')) {
             // @TODO: decouple from publishing from subscriptions
             list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
                 'extended' => true,

@@ -37,12 +37,12 @@ class CompatibilitySetup extends Singleton
             ['name' => 'WordPress', 'slug' => 'wordpress'],
             ['name' => 'Magento', 'slug' => 'magento'],
         ];
-        foreach ($platforms as $name) {
-            $platform = $platformRepository->findOneByName($name);
+        foreach ($platforms as $entry) {
+            $platform = $platformRepository->findOneByName($entry['name']);
             if (!empty($platform)) {
                 continue;
             }
-            $platformRepository->add($name);
+            $platformRepository->add($entry['name'], $entry['slug']);
         }
         $platform = $platformRepository->findOneByName('CS-Cart');
 

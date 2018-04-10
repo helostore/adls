@@ -217,10 +217,13 @@ class ProductManager extends Manager
         }
         // Check if there's unreleased builds
         $product['has_unreleased_version'] = false;
+
         if ( ! empty($product['latestBuild']) && ! empty($product['latestRelease'])) {
             $latestReleaseVersion = $product['latestRelease']->getVersion();
             $latestBuildVersion   = $product['latestBuild']['version'];
-            if (version_compare($latestBuildVersion, $latestReleaseVersion) > 1) {
+            $r = version_compare($latestBuildVersion, $latestReleaseVersion);
+
+            if ($r === 1) {
                 $product['has_unreleased_version'] = true;
             }
         }
