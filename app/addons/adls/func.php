@@ -667,11 +667,11 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 //		$product['out_of_stock_actions'] = 'S';
 //		$product['tracking'] = 'B';
 //		$product['amount'] = 0;
-		$product['price'] = 0;
-		$product['product_options'] = array();
-		$product['has_options'] = false;
-		$product['zero_price_action'] = 'R';
-		$product['full_description'] .= __('adls.product.not_released_yet');
+        $product['product_options'] = array();
+        $product['has_options'] = false;
+        $product['zero_price_action'] = 'R';
+        $product['price'] = 0;
+//        $product['avail_since'] = TIME + 60 * 60 * 24 * 30;
 
 		list($betaReleases, ) = ReleaseRepository::instance()->find(array(
 			'productId'  => $product['product_id'],
@@ -679,9 +679,11 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 			'extended'   => true,
 			'compatibilities'   => true,
 		));
-		if ( ! empty( $betaReleases ) ) {
 
+		if ( ! empty( $betaReleases ) ) {
+            $product['has_beta_testing_program'] = true;
 			$product['full_description'] .= __('adls.product.beta_testing_sign_up_text', array(
+				'[join_url]' => fn_url('profiles.update?selected_section=usergroups'),
 				'[login_url]' => fn_url('auth.login_form'),
 				'[register_url]' => fn_url('profiles.add'),
 			));
@@ -696,9 +698,9 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 				$url = fn_url( 'pages.view?page_id=' . $agreementPage['page_id'] );
 				$product['full_description'] .= __('adls.product.beta_testing_agreement_text', array('[url]' => $url));
 			}
-
-
-		}
+		} else {
+            $product['full_description'] .= __('adls.product.not_released_yet');
+        }
 	}
 
 
