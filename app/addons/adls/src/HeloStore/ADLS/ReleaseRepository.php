@@ -276,6 +276,7 @@ class ReleaseRepository extends EntityRepository
             $limit = db_paginate($params['page'], $params['items_per_page'], $params['total_items']);
         }
         $query = db_quote('SELECT ?p FROM ?p AS releases ?p ?p GROUP BY ?p ?p ?p', $fields, $this->table, $joins, $conditions, $group, $sorting, $limit);
+
         $items = db_get_array($query);
 
         if (!empty($items)) {
@@ -468,6 +469,7 @@ class ReleaseRepository extends EntityRepository
      * @param $productId
      * @param array $params
      * @return Release|null
+     * @throws \Exception
      */
     public function findByProductId($productId, $params = array())
     {
@@ -476,11 +478,12 @@ class ReleaseRepository extends EntityRepository
         return $this->find($params);
     }
 
-	/**
-	 * @param array $params
-	 *
-	 * @return Release|null
-	 */
+    /**
+     * @param array $params
+     *
+     * @return Release|null
+     * @throws \Exception
+     */
 	public function findOne($params = array())
 	{
 		$params['one'] = true;
@@ -489,11 +492,12 @@ class ReleaseRepository extends EntityRepository
 		return $item;
 	}
 
-	/**
-	 * @param $id
-	 *
-	 * @return Release|null
-	 */
+    /**
+     * @param $id
+     *
+     * @return Release|null
+     * @throws \Exception
+     */
 	public function findOneById($id)
 	{
 		return $this->findOne(array(
@@ -501,26 +505,28 @@ class ReleaseRepository extends EntityRepository
 		));
 	}
 
-	/**
-	 * @param $productId
-	 * @param $version
-	 * @return Release|null
-	 */
-	public function findOneByProductVersion($productId, $version)
+    /**
+     * @param $productId
+     * @param $version
+     * @param array $params
+     * @return Release|null
+     * @throws \Exception
+     */
+	public function findOneByProductVersion($productId, $version, $params = array())
 	{
-		return $this->findOne(array(
-			'productId' => $productId,
-			'version' => $version
-		));
+        $params['productId'] = $productId;
+        $params['version'] = $version;
+		return $this->findOne($params);
 	}
 
-	/**
-	 * @param $hash
-	 * @param $userId
-	 * @param array $params
-	 *
-	 * @return Release|null
-	 */
+    /**
+     * @param $hash
+     * @param $userId
+     * @param array $params
+     *
+     * @return Release|null
+     * @throws \Exception
+     */
 	public function findOneByHashUser($hash, $userId, $params = array())
 	{
 		$params['hash'] = $hash;
