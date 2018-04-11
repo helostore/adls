@@ -659,9 +659,17 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 		'extended'   => true,
 		'compatibilities'   => true,
 	);
-	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
-		$params['status'] = array_merge( $params['status'], $auth['release_status'] );
+
+
+	if ( ! empty( $auth )) {
+        $releaseStatus = array();
+        if (!empty($auth['usergroup_ids'])) {
+            $releaseStatus = fn_adls_get_usergroups_release_status( $auth['usergroup_ids'] );
+        }
+
+		$params['status'] = array_merge( $params['status'], $releaseStatus );
 	}
+
 	list($releases, ) = ReleaseRepository::instance()->find($params);
 	if ( empty( $releases ) ) {
 //		$product['out_of_stock_actions'] = 'S';
@@ -702,8 +710,6 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
             $product['full_description'] .= __('adls.product.not_released_yet');
         }
 	}
-
-
 }
 
 /**
