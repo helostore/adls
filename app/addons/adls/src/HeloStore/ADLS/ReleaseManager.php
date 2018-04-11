@@ -151,11 +151,13 @@ class ReleaseManager extends Manager
     /**
      * @param $productId
      * @param $requestVersion
+     * @param array $params
      * @return bool
+     * @throws \Exception
      */
-    public function isValidVersion($productId, $requestVersion)
+    public function isValidVersion($productId, $requestVersion, $params = array())
     {
-        $release = $this->repository->findOneByProductVersion($productId, $requestVersion);
+        $release = $this->repository->findOneByProductVersion($productId, $requestVersion, $params);
 
         return !empty($release);
     }

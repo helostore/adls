@@ -135,7 +135,14 @@ class LicenseServer
 
         // Check if version is valid
         if ( ! defined('ADLS_SKIP_PRODUCT_VERSION_VALIDATION')) {
-            if ( ! ReleaseManager::instance()->isValidVersion($productId, $requestVersion)) {
+
+            $releaseStatus = array();
+            if (!empty($request) && !empty($request['auth']) && !empty($request['auth']['usergroup_ids'])) {
+                $tmp = fn_adls_get_usergroups_release_status($request['auth']['usergroup_ids']);
+                $releaseStatus = array_merge($releaseStatus, $tmp);
+            }
+
+            if ( ! ReleaseManager::instance()->isValidVersion($productId, $requestVersion, array('status' => $releaseStatus))) {
                 throw new \Exception('Invalid product version requested',
                     LicenseClient::CODE_ERROR_PRODUCT_INVALID_VERSION);
             }

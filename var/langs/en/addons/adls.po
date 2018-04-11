@@ -310,6 +310,10 @@ msgctxt "adls.product.beta_testing_agreement_text"
 msgid ""
 msgstr "<br /><p>Disclaimer: by signing up to our \"Beta Testing\" group, you implicitly agree with our <a href=\"[url]\" target=\"_blank\">Beta Testing Participant Agreement</a>.</p>"
 
+msgctxt "Languages::adls.group.join_notification"
+msgid ""
+msgstr "Your request will be promptly reviewed. Thank you."
+
 msgctxt "Languages::adls.platforms"
 msgid ""
 msgstr "Platforms"
