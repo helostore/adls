@@ -297,12 +297,11 @@ msgstr "Not Released Yet."
 
 msgctxt "Languages::adls.product.beta_testing_sign_up_text"
 msgid ""
-msgstr
-    "<h2>Early Beta Access</h2>"
+msgstr "<h2>Early Beta Access</h2>"
     "<hr>"
     "<ol>"
     "<li><a href=\"[register_url]\" target=\"_blank\"><strong>Register for a new account</strong></a> or <a href=\"[login_url]\" target=\"_blank\"><strong>login into your existing account</strong>.</li>"
-    "<li><a target=\"[join_url]\">Join our <strong>\"Beta Testing\" group </strong></a> in your profile page.</li>"
+    "<li><a href=\"[join_url]\" target=\"_blank\">Join our <strong>\"Beta Testing\" group </strong></a> in your profile page.</li>"
     "<li>Order this product for free and get early beta access.</li>"
     "</ol>"
 
