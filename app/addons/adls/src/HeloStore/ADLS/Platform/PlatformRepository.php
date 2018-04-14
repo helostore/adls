@@ -71,6 +71,11 @@ class PlatformRepository extends EntityRepository
         $group = 'platform.id';
 
         if (isset($params['name'])) {
+            // @TODO: find alternative for this dirty hack which works around the fact that CS-Cart multi-vendor edition report itself as "Multi-Vendor" and not CS-Cart;
+            if ($params['name'] == 'Multi-Vendor') {
+                $params['name'] = 'CS-Cart';
+            }
+
             $condition[] = db_quote('platform.name = ?s', $params['name']);
         }
         if (isset($params['id'])) {

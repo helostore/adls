@@ -370,9 +370,8 @@ class ProductManager extends Manager
             }
             $this->hydrateProductWithReleases($storeProduct, $platform);
 
-//            Logger::instance()->debug($storeProduct);
-
             $update = $this->getProductUpdate($productCode, $customerProduct, $storeProduct, $userId, $request);
+
             if ( ! empty($update)) {
                 $updates[$productCode] = $update;
             }
@@ -481,7 +480,7 @@ class ProductManager extends Manager
             'one'                            => true,
             'productId'                      => $productId,
             'compatibilityPlatformId'        => $platformId,
-            'compatibilityPlatformEditionId' => $platformEditionId,
+//            'compatibilityPlatformEditionId' => $platformEditionId,
             'compatibilityPlatformVersionId' => $platformVersionId
         ));
 
@@ -502,7 +501,7 @@ class ProductManager extends Manager
                 'licenseId'                      => $license->getId(),
                 'subscriptionId'                 => $subscription->getId(),
                 'compatibilityPlatformId'        => $platformId,
-                'compatibilityPlatformEditionId' => $platformEditionId,
+//                'compatibilityPlatformEditionId' => $platformEditionId,
                 'compatibilityPlatformVersionId' => $platformVersionId
             ));
         } elseif ( ! empty($license)) {
@@ -512,7 +511,7 @@ class ProductManager extends Manager
                 'productId'                      => $productId,
                 'licenseId'                      => $license->getId(),
                 'compatibilityPlatformId'        => $platformId,
-                'compatibilityPlatformEditionId' => $platformEditionId,
+//                'compatibilityPlatformEditionId' => $platformEditionId,
                 'compatibilityPlatformVersionId' => $platformVersionId
             ));
         } else {
@@ -521,7 +520,7 @@ class ProductManager extends Manager
                 'userId'                         => $userId,
                 'productId'                      => $productId,
                 'compatibilityPlatformId'        => $platformId,
-                'compatibilityPlatformEditionId' => $platformEditionId,
+//                'compatibilityPlatformEditionId' => $platformEditionId,
                 'compatibilityPlatformVersionId' => $platformVersionId
             ));
         }
