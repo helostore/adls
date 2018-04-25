@@ -651,6 +651,9 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	if ( AREA != 'C' ) {
 		return;
 	}
+    if (empty($product['adls_slug'])) {
+        return;
+    }
 
 	$params = array(
 //		'userId'     => $auth['user_id'],
