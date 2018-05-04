@@ -1,4 +1,4 @@
-{if $show_price_values && $show_price}
+{if $show_price_values && $show_price && fn_is_adls_product($product)}
     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
 
     {elseif $product.zero_price_action == "A" && $show_add_to_cart}
