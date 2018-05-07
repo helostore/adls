@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $orderId = intval($_REQUEST['order_id']);
             $licenseManager = LicenseManager::instance();
+            $licenseRepository = \HeloStore\ADLS\LicenseRepository::instance();
             $licenses = $licenseManager->getOrderLicenses($orderId);
             $requestLicenses = is_array($_REQUEST['licenses']) ? $_REQUEST['licenses'] : array();
             $requestLicensesIds = array_keys($requestLicenses);
@@ -44,10 +45,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (empty($requestLicense)) {
                     continue;
                 }
+
                 if (empty($requestLicense['domains'])) {
                     continue;
                 }
                 $currentDomains = $licenseManager->getLicenseDomains($licenseId);
+
                 foreach ($currentDomains as $domain) {
                     $domainId = $domain['id'];
                     if (!isset($requestLicense['domains'][$domainId])) {
@@ -61,6 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         continue;
                     }
 
+//                    // User wants to delete a domain, so delete the corresponding database entry as well.
+//                    if (empty($newDomainValue)) {
+//                        $licenseRepository->deleteDomainById($domainId);
+//                        continue;
+//                    }
+
                     if ($domain['status'] == License::STATUS_DISABLED) {
                         $message = __('adls.order_license_domain_update_failed_license_is_disabled', array('[domain]' => $newDomainValue));
 //                        foreach ($result as $value) {
@@ -70,20 +79,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         continue;
                     }
 
-                    $result = Utils::validateHostname($newDomainValue, $domain['type']);
-                    if ($result !== true) {
-                        $message = __('adls.order_license_domain_update_failed', array('[domain]' => $newDomainValue));
-                        foreach ($result as $value) {
-                            $message .= '<br> - ' . $value;
+                    if (!empty($newDomainValue)) {
+                        $result = Utils::validateHostname($newDomainValue, $domain['type']);
+                        if ($result !== true) {
+                            $message = __('adls.order_license_domain_update_failed', array('[domain]' => $newDomainValue));
+                            foreach ($result as $value) {
+                                $message .= '<br> - ' . $value;
+                            }
+                            fn_set_notification('E', __('error'), $message, 'I');
+                            continue;
                         }
-                        fn_set_notification('E', __('error'), $message, 'I');
-                        continue;
                     }
-
 
                     $updates = array(
                         'name' => $newDomainValue
                     );
+
                     $licenseManager->inactivateLicense($licenseId, $oldDomainValue);
                     if (!empty($updates)) {
                         $query = db_quote('UPDATE ?:adls_license_domains SET ?u WHERE licenseId = ?i AND id = ?i', $updates, $licenseId, $domainId);

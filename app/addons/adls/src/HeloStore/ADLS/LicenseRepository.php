@@ -25,6 +25,21 @@ class LicenseRepository extends EntityRepository
 {
 	protected $table = '?:adls_licenses';
 
+    /**
+     * @param $domainId
+     *
+     * @return mixed
+     */
+    public function deleteDomainById($domainId)
+    {
+        return db_query('DELETE FROM ?:adls_license_domains WHERE id = ?i', $domainId);
+    }
+
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
     public function delete($id)
     {
         db_query('DELETE FROM ?:adls_license_domains WHERE licenseId = ?i', $id);
