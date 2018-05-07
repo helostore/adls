@@ -504,7 +504,6 @@ class LicenseServer
 //            $requestSidekick = $request['licenseClient'];
 //        }
 
-//        Logger::dump($request);
 
         $response['updates'] = $productManager->checkUpdatesUniversal($customerProducts, $userId, $request);
 
