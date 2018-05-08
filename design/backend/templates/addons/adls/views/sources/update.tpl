@@ -1,4 +1,5 @@
-<form method="post">
+<form action="{""|fn_url}" method="post" class="form-horizontal form-edit" enctype="multipart/form-data">
+    <input type="hidden" name="dispatch" value="sources.update" />
     <div class="control-group">
         <label class="control-label" for="elm_source_product">{__("product")}</label>
         <div class="controls">

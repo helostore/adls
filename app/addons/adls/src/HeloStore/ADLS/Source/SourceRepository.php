@@ -32,6 +32,20 @@ class SourceRepository extends EntityRepository
      *
      * @return mixed
      */
+    public function delete(Source $source)
+    {
+        $query = db_quote('DELETE FROM ?p WHERE id = ?i',
+            $this->table,
+            $source->getId()
+        );
+
+        return db_query($query);
+    }
+    /**
+     * @param Source $source
+     *
+     * @return mixed
+     */
     public function add(Source $source)
     {
         $query = db_quote('INSERT INTO ?p ?e',
