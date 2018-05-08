@@ -26,7 +26,7 @@
                     <td>{$source->getSourcePath()}</td>
                     <td>{$source->getReleasePath()}</td>
                     <td>
-
+                        <a class="icon-trash cm-tooltip cm-confirm cm-post" href="{"sources.delete?id=`$source->getId()`"|fn_url}" title="{__("delete")}"></a>
                     </td>
                 </tr>
                 {foreachelse}

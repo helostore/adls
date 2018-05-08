@@ -21,10 +21,34 @@ if ( ! defined('BOOTSTRAP')) {
     die('Access denied');
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($mode == 'update') {
-        SourceManager::instance()->update($_POST['source_data']);
+$sourceManager = SourceManager::instance();
+$sourceRepository = SourceRepository::instance();
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($mode == 'delete') {
+        $source = $sourceRepository->findOneById($_REQUEST['id']);
+        if ( ! empty($source)) {
+            $result = $sourceRepository->delete($source);
+            if ($result) {
+                fn_set_notification('N', __('notice'), 'Successfully deleted source.');
+            } else {
+                fn_set_notification('E', __('error'), 'Failed deleting source: unknown error.');
+            }
+        } else {
+            fn_set_notification('E', __('error'), 'Failed deleting source: source not found.');
+        }
+
+        return array(CONTROLLER_STATUS_REDIRECT, $_SERVER['HTTP_REFERER']);
+    }
+
+
+    if ($mode == 'update') {
+        $sourceId = $sourceManager->update($_POST['source_data']);
+        if (empty($sourceId)) {
+            fn_set_notification('E', __('error'), 'Failed creating new source.');
+        } else {
+            fn_set_notification('N', __('notice'), 'Successfully created new source.');
+        }
         return array(CONTROLLER_STATUS_REDIRECT, $_SERVER['HTTP_REFERER']);
     }
 }
