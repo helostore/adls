@@ -246,7 +246,8 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
     $controller = Registry::get('runtime.controller');
     // For now, we don't want to go any further if there's an admin editing an order
     // @see app/addons/paypal/controllers/common/payment_notification.post.php:37
-    $isHumanOrderManagement = (defined('ORDER_MANAGEMENT') && $controller !== 'payment_notification');
+//    $isHumanOrderManagement = (defined('ORDER_MANAGEMENT') && $controller !== 'payment_notification');
+    $isHumanOrderManagement = false;
 
     if ($isHumanOrderManagement) {
         return false;
@@ -674,6 +675,17 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	}
 
 	list($releases, ) = ReleaseRepository::instance()->find($params);
+
+    list($betaReleases, ) = ReleaseRepository::instance()->find(array(
+        'productId'  => $product['product_id'],
+        'status' => Release::STATUS_BETA,
+        'extended'   => true,
+        'compatibilities'   => true,
+    ));
+    if ( ! empty( $betaReleases ) ) {
+        $product['has_beta_testing_program'] = true;
+    }
+
 	if ( empty( $releases ) ) {
 //		$product['out_of_stock_actions'] = 'S';
 //		$product['tracking'] = 'B';
@@ -684,35 +696,31 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
         $product['price'] = 0;
 //        $product['avail_since'] = TIME + 60 * 60 * 24 * 30;
 
-		list($betaReleases, ) = ReleaseRepository::instance()->find(array(
-			'productId'  => $product['product_id'],
-			'status' => Release::STATUS_BETA,
-			'extended'   => true,
-			'compatibilities'   => true,
-		));
-
 		if ( ! empty( $betaReleases ) ) {
-            $product['has_beta_testing_program'] = true;
 			$product['full_description'] .= __('adls.product.beta_testing_sign_up_text', array(
 				'[join_url]' => fn_url('profiles.update?selected_section=usergroups'),
 				'[login_url]' => fn_url('auth.login_form'),
 				'[register_url]' => fn_url('profiles.add'),
 			));
-
-			list( $pages, ) = fn_get_pages( array(
-				'tag' => 'beta-testing-agreement'
-			), 1);
-			if ( ! empty( $pages ) ) {
-				$agreementPage = reset( $pages );
-			}
-			if ( ! empty( $agreementPage ) ) {
-				$url = fn_url( 'pages.view?page_id=' . $agreementPage['page_id'] );
-				$product['full_description'] .= __('adls.product.beta_testing_agreement_text', array('[url]' => $url));
-			}
 		} else {
             $product['full_description'] .= __('adls.product.not_released_yet');
         }
 	}
+
+
+    if ( ! empty( $betaReleases ) ) {
+
+        list( $pages, ) = fn_get_pages( array(
+            'tag' => 'beta-testing-agreement'
+        ), 1);
+        if ( ! empty( $pages ) ) {
+            $agreementPage = reset( $pages );
+        }
+        if ( ! empty( $agreementPage ) ) {
+            $url = fn_url( 'pages.view?page_id=' . $agreementPage['page_id'] );
+            $product['full_description'] .= __('adls.product.beta_testing_agreement_text', array('[url]' => $url));
+        }
+    }
 }
 
 /**
