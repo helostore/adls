@@ -320,7 +320,7 @@ class License extends Entity
     /**
      * @return bool
      */
-    public function hasDomains()
+        public function hasDomains()
     {
         return !empty($this->domains);
     }

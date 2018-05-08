@@ -200,6 +200,11 @@ class LicenseServer
                     }
                 }
 
+                if ($license->isDisabled()) {
+                    throw new \Exception('Unable to activate: license is disabled',
+                        LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);
+                }
+
                 if ( ! $manager->activateLicense($licenseId, $domain)) {
                     throw new \Exception('Unable to activate license for specified domain',
                         LicenseClient::CODE_ERROR_INVALID_LICENSE_OR_DOMAIN);

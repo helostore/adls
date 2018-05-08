@@ -33,6 +33,9 @@
         $(document).on('change', '.ty-product-options :input', function(event) {
             var $this = $(this);
             var id = $this.attr('id');
+            if (!id) {
+                return;
+            }
             var matches = id.match(/\d+/g);
             if (!matches || matches.length != 2) {
                 console.error('ADLS: failed to retrieve product and option IDs of field', this);
