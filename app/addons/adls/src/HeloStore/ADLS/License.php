@@ -269,6 +269,22 @@ class License extends Entity
         return $this->domains;
     }
 
+
+    /**
+     * @return array
+     */
+    public function getNonEmptyDomains()
+    {
+        $list = array();
+        foreach ($this->domains as $domain) {
+            if ( ! empty($domain['name'])) {
+                $list[] = $domain;
+            }
+        }
+
+        return $list;
+    }
+
     /**
      * @param array $domains
      *

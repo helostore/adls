@@ -102,7 +102,7 @@ msgstr "Created"
 
 msgctxt "Languages::adls.license_status_inactive"
 msgid "license_status_inactive"
-msgstr "Inactive, ready to be used"
+msgstr "Inactive"
 
 msgctxt "Languages::adls.license_status_active"
 msgid "license_status_active"

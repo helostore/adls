@@ -12,6 +12,7 @@
  * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  ****************************************************************************/
 
+use HeloStore\ADLS\Compatibility\CompatibilityRepository;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
@@ -79,14 +80,19 @@ if ($mode == 'view') {
 
     ReleaseManager::instance()->checkFileIntegrity($releases);
 
+
     /** @var \HeloStore\ADLS\Release $release */
     foreach ($releases as $release) {
 
         $compatibilities = [];
         if ( ! empty($release)) {
-            list($compatibilities, ) = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->find(array(
+            $compatibilityParams = array(
                 'releaseId' => $release->getId(),
-            ));
+            );
+            if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+                $compatibilityParams['releaseStatus'] = $auth['release_status'];
+            }
+            list($compatibilities, ) = CompatibilityRepository::instance()->find($compatibilityParams);
             $release->setCompatibility($compatibilities);
         }
     }
