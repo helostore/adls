@@ -566,7 +566,6 @@ function fn_adls_adlss_get_subscriptions_post(&$items , $params ) {
 	if ( empty( $params['extended'] ) ) {
 		return;
 	}
-
 	/** @var Subscription $subscription */
 	foreach ( $items as $subscription ) {
 		$domains = $subscription->getExtra( 'license$domains' );
@@ -606,8 +605,9 @@ function fn_adls_adlss_get_subscriptions( &$fields, $table, &$joins, $condition,
 				ON license.orderId = subscription.orderId 
 				AND license.userId = subscription.userId
 				AND license.productId = subscription.productId
+				AND license.orderItemId = subscription.itemId
 				');
-		// @TODO: should have condition to join by `AND license.orderItemId = subscription.itemId`, but the item IDs get desync'ed for some reason (same item ends up with different IDs)
+		// <del>@TODO: should have condition to join by `AND license.orderItemId = subscription.itemId`, but the item IDs get desync'ed for some reason (same item ends up with different IDs)</del>
 		$fields[] = 'license.licenseKey AS license$licenseKey';
 		$fields[] = 'license.status AS license$status';
 		$fields[] = 'license.id AS license$id';

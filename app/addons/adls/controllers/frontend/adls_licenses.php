@@ -41,16 +41,19 @@ if ( $mode === 'manage' ) {
         $params['sort_by'] = $_REQUEST['sort_by'];
     }
 	list($licenses, $search) = $licenseRepository->find($params);
-	Tygh::$app['view']->assign('licenses', $licenses);
-	Tygh::$app['view']->assign('search', $search);
-	fn_add_breadcrumb(__('adls.licenses'));
 
+
+    $releaseParams = array(
+        'extended' => true,
+        'userId' => $userId
+    );
+
+    if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+        $releaseParams['status'] = $auth['release_status'];
+    }
 
 	$releaseRepository = ReleaseRepository::instance();
-	list ($releases, ) = $releaseRepository->find(array(
-		'extended' => true,
-		'userId' => $userId
-	));
+	list ($releases, ) = $releaseRepository->find($releaseParams);
 	$tmp = array();
 	foreach ( $releases as $release ) {
 		$pid = $release->getProductId();
@@ -78,5 +81,7 @@ if ( $mode === 'manage' ) {
 			}
 		}
 	}
-
+    Tygh::$app['view']->assign('licenses', $licenses);
+    Tygh::$app['view']->assign('search', $search);
+    fn_add_breadcrumb(__('adls.licenses'));
 }
