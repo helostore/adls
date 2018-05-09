@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.91",
+        "releaseDate": "2018-05-09 08:51:04",
+        "releaseTimestamp": "1525855864",
+        "hash": "bd4eb279111f985b10fc9ca9066923cee8466dd6",
+        "commits": [
+            "[2018-05-09] Bumped version to 0.2.91"
+        ]
+    },
+    {
         "version": "0.2.90",
         "releaseDate": "2018-05-08 05:12:09",
         "releaseTimestamp": "1525799529",
@@ -26,17 +35,6 @@
         "commits": [
             "[2018-05-08] Bumped version to 0.2.88",
             "[2018-05-08]\tFix adding source issue + add delete source function"
-        ]
-    },
-    {
-        "version": "0.2.87",
-        "releaseDate": "2018-05-07 09:28:46",
-        "releaseTimestamp": "1525685326",
-        "hash": "fe5e02cb959459bd9239400db0ac463ed3eecb5c",
-        "commits": [
-            "[2018-05-07] Bumped version to 0.2.87",
-            "[2018-05-07]\tMerge branch 'hotfix\/www-domain-exception-on-validation' into feature\/adls-client",
-            "[2018-05-07]\tImprove license domain validation: implicitely allow www subdomain validation"
         ]
     }
 ]
