@@ -13,6 +13,7 @@
  ****************************************************************************/
 
 use HeloStore\ADLS\Compatibility\CompatibilityRepository;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
@@ -71,6 +72,8 @@ if ($mode == 'view') {
 	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
 		$params['status'] = $auth['release_status'];
 	}
+    $params['status'][] = Release::STATUS_PRODUCTION;
+
 
     if ( ! empty( $productId ) ) {
         list( $releases, $search ) = ReleaseRepository::instance()->find( $params );
@@ -107,12 +110,14 @@ if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     $releaseRepository = ReleaseRepository::instance();
     $hash = strval($_REQUEST['hash']);
     $params = array();
-
+    $params['status'] = array();
 	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
 		$params['status'] = $auth['release_status'];
 	}
+    $params['status'][] = Release::STATUS_PRODUCTION;
 
-	$release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'], $params );
+
+    $release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'], $params );
     if (empty($release)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }

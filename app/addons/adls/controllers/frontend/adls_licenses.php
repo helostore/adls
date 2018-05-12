@@ -13,6 +13,7 @@
  */
 
 use HeloStore\ADLS\LicenseRepository;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use Tygh\Registry;
@@ -47,12 +48,14 @@ if ( $mode === 'manage' ) {
         'extended' => true,
         'userId' => $userId
     );
-
+    $releaseParams['status'] = array();
     if ( ! empty( $auth ) && !empty($auth['release_status'])) {
         $releaseParams['status'] = $auth['release_status'];
     }
+    $releaseParams['status'][] = Release::STATUS_PRODUCTION;
 
-	$releaseRepository = ReleaseRepository::instance();
+
+    $releaseRepository = ReleaseRepository::instance();
 	list ($releases, ) = $releaseRepository->find($releaseParams);
 	$tmp = array();
 	foreach ( $releases as $release ) {
