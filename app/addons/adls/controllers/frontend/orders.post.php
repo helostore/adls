@@ -14,6 +14,7 @@
 
 use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\Utils;
 use Tygh\Registry;
 use Tygh\Tygh;
@@ -169,10 +170,11 @@ if ($mode == 'details') {
 
 
 	$params = array();
-
+    $params['status'] = array();
 	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
 		$params['status'] = $auth['release_status'];
 	}
+    $params['status'][] = Release::STATUS_PRODUCTION;
 
     if (!empty($order) && !empty($order['products'])) {
         $changed = false;

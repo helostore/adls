@@ -156,7 +156,6 @@ class ReleaseRepository extends EntityRepository
 			$status = array_unique( $status );
 			$condition[] = db_quote('releases.status IN (?a)', $status);
 		}
-
         if ( ! empty($params['compatibilityPlatformId'])
              || ! empty($params['compatibilityPlatformVersionId'])
              || ! empty($params['compatibilityPlatformEditionId'])

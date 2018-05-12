@@ -137,6 +137,7 @@ class LicenseServer
         if ( ! defined('ADLS_SKIP_PRODUCT_VERSION_VALIDATION')) {
 
             $releaseStatus = array();
+            $releaseStatus[] = Release::STATUS_PRODUCTION;
             if (!empty($request) && !empty($request['auth']) && !empty($request['auth']['usergroup_ids'])) {
                 $tmp = fn_adls_get_usergroups_release_status($request['auth']['usergroup_ids']);
                 $releaseStatus = array_merge($releaseStatus, $tmp);
