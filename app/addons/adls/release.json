@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.93",
+        "releaseDate": "2018-05-12 07:34:29",
+        "releaseTimestamp": "1526110469",
+        "hash": "751a4baf70e90ae4d7fdb6b0ef5cc76819f54ecb",
+        "commits": [
+            "[2018-05-12] Bumped version to 0.2.93"
+        ]
+    },
+    {
         "version": "0.2.92",
         "releaseDate": "2018-05-09 08:59:50",
         "releaseTimestamp": "1525856390",
@@ -24,16 +33,6 @@
         "hash": "51fde4528f80b8a1cddaa84a1e442c15864e6562",
         "commits": [
             "[2018-05-09] Bumped version to 0.2.90"
-        ]
-    },
-    {
-        "version": "0.2.89",
-        "releaseDate": "2018-05-08 05:12:05",
-        "releaseTimestamp": "1525799525",
-        "hash": "4e67c0117038bf9f9b86384309574d1a8807fb32",
-        "commits": [
-            "[2018-05-08] Bumped version to 0.2.89",
-            "[2018-05-08]\tDisabled licenses should not be usable by customer; bugfix js; display beta agreement always"
         ]
     }
 ]
