@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.95</version>
+    <version>0.2.96</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
@@ -173,6 +173,8 @@
             <min>4.2.1</min>
         </core_version>
     </compatibility>
+    <supplier>HELOstore</supplier>
+    <supplier_link>https://helostore.com/</supplier_link>
     <authors>
         <author>
             <name>HELOstore</name>
