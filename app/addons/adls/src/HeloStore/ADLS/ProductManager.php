@@ -475,26 +475,42 @@ class ProductManager extends Manager
             throw new \Exception('Your request has not provided us with your platform details. Please contact us.', LicenseClient::CODE_ERROR_ALIEN);
         }
 
-        /** @var Release $latestRelease */
-        $latestRelease = $releaseRepository->find(array(
+        $latestReleaseParams = array(
             'one'                            => true,
             'productId'                      => $productId,
             'compatibilityPlatformId'        => $platformId,
 //            'compatibilityPlatformEditionId' => $platformEditionId,
             'compatibilityPlatformVersionId' => $platformVersionId
-        ));
+        );
+        $auth = null;
+        if ( ! empty($request) && ! empty($request['auth']) && ! empty($request['auth']) && !empty($request['auth']['release_status'])) {
+            $auth = $request['auth'];
+            $latestReleaseParams['auth'] = $request['auth'];
+        }
+
+        /** @var Release $latestRelease */
+        $latestRelease = $releaseRepository->find($latestReleaseParams);
 
 
         if (empty($latestRelease)) {
+            Logger::instance()->dump('Latest release not found for ' . $productCode);
 //			throw new \Exception('Latest release not found for ' . $productCode, LicenseClient::CODE_ERROR_ALIEN);
             return false;
         }
 
         /** @var Release $latestUserRelease */
         $latestUserRelease = null;
+        $latestUserReleaseParams = array(
+            'one'                            => true,
+            'userId'                         => $userId,
+            'productId'                      => $productId,
+            'compatibilityPlatformId'        => $platformId,
+//                'compatibilityPlatformEditionId' => $platformEditionId,
+            'compatibilityPlatformVersionId' => $platformVersionId
+        );
 
         if ( ! empty($subscription)) {
-            $latestUserRelease = $releaseRepository->find(array(
+            $latestUserReleaseParams = array(
                 'one'                            => true,
                 'userId'                         => $userId,
                 'productId'                      => $productId,
@@ -503,9 +519,9 @@ class ProductManager extends Manager
                 'compatibilityPlatformId'        => $platformId,
 //                'compatibilityPlatformEditionId' => $platformEditionId,
                 'compatibilityPlatformVersionId' => $platformVersionId
-            ));
+            );
         } elseif ( ! empty($license)) {
-            $latestUserRelease = $releaseRepository->find(array(
+            $latestUserReleaseParams = array(
                 'one'                            => true,
                 'userId'                         => $userId,
                 'productId'                      => $productId,
@@ -513,29 +529,33 @@ class ProductManager extends Manager
                 'compatibilityPlatformId'        => $platformId,
 //                'compatibilityPlatformEditionId' => $platformEditionId,
                 'compatibilityPlatformVersionId' => $platformVersionId
-            ));
+            );
+
         } else {
-            $latestUserRelease = $releaseRepository->find(array(
-                'one'                            => true,
-                'userId'                         => $userId,
-                'productId'                      => $productId,
-                'compatibilityPlatformId'        => $platformId,
-//                'compatibilityPlatformEditionId' => $platformEditionId,
-                'compatibilityPlatformVersionId' => $platformVersionId
-            ));
         }
+
+        if ( ! empty($auth)) {
+            $latestUserReleaseParams['auth'] = $auth;
+        }
+
+        $latestUserRelease = $releaseRepository->find($latestUserReleaseParams);
+
 
         if ($freeSubscription) {
             $latestUserRelease = $latestRelease;
         }
 
-
         if (empty($latestUserRelease)) {
 //            throw new \Exception('No latest release found');
+            Logger::instance()->dump('No latest release found.');
             return false;
         }
 
-        $currentUserRelease = $releaseRepository->findOneByProductVersion($productId, $customerVersion);
+        $currentUserReleaseParams = array();
+        if ( ! empty($auth)) {
+            $currentUserReleaseParams['auth'] = $auth;
+        }
+        $currentUserRelease = $releaseRepository->findOneByProductVersion($productId, $customerVersion, $currentUserReleaseParams);
         if (empty($currentUserRelease)) {
             $message = 'You are using a deprecated product, ' . $productName . ' v' . $customerVersion . '. Please manually update to the latest version available in our store.';
             $code    = LicenseClient::CODE_ERROR_UPDATE_CHECK_FAILED_INVALID_VERSION;
@@ -556,7 +576,6 @@ class ProductManager extends Manager
 
         // There is a newer release to which user has access to
         if ($latestUserRelease->isNewerThan($currentUserRelease)) {
-
             if ($platform->isCSCart()) {
 //                $licenseClient = LicenseClientFactory::buildCSCart();
             } elseif ($platform->isWordPress()) {

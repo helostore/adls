@@ -21,6 +21,9 @@ $app = new LicenseServer();
 $response = array();
 $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1');
 $exception = null;
+
+Logger::instance()->dump('API call: ' . $mode);
+
 try {
 	$response = $app->handleRequest($_REQUEST);
 
