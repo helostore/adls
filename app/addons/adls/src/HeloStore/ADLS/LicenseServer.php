@@ -593,14 +593,28 @@ class LicenseServer
 
         $updateData = $productManager->getProductUpdate($productCode, $requestProduct, $storeProduct,
             $request['auth']['user_id'], $request);
+
         if (empty($updateData) || empty($updateData['releaseId'])) {
+            Logger::instance()->dump('Update data not found: CODE_ERROR_UPDATE_FAILED_RELEASE_NOT_FOUND, product='.$productCode);
+
             $response['code'] = LicenseClient::CODE_ERROR_UPDATE_FAILED_RELEASE_NOT_FOUND;
 
             return $response;
         }
 
-        $release = ReleaseRepository::instance()->findOneById($updateData['releaseId']);
+        $rParams = array();
+        if ( ! empty($request) && ! empty($request['auth'])) {
+            $rParams['auth'] = $request['auth'];
+        }
+        $release = ReleaseRepository::instance()->findOneById($updateData['releaseId'], $rParams);
+        if (empty($release)) {
+            Logger::instance()->dump(['$updateData' => $updateData]);
 
+            $response['message'] = 'Sorry, a problem occurred while trying to download the new update';
+
+            return $response;
+        }
+        Logger::instance()->dump(['$release' => $release]);
 //		if (empty($files)) {
 //			return $response;
 //		}
@@ -610,7 +624,17 @@ class LicenseServer
 
 
         if (empty($path)) {
+            Logger::instance()->dump('Release archive path was empty, product=' . $productCode);
+
 //            return array('xxxx' => __LINE__);
+            return $response;
+        }
+
+        if ( ! is_file($path)) {
+            Logger::instance()->dump('Release archive was not found at path=' . $path);
+
+            $response['code'] = LicenseClient::CODE_ERROR_UPDATE_INVALID_REMOTE_PATH;
+
             return $response;
         }
 
@@ -618,11 +642,7 @@ class LicenseServer
             @apache_setenv('no-gzip', 1);
         }
         @ini_set('zlib.output_compression', 'Off');
-        if ( ! is_file($path)) {
-            $response['code'] = LicenseClient::CODE_ERROR_UPDATE_INVALID_REMOTE_PATH;
 
-            return $response;
-        }
         $size = filesize($path);
         $file = @fopen($path, "rb");
         if (empty($file)) {

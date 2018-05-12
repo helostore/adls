@@ -378,5 +378,10 @@
     "version": "4.7.3",
     "date": "2018-03-28 12:00:00",
     "description": "We have released CS-Cart and Multi-Vendor 4.7.3. This version is a patch release, so it mostly contains bug fixes. However, there are also some interesting changes."
+  },
+  {
+    "version": "4.7.4",
+    "date": "2018-05-02 12:00:00",
+    "description": "We've released a new CS-Cart and Multi-Vendor version so that you could make your online business compliant with the GDPR."
   }
 ]

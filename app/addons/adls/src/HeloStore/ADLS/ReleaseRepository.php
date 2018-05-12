@@ -495,14 +495,15 @@ class ReleaseRepository extends EntityRepository
     /**
      * @param $id
      *
+     * @param array $params
+     *
      * @return Release|null
-     * @throws \Exception
      */
-	public function findOneById($id)
+	public function findOneById($id, $params = array())
 	{
-		return $this->findOne(array(
-			'id' => $id
-		));
+	    $params['id'] = $id;
+
+		return $this->findOne($params);
 	}
 
     /**
