@@ -30,17 +30,18 @@
                                 <input type="hidden" name="order_id" value="{$order_info.order_id}"/>
                                 {foreach from=$product.license->getDomains() item=domain}
                                     {$isDomainLicenseDisabled = fn_adls_license_is_disabled($domain.status)}
-                                    {if !(empty($domain.name) && $isDomainLicenseDisabled)}
+                                    {*{if !$isDomainLicenseDisabled}*}
+                                    {if !$product.license->isDisabled()}
                                         <div class="adls-license-status status-{$domain.status|strtolower}">
-                                            {if !fn_adls_license_is_disabled($domain.status)}
-                                                <input name="licenses[{$product.license->getId()}][domains][{$domain.id}]"
-                                                       value="{$domain.name}" class="ty-input-text adls-hostname"
-                                                       type="text" size="36"/>
-                                            {else}
-                                                {$domain.name|default:""}
-                                            {/if}
+                                            <input name="licenses[{$product.license->getId()}][domains][{$domain.id}]"
+                                                   value="{$domain.name}" class="ty-input-text adls-hostname"
+                                                   type="text" size="36"/>
                                             &mdash; {$domain.status|fn_adls_get_license_status_label}
                                         </div>
+                                    {else}
+                                        {if !empty($domain.name)}
+                                            {$domain.name|default:""} &mdash; {$domain.status|fn_adls_get_license_status_label}
+                                        {/if}
                                     {/if}
                                 {/foreach}
                                 <div class="adls-license-status">
