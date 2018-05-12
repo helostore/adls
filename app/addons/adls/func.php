@@ -333,7 +333,9 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 
         } else {
             if (!defined('ORDER_MANAGEMENT')) {
-	            $manager->doDisableLicense( $licenseId );
+                if ( ! empty($licenseId)) {
+                    $manager->doDisableLicense( $licenseId );
+                }
             }
         }
     }
