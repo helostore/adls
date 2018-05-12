@@ -135,16 +135,20 @@ class ReleaseRepository extends EntityRepository
         }
 
 		$status = array();
-        if (AREA === 'C') {
-	        $status[] = Release::STATUS_PRODUCTION;
-        }
+//        if (AREA === 'C') {
+//	        $status[] = Release::STATUS_PRODUCTION;
+//        }
 		if (!empty($params['status'])) {
 			if ( is_array( $params['status'] ) ) {
 				$status = array_merge( $status, $params['status'] );
 			} else {
 				$status[] = $params['status'];
 			}
-		}
+		} else {
+            if (AREA === 'C') {
+                $status[] = Release::STATUS_PRODUCTION;
+            }
+        }
 		if ( ! empty( $params['auth'] ) && ! empty( $params['auth']['release_status'] ) ) {
 			$status = array_merge( $status, $params['auth']['release_status'] );
 		}

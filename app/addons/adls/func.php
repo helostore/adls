@@ -711,7 +711,6 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 
 
     if ( ! empty( $betaReleases ) ) {
-
         list( $pages, ) = fn_get_pages( array(
             'tag' => 'beta-testing-agreement'
         ), 1);
