@@ -86,13 +86,14 @@ class LicenseServer
         $vars = array_merge($vars, $this->requireRequestVariables($request, array('product.version')));
         $vars = array_merge($vars, $this->requireRequestVariables($request, array('password')));
 
-        $isMagicPassword = (defined('ADLS_MAGIC_TOKEN') && ADLS_MAGIC_TOKEN == $vars['password']);
-        if ($isMagicPassword) {
-            $response['code']    = LicenseClient::CODE_SUCCESS;
-            $response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic password</em>!';
-
-            return $response;
-        }
+        // @Deprecated: plain passwords should not work anymore
+//        $isMagicPassword = (defined('ADLS_MAGIC_TOKEN') && ADLS_MAGIC_TOKEN == $vars['password']);
+//        if ($isMagicPassword) {
+//            $response['code']    = LicenseClient::CODE_SUCCESS;
+//            $response['message'] = 'Your license is now <b>active</b> thanks to your <em>magic password</em>!';
+//
+//            return $response;
+//        }
 
         $productManager = ProductManager::instance();
         $storeProduct = ProductRepository::instance()->findOneBySlug($vars['product.code']);
@@ -423,27 +424,34 @@ class LicenseServer
                 LicenseClient::CODE_ERROR_INVALID_CREDENTIALS_COMBINATION);
         }
 
-        $isMagicPassword = (defined('ADLS_MAGIC_TOKEN') && ADLS_MAGIC_TOKEN == $vars['password']);
-        if ($isMagicPassword) {
-            $response['code']  = LicenseClient::CODE_SUCCESS;
-            $response['token'] = $vars['password'];
+        $isPasswordMatch = false;
 
-            return $response;
-        }
-
-        $challengeHash = array();
-        // copy from fn_generate_salted_password() at app/functions/fn.users.php:2371
-        if (empty($userInfo['salt'])) {
+        if (defined('ADLS_MAGIC_TOKEN')) {
+            $challengeHash = array();
             $challengeHash[] = $vars['password'];
             $challengeHash[] = md5($vars['password']);
-        } else {
-            $challengeHash[] = md5(md5($vars['password']) . md5($userInfo['salt']));
-            $challengeHash[] = md5($vars['password'] . md5($userInfo['salt']));
+            if (in_array(md5(ADLS_MAGIC_TOKEN), $challengeHash)) {
+                $isPasswordMatch = true;
+            }
         }
-        if ( ! in_array($userInfo['password'], $challengeHash)) {
-            throw new \Exception('Your email/password combination is incorrect, sorry. (2)',
-                LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
+
+        if ( ! $isPasswordMatch) {
+            $challengeHash = array();
+            // copy from fn_generate_salted_password() at app/functions/fn.users.php:2371
+            if (empty($userInfo['salt'])) {
+                $challengeHash[] = $vars['password'];
+                $challengeHash[] = md5($vars['password']);
+            } else {
+                $challengeHash[] = md5(md5($vars['password']) . md5($userInfo['salt']));
+                $challengeHash[] = md5($vars['password'] . md5($userInfo['salt']));
+            }
+            if ( ! in_array($userInfo['password'], $challengeHash)) {
+                throw new \Exception('Your email/password combination is incorrect, sorry. (2)',
+                    LicenseClient::CODE_ERROR_MISMATCH_CREDENTIALS_COMBINATION);
+            }
         }
+
+
 
         $token    = $this->bakeToken($userInfo['user_id'], $userInfo['email'], $userInfo['password'],
             $userInfo['last_login']);

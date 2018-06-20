@@ -643,7 +643,8 @@ class ProductManager extends Manager
                 'userVersion'   => $customerVersion,
                 'releaseId'     => $latestUserRelease->getId(),
                 'code'          => $productCode,
-                'reviewMessage' => $this->getReviewMessage($productCode),
+//                'reviewMessage' => $this->getReviewMessage($productCode),
+                'reviewMessage' => '', //$this->getReviewMessage($productCode),
                 'notifications' => array(
                     array(
                         'notification_type'  => 'N',
