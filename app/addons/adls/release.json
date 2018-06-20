@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.99",
+        "releaseDate": "2018-06-20 07:33:05",
+        "releaseTimestamp": "1529523185",
+        "hash": "0c1048687201a274314b027cb18727bc63e5c7ce",
+        "commits": [
+            "[2018-06-20] Bumped version to 0.2.99",
+            "[2018-06-20]\tMagic password\/license fix + no more review messages to clients"
+        ]
+    },
+    {
         "version": "0.2.98",
         "releaseDate": "2018-05-12 07:40:36",
         "releaseTimestamp": "1526154036",
@@ -25,16 +35,6 @@
         "hash": "6db8170ae290d688615306a193299e1a99c8e70a",
         "commits": [
             "[2018-05-12] Bumped version to 0.2.96"
-        ]
-    },
-    {
-        "version": "0.2.95",
-        "releaseDate": "2018-05-12 06:57:19",
-        "releaseTimestamp": "1526151439",
-        "hash": "c1056dd26376aca5f23624f771c9de7deccb22e2",
-        "commits": [
-            "[2018-05-12] Bumped version to 0.2.95",
-            "[2018-05-12]\tAdd CS-Cart 4.7.4 as compat"
         ]
     }
 ]
