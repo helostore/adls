@@ -300,7 +300,7 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                 // @TODO move this into an option per product, eg. "This product generates license keys"
                 // if is sidekick, don't generate license
                 $isSidekick = ($productId == 5);
-                $hasSubscription = ! empty($product['subscription']) || ! empty($orderInfo['adls_subscription_setup_pending']);
+                $hasSubscription = ! empty($product['subscription']) || ! empty($product['adls_subscription_setup_pending']);
 
 	            if (!$isSidekick && $hasSubscription ) {
 		            $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
@@ -315,7 +315,7 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 	            }
             }
             // If it's not a subscription-based product, but license-based
-            $hasNoSubscription = empty($product['subscription']) && empty($orderInfo['adls_subscription_setup_pending']);
+            $hasNoSubscription = empty($product['subscription']) && empty($product['adls_subscription_setup_pending']);
 	        if ( $hasNoSubscription ) {
 		        ReleaseManager::instance()->addUserLinks(
 			        $userId,

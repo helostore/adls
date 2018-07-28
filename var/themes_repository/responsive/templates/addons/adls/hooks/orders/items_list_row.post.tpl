@@ -1,4 +1,4 @@
-{if !empty($product) && !$product.extra.parent && !empty($product.license)}
+{if !empty($product) && !$product.extra.parent && (!empty($product.license) || !empty($product.releases))}
     {$colSpan = 4}
     {if $order_info.use_discount}
         {$colSpan = $colSpan + 1}
@@ -6,7 +6,6 @@
     {if $order_info.taxes && $settings.General.tax_calculation != "subtotal"}
         {$colSpan = $colSpan + 1}
     {/if}
-
     <tr class="ty-valign-top adls-order-item-license">
         <td colspan="{$colSpan}">
             {if !empty($product.license)}
@@ -24,16 +23,19 @@
                     <div class="ty-control-group clearfix">
                         <label class="ty-product-options__title">{__('adls.domains')}</label>
                         <div class="adls-license-domains" id="adls_license_domains_{$product.product_id}">
-                            <form class="cm-ajax cm-ajax-full-render" action="{""|fn_url}" method="post" name="adls_domains_update_{$product.product_id}">
-                                <input type="hidden" name="redirect_url" value="{$config.current_url}" />
-                                <input type="hidden" name="result_ids" value="adls_license_domains_*" />
-                                <input type="hidden" name="order_id" value="{$order_info.order_id}" />
+                            <form class="cm-ajax cm-ajax-full-render" action="{""|fn_url}" method="post"
+                                  name="adls_domains_update_{$product.product_id}">
+                                <input type="hidden" name="redirect_url" value="{$config.current_url}"/>
+                                <input type="hidden" name="result_ids" value="adls_license_domains_*"/>
+                                <input type="hidden" name="order_id" value="{$order_info.order_id}"/>
                                 {foreach from=$product.license->getDomains() item=domain}
                                     {$isDomainLicenseDisabled = fn_adls_license_is_disabled($domain.status)}
                                     {if !(empty($domain.name) && $isDomainLicenseDisabled)}
                                         <div class="adls-license-status status-{$domain.status|strtolower}">
                                             {if !fn_adls_license_is_disabled($domain.status)}
-                                                <input name="licenses[{$product.license->getId()}][domains][{$domain.id}]" value="{$domain.name}" class="ty-input-text adls-hostname" type="text" size="36" />
+                                                <input name="licenses[{$product.license->getId()}][domains][{$domain.id}]"
+                                                       value="{$domain.name}" class="ty-input-text adls-hostname"
+                                                       type="text" size="36"/>
                                             {else}
                                                 {$domain.name|default:""}
                                             {/if}
@@ -50,14 +52,12 @@
                             <!--adls_license_domains_{$product.product_id}--></div>
                     </div>
                 {/if}
-
-                {include file="addons/adls/views/adls_releases/components/product.tpl"}
-
-            </td>
-        </tr>
-        {* If there's a subscription attached to this product, let the subscription add-on to take care of retrieving the releases *}
-        {* Else, dump them here *}
-        {if empty($product.subscription)}
-        {/if}
+            {/if}
+            {include file="addons/adls/views/adls_releases/components/product.tpl"}
+        </td>
+    </tr>
+    {* If there's a subscription attached to this product, let the subscription add-on to take care of retrieving the releases *}
+    {* Else, dump them here *}
+    {if empty($product.subscription)}
     {/if}
 {/if}
