@@ -82,6 +82,10 @@ class PlatformRepository extends EntityRepository
             $condition[] = db_quote('platform.id = ?i', $params['id']);
         }
 
+        if (isset($params['slug'])) {
+            $condition[] = db_quote('platform.slug = ?s', $params['slug']);
+        }
+
         $joins = empty($joins) ? '' : implode(' ', $joins);
         $fields = empty($fields) ? 'platform.*' : implode(', ', $fields);
         $condition = implode(' AND ', $condition);
