@@ -15,11 +15,13 @@
 namespace HeloStore\ADLS\Compatibility;
 
 
+use HeloStore\ADLS\Platform\Platform;
 use HeloStore\ADLS\Platform\PlatformEditionRepository;
 use HeloStore\ADLS\Platform\PlatformRepository;
 use HeloStore\ADLS\Platform\PlatformVersion;
 use HeloStore\ADLS\Platform\PlatformVersionRepository;
 use HeloStore\ADLS\Singleton;
+use HeloStore\ADLS\Utils;
 
 /**
  * Class CompatibilitySetup
@@ -28,6 +30,84 @@ use HeloStore\ADLS\Singleton;
  */
 class CompatibilitySetup extends Singleton
 {
+    public function sync()
+    {
+        $platformRepository = PlatformRepository::instance();
+        $platform = $platformRepository->findOne([
+            'slug' => Platform::SLUG_WORDPRESS,
+        ]);
+        if (empty($platform)) {
+            throw new \Exception('WordPress platform not found in DB');
+        }
+        $versionRepository = PlatformVersionRepository::instance();
+        $latestLocalVersion = $versionRepository->findOne([
+            'platformId' => $platform->getId(),
+            'sort_by' => 'version',
+            'sort_order' => 'desc',
+            'items_per_page' => 1,
+        ]);
+        if (empty($latestLocalVersion)) {
+            throw new \Exception('Latest WordPress local version not found in DB');
+        }
+        $latestLVP = Utils::explodeVersion($latestLocalVersion->getVersion());
+        $maxIterations = 1000;
+        $i = 0;
+        $currentMinor = $latestLVP->minor;
+        $currentMajor = $latestLVP->major;
+        aa($latestLVP);
+        $emptyResponses = 0;
+        $emptyMinorResponse = 0;
+        $nextMinor = false;
+        $nextMajor = false;
+        while (true) {
+            if ($nextMinor) {
+                $currentMinor++;
+                $nextMinor = true;
+            }
+            if ($nextMajor) {
+                $currentMajor++;
+                $currentMinor = 0;
+                $nextMajor = false;
+            }
+            $apiUrl = 'http://displaywp.com/wp-json/version/' . $currentMajor . $currentMinor;
+            fn_echo('- request: ' . $apiUrl . "\n");
+            $json = file_get_contents($apiUrl);
+            $data = json_decode($json);
+            if (empty($data)) {
+                fn_echo("empty response \n");
+                $emptyMinorResponse++;
+                $nextMajor = true;
+                if ($emptyMinorResponse > 2) {
+                    fn_echo("Received second empty response, breaking  at ${currentMajor}.${currentMinor}\n");
+                    break;
+                }
+            } else {
+                $nextMinor = true;
+                if (!empty($data->minor_versions)) {
+                    foreach ($data->minor_versions as $remoteVersion) {
+                        $rv = $remoteVersion->number;
+                        fn_echo("- found remote version: $rv \n");
+                        $version = $versionRepository->findOne([
+                            'platformId' => $platform->getId(),
+                            'version' => $rv
+                        ]);
+                        aa($version);
+                        if (!empty($version)) {
+                            fn_echo("    - already have it, skipping \n");
+                            continue;
+                        }
+                        $versionRepository->add($platform->getId(), $rv, null, '', $remoteVersion->date);
+                        fn_echo("    - creating \n");
+                    }
+                }
+            }
+            $i++;
+            if ($i > $maxIterations) {
+                fn_echo("Warning: breaking loop after ' . $maxIterations . ' iterations\n");
+                break;
+            }
+        }
+    }
     public function make()
     {
         // Add platforms
