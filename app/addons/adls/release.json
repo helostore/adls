@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.101",
+        "releaseDate": "2020-03-08 03:07:06",
+        "releaseTimestamp": "1583680026",
+        "hash": "af126d387d5ffb5fb899d795352fe9ad21b85a05",
+        "commits": [
+            "[2020-03-08] Bumped version to 0.2.101",
+            "[2020-03-08]\tAdd function that syncs WP versions in local DB"
+        ]
+    },
+    {
         "version": "0.2.100",
         "releaseDate": "2018-06-20 07:33:12",
         "releaseTimestamp": "1529523192",
@@ -26,15 +36,6 @@
         "commits": [
             "[2018-05-12] Bumped version to 0.2.98",
             "[2018-05-12]\tProduction release status for customers should be added in controllers, not in repository"
-        ]
-    },
-    {
-        "version": "0.2.97",
-        "releaseDate": "2018-05-12 07:06:52",
-        "releaseTimestamp": "1526152012",
-        "hash": "a12a3afb6400a6d000b79c4272faba2f9f3ff177",
-        "commits": [
-            "[2018-05-12] Bumped version to 0.2.97"
         ]
     }
 ]
