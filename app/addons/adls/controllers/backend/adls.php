@@ -214,7 +214,7 @@ if ($mode == 'fix_orphaned_licenses') {
         if (empty($item)) {
             $license = $manager->getOrderLicense($license->getOrderId(), $license->getOrderItemId());
             if (!empty($license)) {
-                aa('Deleted orphan license #' . $license->getId());
+                fn_print_r('Deleted orphan license #' . $license->getId());
                 $licenseRepository->delete($license->getId());
             }
         }

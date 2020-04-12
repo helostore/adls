@@ -25,9 +25,14 @@ $exception = null;
 Logger::instance()->dump('API call: ' . $mode);
 
 try {
-	$response = $app->handleRequest($_REQUEST);
+    $requestData = $_REQUEST;
+    if ($_SERVER['CONTENT_TYPE'] === 'application/json') {
+        $json = file_get_contents('php://input');
+        $requestData = json_decode($json, true);
+    }
+	$response = $app->handleRequest($requestData);
 
-	Logger::instance()->log($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);
+	Logger::instance()->log($requestData, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);
     $httpCode = 200;
     http_response_code($httpCode);
 //	if (defined('WS_DEBUG')) {
