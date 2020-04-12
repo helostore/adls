@@ -54,7 +54,6 @@ class CompatibilitySetup extends Singleton
         $i = 0;
         $currentMinor = $latestLVP->minor;
         $currentMajor = $latestLVP->major;
-        aa($latestLVP);
         $emptyResponses = 0;
         $emptyMinorResponse = 0;
         $nextMinor = false;
@@ -91,7 +90,6 @@ class CompatibilitySetup extends Singleton
                             'platformId' => $platform->getId(),
                             'version' => $rv
                         ]);
-                        aa($version);
                         if (!empty($version)) {
                             fn_echo("    - already have it, skipping \n");
                             continue;

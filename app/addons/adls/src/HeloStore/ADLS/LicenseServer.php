@@ -16,6 +16,7 @@ namespace HeloStore\ADLS;
 
 use HeloStore\ADLSS\Subscription;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
+use HeloStore\hCaptcha\hCaptchaAPI;
 use Tygh\Storage;
 
 /**
@@ -38,12 +39,12 @@ class LicenseServer
      */
     public function handleRequest($request)
     {
+        $context = ! empty($request['context']) ? $request['context'] : '';
         $response = array(
             'code'    => LicenseClient::CODE_ERROR_ALIEN,
             'message' => '99 problems',
         );
 
-        $context = ! empty($request['context']) ? $request['context'] : '';
         if ($context == LicenseClient::CONTEXT_UPDATE_CHECK) {
             try {
                 $this->authorizeReadAccess($request);
@@ -61,6 +62,24 @@ class LicenseServer
                 $response = $this->updateRequest($request);
             } elseif ($context == LicenseClient::CONTEXT_UPDATE_DOWNLOAD) {
                 $response = $this->downloadRequest($request);
+            } elseif ($context === "configurationReq") {
+                $hCaptcha = new hCaptchaAPI(HCAPTCHA_API_KEY);
+                try {
+                    $vars = $this->requireRequestVariables($request, array('server.hostname'));
+                    $siteKey = $hCaptcha->addNewSite($vars['server.hostname']);
+                    if (!empty($siteKey)) {
+                        $response['code'] = LicenseClient::CODE_SUCCESS;
+                        $response['message'] = '';
+                        $response['siteKey'] = $siteKey;
+                        $response['secretKey'] = HCAPTCHA_SECRET_KEY;
+                    }
+                } catch (\Exception $exception) {
+                    $response = array(
+                        'code'    => LicenseClient::CODE_ERROR_ALIEN,
+                        'message' => $exception->getMessage(),
+                    );
+                }
+
             }
         } else {
             $response = array(
@@ -69,7 +88,6 @@ class LicenseServer
             );
             // log installs/uninstalls/everything
         }
-
         return $response;
     }
 
@@ -352,7 +370,6 @@ class LicenseServer
                 }
             }
         }
-//		ws_log_file($request, 'var/log/debug.log');
 
         $vars = array();
         foreach ($keys as $key) {
@@ -474,7 +491,7 @@ class LicenseServer
      */
     public function bakeToken($userId, $email, $challengeHash, $lastTokenDate)
     {
-        $expirationTime = 60;
+        $expirationTime = defined('ADLS_API_TOKEN_EXPIRATION') ? ADLS_API_TOKEN_EXPIRATION : 60;
         $expirationDate = $lastTokenDate + $expirationTime;
 
         // token time expired, update new expiration time (implicitly a new token will be baked)
@@ -582,7 +599,6 @@ class LicenseServer
 //			return $response;
 //		}
         $requestProduct = $request['product'];
-//		ws_log_file(array('$customerProduct' => $customerProduct), 'var/log/debug.log');
 
         if (empty($requestProduct['code'])) {
             return $response;
