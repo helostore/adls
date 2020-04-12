@@ -1,5 +1,16 @@
 [
     {
+        "version": "0.2.102",
+        "releaseDate": "2020-04-12 07:50:47",
+        "releaseTimestamp": "1586692247",
+        "hash": "ba0a9deeb615ca611b3a9f175a07c3951a17ee9a",
+        "commits": [
+            "[2020-04-12] Bumped version to 0.2.102",
+            "[2020-04-12]\tFeature: add backend for hCaptcha",
+            "[2020-03-19]\tUpdate cscart versions"
+        ]
+    },
+    {
         "version": "0.2.101",
         "releaseDate": "2020-03-08 03:07:06",
         "releaseTimestamp": "1583680026",
@@ -26,16 +37,6 @@
         "commits": [
             "[2018-06-20] Bumped version to 0.2.99",
             "[2018-06-20]\tMagic password\/license fix + no more review messages to clients"
-        ]
-    },
-    {
-        "version": "0.2.98",
-        "releaseDate": "2018-05-12 07:40:36",
-        "releaseTimestamp": "1526154036",
-        "hash": "2d8dce4665fbf7128e533bb3f6c91c66457cbec7",
-        "commits": [
-            "[2018-05-12] Bumped version to 0.2.98",
-            "[2018-05-12]\tProduction release status for customers should be added in controllers, not in repository"
         ]
     }
 ]
