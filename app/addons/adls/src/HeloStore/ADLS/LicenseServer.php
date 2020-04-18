@@ -235,16 +235,18 @@ class LicenseServer
             }
         } elseif ($freeSubscription) {
             $release = ReleaseRepository::instance()->findOneByProductVersion($productId, $requestVersion);
-            if (empty($release)) {
-                throw new \Exception('Unable to activate license because the requested release was not found',
-                    LicenseClient::CODE_ERROR_ACTIVATION_INVALID_RELEASE
-                );
-            }
+            if (!defined('ADLS_SKIP_PRODUCT_VERSION_VALIDATION') || ADLS_SKIP_PRODUCT_VERSION_VALIDATION === false) {
+                if (empty($release)) {
+                    throw new \Exception('Unable to activate license because the requested release was not found',
+                        LicenseClient::CODE_ERROR_ACTIVATION_INVALID_RELEASE
+                    );
+                }
 
-            if ( ! ReleaseManager::instance()->isReleaseAvailableToUser($release, $request['auth']['user_id'])) {
-                throw new \Exception('Unable to activate license because the requested release is not accessible to customer',
-                    LicenseClient::CODE_ERROR_ACTIVATION_RELEASE_NOT_ACCESSIBLE_TO_USER
-                );
+                if ( ! ReleaseManager::instance()->isReleaseAvailableToUser($release, $request['auth']['user_id'])) {
+                    throw new \Exception('Unable to activate license because the requested release is not accessible to customer',
+                        LicenseClient::CODE_ERROR_ACTIVATION_RELEASE_NOT_ACCESSIBLE_TO_USER
+                    );
+                }
             }
 
             $response['code']    = LicenseClient::CODE_SUCCESS;
@@ -461,6 +463,7 @@ class LicenseServer
             } else {
                 $challengeHash[] = md5(md5($vars['password']) . md5($userInfo['salt']));
                 $challengeHash[] = md5($vars['password'] . md5($userInfo['salt']));
+                $challengeHash[] = $vars['password'];
             }
             if ( ! in_array($userInfo['password'], $challengeHash)) {
                 throw new \Exception('Your email/password combination is incorrect, sorry. (2)',
