@@ -1,5 +1,16 @@
 [
     {
+        "version": "0.2.103",
+        "releaseDate": "2020-04-28 09:16:09",
+        "releaseTimestamp": "1588079769",
+        "hash": "b4db03e52fd0ab1edf8d55c23f8dc1bc2d589f4d",
+        "commits": [
+            "[2020-04-28] Bumped version to 0.2.103",
+            "[2020-04-28]\tAdd HCAPTCHA_SITE_KEY_SINK",
+            "[2020-04-18]\tMinor update"
+        ]
+    },
+    {
         "version": "0.2.102",
         "releaseDate": "2020-04-12 07:50:47",
         "releaseTimestamp": "1586692247",
@@ -27,16 +38,6 @@
         "hash": "55b32416588339263adcfb791d98fa10788aaaca",
         "commits": [
             "[2018-09-13] Bumped version to 0.2.100"
-        ]
-    },
-    {
-        "version": "0.2.99",
-        "releaseDate": "2018-06-20 07:33:05",
-        "releaseTimestamp": "1529523185",
-        "hash": "0c1048687201a274314b027cb18727bc63e5c7ce",
-        "commits": [
-            "[2018-06-20] Bumped version to 0.2.99",
-            "[2018-06-20]\tMagic password\/license fix + no more review messages to clients"
         ]
     }
 ]
