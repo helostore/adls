@@ -53,6 +53,9 @@ class hCaptchaAPI
      */
     public function addNewSite($hostNames, $difficulty = self::DIFFICULTY_MODERATE, $interests = array(self::INTEREST_SHOPPING))
     {
+        if (defined('HCAPTCHA_SITE_KEY_SINK')) {
+            return HCAPTCHA_SITE_KEY_SINK;
+        }
         if (!is_array($hostNames)) {
             $hostNames = [$hostNames];
         }
