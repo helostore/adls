@@ -22,7 +22,13 @@
 						<td>{$entry.requests}</td>
 						<td>
                             {foreach from=$entry.hostname key="hostname" item="productVersions"}
-                                {$hostname} ({", "|implode:$productVersions})
+                                {$hostname}
+								{if is_array($productVersions)}
+									({", "|implode:$productVersions})
+								{else}
+									({$productVersions})
+								{/if}
+								<br>
                             {/foreach}
 {*							{if is_array($entry.hostname.0)}
 
