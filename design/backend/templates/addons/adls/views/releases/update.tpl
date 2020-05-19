@@ -1,9 +1,9 @@
 <style>
     .compatibility {
         display: flex;
-        flex-direction: column;
-        max-width: 800px;
-        max-height: 400px;
+        flex-direction: row;
+        max-width: 900px;
+        /*max-height: 400px;*/
         flex-wrap: wrap;
     }
     .compatibility-version {
