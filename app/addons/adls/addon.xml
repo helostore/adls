@@ -7,6 +7,9 @@
     <status>active</status>
     <has_icon>Y</has_icon>
     <default_language>en</default_language>
+    <functions>
+        <item for="install">fn_adls_install</item>
+    </functions>
     <queries>
         <item for="install">
             CREATE TABLE IF NOT EXISTS `?:adls_licenses` (
@@ -127,23 +130,35 @@
             )
         </item>
 
-        <item for="install">ALTER TABLE `?:usergroups`
-            ADD COLUMN `release_status`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '';</item>
-
         <item for="install">ALTER TABLE `?:products` ADD `adls_subscription_id` smallint(2);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_date` INT(11);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_version` VARCHAR(16);</item>
-        <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
         <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_slug` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL AFTER `adls_subscription_id`</item>
         <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_licenseable` tinyint(1) UNSIGNED NOT NULL DEFAULT 0</item>
+        <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
+        <item for="install">ALTER TABLE `?:usergroups` ADD COLUMN `release_status`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '';</item>
 
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_date`;</item>
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_version`;</item>
-        <item for="___uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
-        <item for="___uninstall">ALTER TABLE `?:usergroups` DROP `release_status`;</item>
+
+        <item for="uninstall">DROP TABLE `?:adls_licenses`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_license_domains`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_logs`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_release_access`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_releases`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_platforms`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_platform_editions`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_platform_versions`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_compatibility`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_sources`;</item>
+
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_release_date`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_release_version`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_slug`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_licenseable`;</item>
+        <item for="uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
+        <item for="uninstall">ALTER TABLE `?:usergroups` DROP `release_status`;</item>
 
     </queries>
     <settings edition_type="ROOT">

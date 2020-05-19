@@ -357,7 +357,6 @@ if ($mode == 'manage' && ! empty($_REQUEST['productId'])) {
     $platform = $platformRepository->findOneById($platformId);
     Registry::get('view')->assign('platform', $platform);
 
-
     $productManager->hydrateProductWithReleases($product, $platform);
     /** @var \HeloStore\ADLS\Release $release */
     foreach ($product['releases'] as $release) {

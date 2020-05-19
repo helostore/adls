@@ -30,6 +30,11 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 /* Hooks */
 
+function fn_adls_install() {
+    require_once __DIR__ . '/init.php';
+    \HeloStore\ADLS\Compatibility\CompatibilitySetup::instance()->make();
+    \HeloStore\ADLS\Compatibility\CompatibilitySetup::instance()->sync();
+}
 function fn_adls_get_orders_post($params, &$orders)
 {
     foreach ($orders as &$order) {
