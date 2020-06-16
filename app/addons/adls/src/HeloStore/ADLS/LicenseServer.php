@@ -32,14 +32,19 @@ class LicenseServer
 
     /**
      * @param $request
-     *
+     * @param array $server
+     * @param array $runtime
      * @return array
      * @throws \Exception
-     * @throws \Tygh\Exceptions\DeveloperException
      */
-    public function handleRequest($request)
+    public function handleRequest($request, $server = array(), $runtime = array())
     {
         $context = ! empty($request['context']) ? $request['context'] : '';
+        if (empty($context) && !empty($server) && !empty($runtime)) {
+            if ($server['REQUEST_METHOD'] === 'GET' && !empty($runtime['mode'])) {
+                $context = $runtime['mode'];
+            }
+        }
         $response = array(
             'code'    => LicenseClient::CODE_ERROR_ALIEN,
             'message' => '99 problems',
@@ -53,6 +58,11 @@ class LicenseServer
             $response = $this->checkUpdates($request);
         } elseif ($context == LicenseClient::CONTEXT_AUTHENTICATION) {
             $response = $this->authenticate($request);
+        } elseif ($context === LicenseClient::CONTEXT_PING) {
+            $response = array(
+                'code'    => 200,
+                'message' => 'pong',
+            );
         } elseif ($this->authorize($request)) {
             if ($context == LicenseClient::CONTEXT_ACTIVATE) {
                 $response = $this->activate($request);

@@ -30,7 +30,10 @@ try {
         $json = file_get_contents('php://input');
         $requestData = json_decode($json, true);
     }
-	$response = $app->handleRequest($requestData);
+	$response = $app->handleRequest($requestData, $_SERVER, array(
+        'controller' => $controller,
+        'mode' => $mode,
+    ));
 
 	Logger::instance()->log($requestData, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);
     $httpCode = 200;
