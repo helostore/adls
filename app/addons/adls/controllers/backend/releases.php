@@ -371,11 +371,12 @@ if ($mode == 'manage' && ! empty($_REQUEST['productId'])) {
     }
 
     Registry::get('view')->assign('product', $product);
+    if (!empty($_REQUEST['showUsage'])) {
+        $usage = \HeloStore\ADLS\Usage::productPlatforms($product['adls_slug']);
+        \Tygh\Registry::get('view')->assign('usage', $usage);
 
-    $usage = \HeloStore\ADLS\Usage::productPlatforms($product['adls_slug']);
-    \Tygh\Registry::get('view')->assign('usage', $usage);
-
-    $usage = \HeloStore\ADLS\Usage::productVersions($product['adls_slug']);
-    \Tygh\Registry::get('view')->assign('usageProductVersions', $usage);
+        $usage = \HeloStore\ADLS\Usage::productVersions($product['adls_slug']);
+        \Tygh\Registry::get('view')->assign('usageProductVersions', $usage);
+    }
 }
 
