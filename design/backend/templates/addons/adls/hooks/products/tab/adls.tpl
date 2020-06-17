@@ -67,9 +67,18 @@
             </div>
         </div>
 
-
-        {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
-        {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
+        {if !empty($smarty.request.showUsage)}
+            <h3>Usage</h3>
+            {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
+            {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
+            <p>
+                <a class="btn" href="{"products.update?product_id=`$smarty.request.product_id`&selected_section=adls"|fn_url}">Hide Usage</a>
+            </p>
+        {else}
+            <p>
+                <a class="btn" href="{"products.update?product_id=`$smarty.request.product_id`&selected_section=adls&showUsage=1"|fn_url}">Show Usage</a>
+            </p>
+        {/if}
     </div>
 
     <!--content_adls--></div>
