@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.107",
+        "releaseDate": "2020-06-17 04:09:52",
+        "releaseTimestamp": "1592381392",
+        "hash": "50a4e531540370eba41c1fa1c6cb96ca73cc384a",
+        "commits": [
+            "[2020-06-17] Bumped version to 0.2.107",
+            "[2020-06-17]\tAdd\/show Releases Usage to Product Update page, too cpu-intensive due to text-based patterns search in DB"
+        ]
+    },
+    {
         "version": "0.2.106",
         "releaseDate": "2020-06-17 02:08:22",
         "releaseTimestamp": "1592374102",
@@ -28,17 +38,6 @@
         "commits": [
             "[2020-05-19] Bumped version to 0.2.104",
             "[2020-05-19]\tBugfix"
-        ]
-    },
-    {
-        "version": "0.2.103",
-        "releaseDate": "2020-04-28 09:16:09",
-        "releaseTimestamp": "1588079769",
-        "hash": "b4db03e52fd0ab1edf8d55c23f8dc1bc2d589f4d",
-        "commits": [
-            "[2020-04-28] Bumped version to 0.2.103",
-            "[2020-04-28]\tAdd HCAPTCHA_SITE_KEY_SINK",
-            "[2020-04-18]\tMinor update"
         ]
     }
 ]
