@@ -1,5 +1,15 @@
 [
     {
+        "version": "0.2.106",
+        "releaseDate": "2020-06-17 02:08:22",
+        "releaseTimestamp": "1592374102",
+        "hash": "0522edfc5cbc310a23a3fe6082f7f1811140a982",
+        "commits": [
+            "[2020-06-17] Bumped version to 0.2.106",
+            "[2020-06-17]\tAdd\/show Releases Usage, too cpu-intensive due to text-based patterns search in DB"
+        ]
+    },
+    {
         "version": "0.2.105",
         "releaseDate": "2020-06-16 10:34:54",
         "releaseTimestamp": "1592318094",
@@ -29,17 +39,6 @@
             "[2020-04-28] Bumped version to 0.2.103",
             "[2020-04-28]\tAdd HCAPTCHA_SITE_KEY_SINK",
             "[2020-04-18]\tMinor update"
-        ]
-    },
-    {
-        "version": "0.2.102",
-        "releaseDate": "2020-04-12 07:50:47",
-        "releaseTimestamp": "1586692247",
-        "hash": "ba0a9deeb615ca611b3a9f175a07c3951a17ee9a",
-        "commits": [
-            "[2020-04-12] Bumped version to 0.2.102",
-            "[2020-04-12]\tFeature: add backend for hCaptcha",
-            "[2020-03-19]\tUpdate cscart versions"
         ]
     }
 ]
