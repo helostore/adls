@@ -1,6 +1,6 @@
 <span class="adls-highlight">
     {$htmlId = "license_`$license->getId()`"}
-    <input value="{$license->getLicenseKey()}" readonly="readonly" class="ty-input-text" type="text" id="{$htmlId}" size="36"/>
+    <input value="{$license->getLicenseKey()}" readonly="readonly" class="ty-input-text adls-license-status status-{$license->getStatus()|strtolower}" type="text" id="{$htmlId}" size="30"/>
     <button class="ty-btn ty-btn__secondary adls-clipboard" data-clipboard-target="#{$htmlId}"
             title="{__('adls.copy_to_clipboard')}">
         <i class="fa fa-clipboard"></i>

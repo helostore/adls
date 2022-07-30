@@ -12,6 +12,8 @@
  * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  ****************************************************************************/
 
+use HeloStore\ADLS\Compatibility\CompatibilityRepository;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use HeloStore\ADLSS\Subscription\SubscriptionRepository;
@@ -67,6 +69,12 @@ if ($mode == 'view') {
         $params['sort_by'] = $_REQUEST['sort_by'];
     }
 
+	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+		$params['status'] = $auth['release_status'];
+	}
+    $params['status'][] = Release::STATUS_PRODUCTION;
+
+
     if ( ! empty( $productId ) ) {
         list( $releases, $search ) = ReleaseRepository::instance()->find( $params );
     } else {
@@ -75,14 +83,19 @@ if ($mode == 'view') {
 
     ReleaseManager::instance()->checkFileIntegrity($releases);
 
+
     /** @var \HeloStore\ADLS\Release $release */
     foreach ($releases as $release) {
 
         $compatibilities = [];
         if ( ! empty($release)) {
-            list($compatibilities, ) = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->find(array(
+            $compatibilityParams = array(
                 'releaseId' => $release->getId(),
-            ));
+            );
+            if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+                $compatibilityParams['releaseStatus'] = $auth['release_status'];
+            }
+            list($compatibilities, ) = CompatibilityRepository::instance()->find($compatibilityParams);
             $release->setCompatibility($compatibilities);
         }
     }
@@ -95,9 +108,16 @@ if ($mode == 'view') {
 
 if ($mode == 'download' && !empty($_REQUEST['hash'])) {
     $releaseRepository = ReleaseRepository::instance();
-    $subscriptionRepository = SubscriptionRepository::instance();
     $hash = strval($_REQUEST['hash']);
-	$release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'] );
+    $params = array();
+    $params['status'] = array();
+	if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+		$params['status'] = $auth['release_status'];
+	}
+    $params['status'][] = Release::STATUS_PRODUCTION;
+
+
+    $release = ReleaseRepository::instance()->findOneByHashUser( $hash, $auth['user_id'], $params );
     if (empty($release)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }

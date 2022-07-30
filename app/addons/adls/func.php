@@ -16,6 +16,7 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\ProductRepository;
 use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseAccessRepository;
 use HeloStore\ADLS\ReleaseManager;
@@ -29,6 +30,11 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 /* Hooks */
 
+function fn_adls_install() {
+    require_once __DIR__ . '/init.php';
+    \HeloStore\ADLS\Compatibility\CompatibilitySetup::instance()->make();
+    \HeloStore\ADLS\Compatibility\CompatibilitySetup::instance()->sync();
+}
 function fn_adls_get_orders_post($params, &$orders)
 {
     foreach ($orders as &$order) {
@@ -245,7 +251,8 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
     $controller = Registry::get('runtime.controller');
     // For now, we don't want to go any further if there's an admin editing an order
     // @see app/addons/paypal/controllers/common/payment_notification.post.php:37
-    $isHumanOrderManagement = (defined('ORDER_MANAGEMENT') && $controller !== 'payment_notification');
+//    $isHumanOrderManagement = (defined('ORDER_MANAGEMENT') && $controller !== 'payment_notification');
+    $isHumanOrderManagement = false;
 
     if ($isHumanOrderManagement) {
         return false;
@@ -304,13 +311,10 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
                     }
                 }
             } else {
-
-
-                // @TODO move this into an option per product, eg. "This product generates license keys"
-                // if is sidekick, don't generate license
-                $isSidekick = ($productId == 5);
+                $storeProduct = ProductRepository::instance()->findOneById($productId);
                 $hasSubscription = ! empty($product['subscription']) || ! empty($product['adls_subscription_setup_pending']);
-	            if (!$isSidekick && $hasSubscription ) {
+                $isLicenseable = ! empty($storeProduct['adls_licenseable']) && $storeProduct['adls_licenseable'] == 1;
+	            if ($hasSubscription || $isLicenseable) {
 		            $licenseId = $manager->createLicense($productId, $itemId, $orderId, $userId);
 		            if ($licenseId) {
 			            fn_set_notification('N', __('notice'), __('adls.order_licenses_created'), $notificationState);
@@ -334,7 +338,9 @@ function fn_adls_process_order($orderInfo, $orderStatus, $statusFrom = null)
 
         } else {
             if (!defined('ORDER_MANAGEMENT')) {
-	            $manager->doDisableLicense( $licenseId );
+                if ( ! empty($licenseId)) {
+                    $manager->doDisableLicense( $licenseId );
+                }
             }
         }
     }
@@ -567,7 +573,6 @@ function fn_adls_adlss_get_subscriptions_post(&$items , $params ) {
 	if ( empty( $params['extended'] ) ) {
 		return;
 	}
-
 	/** @var Subscription $subscription */
 	foreach ( $items as $subscription ) {
 		$domains = $subscription->getExtra( 'license$domains' );
@@ -607,8 +612,9 @@ function fn_adls_adlss_get_subscriptions( &$fields, $table, &$joins, $condition,
 				ON license.orderId = subscription.orderId 
 				AND license.userId = subscription.userId
 				AND license.productId = subscription.productId
+				AND license.orderItemId = subscription.itemId
 				');
-		// @TODO: should have condition to join by `AND license.orderItemId = subscription.itemId`, but the item IDs get desync'ed for some reason (same item ends up with different IDs)
+		// <del>@TODO: should have condition to join by `AND license.orderItemId = subscription.itemId`, but the item IDs get desync'ed for some reason (same item ends up with different IDs)</del>
 		$fields[] = 'license.licenseKey AS license$licenseKey';
 		$fields[] = 'license.status AS license$status';
 		$fields[] = 'license.id AS license$id';
@@ -653,16 +659,74 @@ function fn_adls_gather_additional_product_data_post(&$product, $auth, $params) 
 	if ( AREA != 'C' ) {
 		return;
 	}
-	$releaseCount = ReleaseRepository::instance()->countByProductId($product['product_id']);
-	if ( empty( $releaseCount ) ) {
+    if (empty($product['adls_slug'])) {
+        return;
+    }
 
+	$params = array(
+//		'userId'     => $auth['user_id'],
+		'productId'  => $product['product_id'],
+		'status'  => array(Release::STATUS_PRODUCTION),
+		'extended'   => true,
+		'compatibilities'   => true,
+	);
+
+
+	if ( ! empty( $auth )) {
+        $releaseStatus = array();
+        if (!empty($auth['usergroup_ids'])) {
+            $releaseStatus = fn_adls_get_usergroups_release_status( $auth['usergroup_ids'] );
+        }
+
+		$params['status'] = array_merge( $params['status'], $releaseStatus );
+	}
+
+	list($releases, ) = ReleaseRepository::instance()->find($params);
+
+    list($betaReleases, ) = ReleaseRepository::instance()->find(array(
+        'productId'  => $product['product_id'],
+        'status' => Release::STATUS_BETA,
+        'extended'   => true,
+        'compatibilities'   => true,
+    ));
+    if ( ! empty( $betaReleases ) ) {
+        $product['has_beta_testing_program'] = true;
+    }
+
+	if ( empty( $releases ) ) {
 //		$product['out_of_stock_actions'] = 'S';
 //		$product['tracking'] = 'B';
 //		$product['amount'] = 0;
-		$product['price'] = 0;
-		$product['zero_price_action'] = 'R';
-		$product['full_description'] .= '<h2>This product has not been released yet.</h2>';
+        $product['product_options'] = array();
+        $product['has_options'] = false;
+        $product['zero_price_action'] = 'R';
+        $product['price'] = 0;
+//        $product['avail_since'] = TIME + 60 * 60 * 24 * 30;
+
+		if ( ! empty( $betaReleases ) ) {
+			$product['full_description'] .= __('adls.product.beta_testing_sign_up_text', array(
+				'[join_url]' => fn_url('profiles.update?selected_section=usergroups'),
+				'[login_url]' => fn_url('auth.login_form'),
+				'[register_url]' => fn_url('profiles.add'),
+			));
+		} else {
+            $product['full_description'] .= __('adls.product.not_released_yet');
+        }
 	}
+
+
+    if ( ! empty( $betaReleases ) ) {
+        list( $pages, ) = fn_get_pages( array(
+            'tag' => 'beta-testing-agreement'
+        ), 1);
+        if ( ! empty( $pages ) ) {
+            $agreementPage = reset( $pages );
+        }
+        if ( ! empty( $agreementPage ) ) {
+            $url = fn_url( 'pages.view?page_id=' . $agreementPage['page_id'] );
+            $product['full_description'] .= __('adls.product.beta_testing_agreement_text', array('[url]' => $url));
+        }
+    }
 }
 
 /**
@@ -681,9 +745,46 @@ function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
     }
     $product['compatibility'] = array();
     foreach ($platforms as $platform) {
-        $pair = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId, $platform->getId());
+        $pair = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId, $platform->getId(), array(
+        	'auth' => $auth
+        ));
         if (!empty($pair['min']) && !empty($pair['max'])) {
             $product['compatibility'][] = $pair;
         }
     }
+}
+
+function fn_adls_get_usergroups_release_status($userGroupIds) {
+	$releaseStatuses = db_get_fields( 'SELECT release_status FROM ?:usergroups WHERE usergroup_id IN (?a) AND release_status IS NOT NULL AND release_status <> \'\'', $userGroupIds);
+	if ( empty( $releaseStatuses ) ) {
+		return array();
+	}
+
+	$array = array();
+	foreach ( $releaseStatuses as $enum ) {
+		$enum = explode( ',', $enum );
+		$array = array_merge( $array, $enum );
+	}
+	$array = array_unique( $array );
+
+	return $array;
+}
+/**
+ * @param $auth
+ * @param $user_data
+ * @param $area
+ * @param $original_auth
+ */
+function fn_adls_fill_auth(&$auth, $user_data, $area, $original_auth) {
+	if ( empty( $auth ) ) {
+		return;
+	}
+	if ( empty( $auth['user_id'] ) ) {
+		return;
+	}
+	if ( empty( $auth['usergroup_ids'] ) ) {
+		return;
+	}
+
+	$auth['release_status'] = fn_adls_get_usergroups_release_status( $auth['usergroup_ids'] );
 }

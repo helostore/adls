@@ -1,0 +1,1 @@
+{include file="addons/adls/hooks/products/tab/sources.tpl"}

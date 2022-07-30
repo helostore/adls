@@ -1,0 +1,332 @@
+msgid ""
+msgstr "Project-Id-Version: tygh"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language-Team: English\n"
+"Language: en_US"
+
+msgctxt "Addons::name::adls"
+msgid "Sistem de gestionare și distribuire a licențelor pentru aplicații"
+msgstr "Application Distribution License System"
+
+msgctxt "Addons::description::adls"
+msgid "Manages your digital licenses"
+msgstr "Manages your digital licenses"
+
+msgctxt "SettingsOptions::adls::email"
+msgid "HELOstore email"
+msgstr "HELOstore email"
+
+msgctxt "SettingsOptions::adls::password"
+msgid "HELOstore password"
+msgstr "HELOstore password"
+
+msgctxt "SettingsOptions::adls::license"
+msgid "License key"
+msgstr "License key"
+
+msgctxt "Languages::adls.copy_to_clipboard"
+msgid "adls.copy_to_clipboard"
+msgstr "Copy to clipboard"
+
+msgctxt "Languages::adls.license"
+msgid "adls.license"
+msgstr "License key"
+
+msgctxt "Languages::adls.domains"
+msgid "adls.domains"
+msgstr "Domains"
+
+msgctxt "Languages::adls.domains.update"
+msgid ""
+msgstr "Update domains"
+
+
+msgctxt "Languages::adls"
+msgid "adls"
+msgstr "ADLS"
+
+msgctxt "Languages::adls.product_option_type"
+msgid "product_option_type"
+msgstr "ADLS option type"
+
+msgctxt "Languages::adls.product_type"
+msgid "product_type"
+msgstr "Product type"
+
+msgctxt "Languages::adls.addon"
+msgid "addon"
+msgstr "Add-on"
+
+msgctxt "Languages::adls.subscription_type"
+msgid "subscription_type"
+msgstr "Subscription type"
+
+msgctxt "Languages::adls.downloads"
+msgid ""
+msgstr "Downloads"
+
+
+msgctxt "Languages::adls.license.status.i"
+msgid "i"
+msgstr "Inactive"
+
+msgctxt "Languages::adls.license.status.a"
+msgid "a"
+msgstr "Active"
+
+msgctxt "Languages::adls.license.status.d"
+msgid "d"
+msgstr "Disabled"
+
+msgctxt "Languages::adls.license.status."
+msgid "Unknown"
+msgstr "Unknown"
+
+msgctxt "Languages::adls.license.status"
+msgid "Status"
+msgstr "License status"
+
+msgctxt "Languages::adls.license.key"
+msgid "key"
+msgstr "License key"
+
+msgctxt "Languages::adls.license.updatedAt"
+msgid "updatedAt"
+msgstr "Updated"
+
+msgctxt "Languages::adls.license.createdAt"
+msgid "createdAt"
+msgstr "Created"
+
+
+
+msgctxt "Languages::adls.license_status_inactive"
+msgid "license_status_inactive"
+msgstr "Inactive, ready to be used"
+
+msgctxt "Languages::adls.license_status_active"
+msgid "license_status_active"
+msgstr "Active"
+
+msgctxt "Languages::adls.license_status_disabled"
+msgid "license_status_disabled"
+msgstr "Disabled"
+
+msgctxt "Languages::adls.license_status_unknown"
+msgid "license_status_unknown"
+msgstr "Unknown"
+
+
+msgctxt "Languages::adls.licenses"
+msgid "licenses"
+msgstr "Licenses"
+
+msgctxt "Languages::adls.usage"
+msgid "usage"
+msgstr "Usage"
+
+msgctxt "Languages::adls.order_licenses_created"
+msgid "order_licenses_created"
+msgstr "Your license(s) have been created!"
+
+msgctxt "Languages::adls.order_licenses_inactivated"
+msgid "order_licenses_inactivated"
+msgstr "Your license(s) have been inactivated and will require re-activation."
+
+msgctxt "Languages::adls.order_licenses_disabled"
+msgid "order_licenses_disabled"
+msgstr "Your license(s) have been disabled."
+
+msgctxt "Languages::adls.order_license_production_domain_updated"
+msgid "order_license_production_domain_updated"
+msgstr "Production domain was changed from <b>[old]</b> to <b>[new]</b>. The license can now be activated on the new domain."
+
+msgctxt "Languages::adls.order_license_development_domain_updated"
+msgid "order_license_development_domain_updated"
+msgstr "Development domain was changed from <b>[old]</b> to <b>[new]</b>. The license can now be activated on the new domain. <br><br>Please note: this domain should belong to a <u>development</u> environment (ie. a store which is closed, non-public or not indexed by Google)."
+
+msgctxt "Languages::adls.order_license_domain_update_failed_license_is_disabled"
+msgid "order_license_domain_update_failed_license_is_disabled"
+msgstr "Sorry, there was a problem while trying to update the domain: [domain]. Your license is <b>disabled</b>."
+
+msgctxt "Languages::adls.order_license_domain_update_failed"
+msgid "adls.order_license_domain_update_failed"
+msgstr "Sorry, there was a problem while trying to update the domain: [domain]"
+
+msgctxt "Languages::adls.order_licenses_disabled"
+msgid "order_licenses_disabled"
+msgstr "Your license(s) have been disabled."
+
+msgctxt "Languages::adls.hostname"
+msgid "adls.hostname"
+msgstr "Hostname"
+
+msgctxt "Languages::adls.releases"
+msgid "adls.releases"
+msgstr "Releases"
+
+msgctxt "Languages::adls.date"
+msgid "adls.date"
+msgstr "Date"
+
+msgctxt "Languages::adls.development"
+msgid "adls.development"
+msgstr "Development"
+
+msgctxt "Languages::adls.version"
+msgid "adls.version"
+msgstr "Version"
+
+
+
+
+msgctxt "Languages::adls.release_now"
+msgid "adls.release_now"
+msgstr "Release"
+
+msgctxt "Languages::adls.release.download"
+msgid ""
+msgstr "Download"
+
+msgctxt "Languages::adls.release.publish"
+msgid ""
+msgstr "Publish"
+
+msgctxt "Languages::adls.release.unpublish"
+msgid ""
+msgstr "Unpublish"
+
+msgctxt "Languages::adls.release.new.title"
+msgid ""
+msgstr "New release"
+
+msgctxt "Languages::adls.release.new.submit"
+msgid "Add"
+msgstr "Add"
+
+msgctxt "Languages::adls.release.edit.title"
+msgid ""
+msgstr "Edit release #%id%"
+
+msgctxt "Languages::adls.release.edit.submit"
+msgid "Update"
+msgstr "Update"
+
+msgctxt "Languages::adls.release.version"
+msgid ""
+msgstr "Release version"
+
+msgctxt "Languages::adls.release.created_at"
+msgid ""
+msgstr "Created at"
+
+msgctxt "Languages::adls.release.hash"
+msgid ""
+msgstr "Hash"
+
+msgctxt "Languages::adls.release.file.name"
+msgid ""
+msgstr "File name"
+
+msgctxt "Languages::adls.release.status.a"
+msgid ""
+msgstr "Alpha"
+
+msgctxt "Languages::adls.release.status.b"
+msgid ""
+msgstr "Beta"
+
+msgctxt "Languages::adls.release.status.c"
+msgid ""
+msgstr "Candidate"
+
+msgctxt "Languages::adls.release.status.p"
+msgid ""
+msgstr "Production"
+
+msgctxt "Languages::adls.release.status.d"
+msgid ""
+msgstr "Discontinued"
+
+
+
+
+
+
+msgctxt "Languages::adls.compatibility"
+msgid ""
+msgstr "Compatibility"
+
+msgctxt "Languages::adls.commits"
+msgid "adls.commits"
+msgstr "Commits"
+
+msgctxt "Languages::adls.view_commits"
+msgid "adls.view_commits"
+msgstr "View ([count])"
+
+msgctxt "Languages::adls.api.update.message"
+msgid ""
+msgstr "An update is available for <b>[addon]</b> add-on from version [currentVersion] to [nextVersion]. <a href='[updateUrl]' class='cm-ajax cm-comet cm-notification-close' onclick=\"$.ceNotification('closeAll');\">Click here to update</a>."
+
+
+msgctxt "Languages::adls.api.update.title"
+msgid ""
+msgstr "Fresh code"
+
+msgctxt "Languages::adls.usergroup.release_status_access"
+msgid ""
+msgstr "Release access"
+
+msgctxt "Languages::adls.api.update.upsell.message"
+msgid ""
+msgstr "There is a new version of <b>[addon]</b> add-on, but you first need to renew your subscription in order to upgrade. <a href='[updateUrl]' target='_bl'>Click here to renew</a> (your version: [currentVersion], latest version: [nextVersion])"
+
+msgctxt "Languages::adls.product.not_released_yet"
+msgid ""
+msgstr "<h2>This product has not been released yet.</h2>"
+
+msgctxt "Languages::adls.product.beta_test_group_short"
+msgid ""
+msgstr "Early Beta Access"
+
+msgctxt "Languages::adls.product.not_released_yet_short"
+msgid ""
+msgstr "Not Released Yet."
+
+
+msgctxt "Languages::adls.product.beta_testing_sign_up_text"
+msgid ""
+msgstr
+    "<h2>Early Beta Access</h2>"
+    "<hr>"
+    "<ol>"
+    "<li><a href=\"[register_url]\" target=\"_blank\"><strong>Register for a new account</strong></a> or <a href=\"[login_url]\" target=\"_blank\"><strong>login into your existing account</strong>.</li>"
+    "<li><a target=\"[join_url]\">Join our <strong>\"Beta Testing\" group </strong></a> in your profile page.</li>"
+    "<li>Order this product for free and get early beta access.</li>"
+    "</ol>"
+
+msgctxt "adls.product.beta_testing_agreement_text"
+msgid ""
+msgstr "<br /><p>Disclaimer: by signing up to our \"Beta Testing\" group, you implicitly agree with our <a href=\"[url]\" target=\"_blank\">Beta Testing Participant Agreement</a>.</p>"
+
+msgctxt "Languages::adls.group.join_notification"
+msgid ""
+msgstr "Your request will be promptly reviewed. Thank you."
+
+msgctxt "Languages::adls.platforms"
+msgid ""
+msgstr "Platforms"
+
+msgctxt "Languages::adls.sources"
+msgid ""
+msgstr "Sources"
+
+msgctxt "Languages::adls.source.add"
+msgid ""
+msgstr "Add source"
+
+msgctxt "Languages::adls.licenseable"
+msgid ""
+msgstr "Licenseable"
+

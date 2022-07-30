@@ -6,7 +6,7 @@
     vertical-align: top;
     border: 1px dashed #c3c3c3;
     height: auto;
-    width: 230px;
+    width: auto !important;
   }
   input[type="text"]:hover,
   input[type="text"]:focus {
@@ -14,19 +14,19 @@
   }
   .ty-btn {
     position: absolute;
-    right: 5px;
+    right: 0;
     top: 0;
     border: medium none;
     display: inline-block;
-    width: 50px;
+    width: 60px;
     height: 40px;
   }
   .ty-btn i {
-    top: 14px;
-    position: absolute;
+    margin-right: 0;
   }
 }
-.adls-license-status {
+
+.adls-license-domains .adls-license-status {
   display: block;
   font-size: 1.1em;
   line-height: 1.3em;
@@ -40,7 +40,7 @@
   color: #007FFF;
 }
 .adls-license-status.status-d {
-  color: #5A5A5A;
+  color: #9a9a9a;
 }
 
 .adls-license-domains {
@@ -58,6 +58,21 @@
     }
   }
 
+}
+.adls-product-option-d,
+.adls-product-option-p {
+}
+.adls-product-option-input {
+  margin-right: 10px;
+
+}
+.adls-product-option-button {
+  vertical-align: inherit;
+  font-size: 2em;
+  cursor: pointer;
+}
+.adls-typing {
+  border-color: #ED0057 !important;
 }
 
 .ty-product-notification__body {
@@ -140,10 +155,10 @@
   transform: scale(0.4);
 }
 .icon.svg {
-  left: auto;
   position: absolute;
-  right: -15px;
   top: -15px;
+  margin: 0;
+  right: -5px;
 }
 
 .inlinesvg .svg svg {
@@ -151,17 +166,23 @@
 }
 
 .icon--order-success svg path {
-  -webkit-animation: checkmark 0.25s ease-in-out 0.7s backwards;
-  animation: checkmark 0.25s ease-in-out 0.7s backwards
+  -webkit-animation: checkmark 0.15s ease-in-out 0.3s backwards;
+  animation: checkmark 0.15s ease-in-out 0.3s backwards
 }
 
 .icon--order-success svg circle {
-  -webkit-animation: checkmark-circle 0.6s ease-in-out backwards;
-  animation: checkmark-circle 0.6s ease-in-out backwards
+  -webkit-animation: checkmark-circle 0.3s ease-in-out backwards;
+  animation: checkmark-circle 0.3s ease-in-out backwards
 }
 /* /Animations */
 
 .ty-sidebox__body .ty-product-options {
-
   margin-left: 15px;
+}
+
+.adls-not-released {
+  color: rgba(51, 51, 51, 0.43);
+}
+.adls-beta-test {
+  color: #13bd00;
 }

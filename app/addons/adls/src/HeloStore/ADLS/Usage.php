@@ -154,8 +154,8 @@ class Usage
         $params['productCode'] = $productCode;
         $params['objectAction'] = 'update_check';
         $params['excludeIps'] = array(
-            '***REMOVED***'
-        , '127.0.0.1'
+            '***REMOVED***',
+            '127.0.0.1'
         );
         $params['fromDate'] = new \DateTime("-30 days");
         list($logs, $result) = $logger->get($params);

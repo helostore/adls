@@ -19,21 +19,39 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 // header("HTTP/1.1 404 Not Found"); exit;
 $app = new LicenseServer();
 $response = array();
+$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1');
 $exception = null;
+
+Logger::instance()->dump('API call: ' . $mode);
+
 try {
-	$response = $app->handleRequest($_REQUEST);
+    $requestData = $_REQUEST;
+    if ($_SERVER['CONTENT_TYPE'] === 'application/json') {
+        $json = file_get_contents('php://input');
+        $requestData = json_decode($json, true);
+    }
+	$response = $app->handleRequest($requestData, $_SERVER, array(
+        'controller' => $controller,
+        'mode' => $mode,
+    ));
 
-	Logger::instance()->log($_REQUEST, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);
-
+	Logger::instance()->log($requestData, $_SERVER, Logger::OBJECT_TYPE_API, $mode, $response);
+    $httpCode = 200;
+    http_response_code($httpCode);
 //	if (defined('WS_DEBUG')) {
 //		$response['request'] = $_REQUEST;
 //		$e = new \Exception();
 //		$response['trace'] = $e->getTraceAsString();
 //	}
 } catch (\Exception $e) {
-	$response['code'] = $e->getCode();
-	$response['message'] = $e->getMessage();
-	$exception = $e;
+//    $httpCode = 412;
+//    $httpCode = 200;
+//    header($protocol . ' ' . $httpCode . ' ' . $e->getMessage() . ' ' . $e->getCode());
+
+    $response['code'] = $e->getCode();
+    $response['message'] = $e->getMessage();
+
+    $exception = $e;
 	Logger::instance()->error(
 		$_REQUEST,
 		$_SERVER,
@@ -59,7 +77,8 @@ if (function_exists('ws_log_file')) {
 	}
 	ws_log_file($log, 'var/log/adls.log');
 }
-
 $response = json_encode($response);
+//header('Content-Type: application/json');
+
 echo $response;
 exit;

@@ -132,11 +132,24 @@ class LicenseManager extends Manager
 		return true;
 	}
 
+    public function getDomainVariations($domainName)
+    {
+        $variations = array();
+        $variations[] = $domainName;
+        if (substr($domainName, 0, 4) === 'www.') {
+            $variations[] = substr($domainName, 4);
+        } else {
+            $variations[] = 'www.' . $domainName;
+        }
+
+        return $variations;
+    }
     public function isValidLicenseDomain($licenseId, $domainName)
     {
-        $domain = $this->getDomainBy(array('licenseId' => $licenseId, 'domain' => $domainName));
+        $candidates = $this->getDomainVariations($domainName);
+        $licensedDomains = $this->getDomainBy(array('licenseId' => $licenseId, 'domains' => $candidates));
 
-        return !empty($domain);
+        return !empty($licensedDomains);
     }
 	public function getDomainByType($licenseId, $type)
 	{
@@ -158,6 +171,9 @@ class LicenseManager extends Manager
 		if (!empty($params['domain'])) {
 			$conditions[] = db_quote('name = ?s', $params['domain']);
 		}
+        if (!empty($params['domains'])) {
+            $conditions[] = db_quote('name IN (?a)', $params['domains']);
+        }
 		if (!empty($params['type'])) {
 			$conditions[] = db_quote('type = ?s', $params['type']);
 		}
@@ -169,7 +185,7 @@ class LicenseManager extends Manager
 
 		return db_get_row($query);
 	}
-	
+
 	public function getLicenses($params)
 	{
 		$conditions = array();
@@ -197,7 +213,7 @@ class LicenseManager extends Manager
 			$conditions[] = db_quote('al.productId = ?i', $params['productId']);
 		}
 		if (!empty($params['orderItemId'])) {
-			$conditions[] = db_quote('al.orderItemId = ?i', $params['orderItemId']);
+			$conditions[] = db_quote('al.orderItemId = ?s', $params['orderItemId']);
 		}
 		if (!empty($params['orderId'])) {
 			$conditions[] = db_quote('al.orderId = ?i', $params['orderId']);
@@ -314,14 +330,13 @@ class LicenseManager extends Manager
 	public function changeLicenseStatus($licenseId, $status, $domain = null)
 	{
 		if ($domain !== null) {
-			$domainIds = db_get_fields('SELECT id FROM ?:adls_license_domains WHERE licenseId = ?i AND name = ?s', $licenseId, $domain);
-			if ( ! empty( $domainIds ) ) {
-				foreach ( $domainIds as $domainId ) {
-					if (!$this->updateLicenseDomainStatus($domainId, $status)) {
-						return false;
-					}
-				}
-			}
+            $candidates = $this->getDomainVariations($domain);
+            $licensedDomain = $this->getDomainBy(array('licenseId' => $licenseId, 'domains' => $candidates));
+            if ( ! empty($licensedDomain)) {
+                if (!$this->updateLicenseDomainStatus($licensedDomain['id'], $status)) {
+//                    return false;
+                }
+            }
 		}
 
         return $this->updateLicenseStatus($licenseId, $status);
@@ -329,7 +344,9 @@ class LicenseManager extends Manager
 
     public function updateLicenseStatus($licenseId, $status)
     {
-        return db_query('UPDATE ?:adls_licenses SET status = ?s WHERE id = ?i', $status, $licenseId);
+        db_query('UPDATE ?:adls_licenses SET status = ?s WHERE id = ?i', $status, $licenseId);
+
+        return true;
     }
 
     public function updateLicenseDomainStatus($domainId, $status)

@@ -27,14 +27,16 @@ class PlatformRepository extends EntityRepository
     /**
      * @param $name
      *
+     * @param $slug
      * @return mixed
      */
-    public function add($name)
+    public function add($name, $slug)
     {
         $query = db_quote('INSERT INTO ?p ?e',
             $this->table,
             array(
                 'name' => $name,
+                'slug' => $slug,
             ));
 
         return db_query($query);
@@ -69,10 +71,19 @@ class PlatformRepository extends EntityRepository
         $group = 'platform.id';
 
         if (isset($params['name'])) {
+            // @TODO: find alternative for this dirty hack which works around the fact that CS-Cart multi-vendor edition report itself as "Multi-Vendor" and not CS-Cart;
+            if ($params['name'] == 'Multi-Vendor') {
+                $params['name'] = 'CS-Cart';
+            }
+
             $condition[] = db_quote('platform.name = ?s', $params['name']);
         }
         if (isset($params['id'])) {
             $condition[] = db_quote('platform.id = ?i', $params['id']);
+        }
+
+        if (isset($params['slug'])) {
+            $condition[] = db_quote('platform.slug = ?s', $params['slug']);
         }
 
         $joins = empty($joins) ? '' : implode(' ', $joins);

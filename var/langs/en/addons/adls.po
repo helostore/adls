@@ -12,6 +12,18 @@ msgctxt "Addons::description::adls"
 msgid "Manages your digital licenses"
 msgstr "Manages your digital licenses"
 
+msgctxt "SettingsOptions::adls::email"
+msgid "HELOstore email"
+msgstr "HELOstore email"
+
+msgctxt "SettingsOptions::adls::password"
+msgid "HELOstore password"
+msgstr "HELOstore password"
+
+msgctxt "SettingsOptions::adls::license"
+msgid "License key"
+msgstr "License key"
+
 msgctxt "Languages::adls.copy_to_clipboard"
 msgid "adls.copy_to_clipboard"
 msgstr "Copy to clipboard"
@@ -23,6 +35,11 @@ msgstr "License key"
 msgctxt "Languages::adls.domains"
 msgid "adls.domains"
 msgstr "Domains"
+
+msgctxt "Languages::adls.domains.update"
+msgid ""
+msgstr "Update domains"
+
 
 msgctxt "Languages::adls"
 msgid "adls"
@@ -85,7 +102,7 @@ msgstr "Created"
 
 msgctxt "Languages::adls.license_status_inactive"
 msgid "license_status_inactive"
-msgstr "Inactive, ready to be used"
+msgstr "Inactive"
 
 msgctxt "Languages::adls.license_status_active"
 msgid "license_status_active"
@@ -257,7 +274,58 @@ msgctxt "Languages::adls.api.update.title"
 msgid ""
 msgstr "Fresh code"
 
+msgctxt "Languages::adls.usergroup.release_status_access"
+msgid ""
+msgstr "Release access"
 
 msgctxt "Languages::adls.api.update.upsell.message"
 msgid ""
 msgstr "There is a new version of <b>[addon]</b> add-on, but you first need to renew your subscription in order to upgrade. <a href='[updateUrl]' target='_bl'>Click here to renew</a> (your version: [currentVersion], latest version: [nextVersion])"
+
+msgctxt "Languages::adls.product.not_released_yet"
+msgid ""
+msgstr "<h2>This product has not been released yet.</h2>"
+
+msgctxt "Languages::adls.product.beta_test_group_short"
+msgid ""
+msgstr "Early Beta Access"
+
+msgctxt "Languages::adls.product.not_released_yet_short"
+msgid ""
+msgstr "Not Released Yet."
+
+
+msgctxt "Languages::adls.product.beta_testing_sign_up_text"
+msgid ""
+msgstr "<h2>Early Beta Access</h2>"
+    "<hr>"
+    "<ol>"
+    "<li><a href=\"[register_url]\" target=\"_blank\"><strong>Register for a new account</strong></a> or <a href=\"[login_url]\" target=\"_blank\"><strong>login into your existing account</strong>.</li>"
+    "<li><a href=\"[join_url]\" target=\"_blank\">Join our <strong>\"Beta Testing\" group </strong></a> in your profile page.</li>"
+    "<li>Order this product for free and get early beta access.</li>"
+    "</ol>"
+
+msgctxt "adls.product.beta_testing_agreement_text"
+msgid ""
+msgstr "<br /><p>Disclaimer: by signing up to our \"Beta Testing\" group, you implicitly agree with our <a href=\"[url]\" target=\"_blank\">Beta Testing Participant Agreement</a>.</p>"
+
+msgctxt "Languages::adls.group.join_notification"
+msgid ""
+msgstr "Your request will be promptly reviewed. Thank you."
+
+msgctxt "Languages::adls.platforms"
+msgid ""
+msgstr "Platforms"
+
+msgctxt "Languages::adls.sources"
+msgid ""
+msgstr "Sources"
+
+msgctxt "Languages::adls.source.add"
+msgid ""
+msgstr "Add source"
+
+msgctxt "Languages::adls.licenseable"
+msgid ""
+msgstr "Licenseable"
+

@@ -24,7 +24,7 @@
 {assign var="extra_status" value=$config.current_url|escape:"url"}
 {$statuses = []}
 {assign var="order_statuses" value=$smarty.const.STATUSES_ORDER|fn_get_statuses:$statuses:$get_additional_statuses:true}
-
+{$license_statuses = fn_adls_get_license_statuses()}
 {if $licenses}
     {strip}
         <table width="100%" class="table table-middle">
@@ -79,13 +79,21 @@
                             {include file="common/price.tpl" value=$license->extra['orderItem$price']}
                         </td>
                         <td>
-                            {if "MULTIVENDOR"|fn_allowed_for}
+                            {*{if "MULTIVENDOR"|fn_allowed_for}
                                 {assign var="notify_vendor" value=true}
                             {else}
                                 {assign var="notify_vendor" value=false}
                             {/if}
-                            {$license->getStatusLabel()}
+                            {$license->getStatusLabel()}*}
 
+                            {include file="common/select_popup.tpl"
+                            items_status=$license_statuses
+                            popup_additional_class="dropleft"
+                            id=$license->getId()
+                            status=$license->getStatus()
+                            hidden=true
+                            object_id_name="id"
+                            table="adls_licenses"}
                             {*{include file="common/select_popup.tpl" suffix="o" order_info=$license id=$license->getId() status=$license->getStatus() items_status=$order_status_descr update_controller="orders" notify=true notify_department=true notify_vendor=$notify_vendor status_target_id="orders_total,`$rev`" extra="&return_url=`$extra_status`" statuses=$order_statuses btn_meta="btn btn-info o-status-`$license->status` btn-small"|lower}*}
                         </td>
 
@@ -133,6 +141,24 @@
                               {include file="common/price.tpl" value=$license->total}
                           </td>*}
                     </tr>
+                    {if $license->hasDomains()}
+                        <tr>
+                            <td colspan="11">
+                                {foreach from=$license->getDomains() item="domain"}
+                                    <div>{$domain.name|default:"(unset domain name)"} &mdash; &nbsp;
+                                        {include file="common/select_popup.tpl"
+                                        items_status=$license_statuses
+                                        popup_additional_class="inline-block"
+                                        id=$domain.id
+                                        status=$domain.status
+                                        hidden=true
+                                        object_id_name="id"
+                                        table="adls_license_domains"}
+                                    </div>
+                                {/foreach}
+                            </td>
+                        </tr>
+                    {/if}
                 {/hook}
             {/foreach}
         </table>

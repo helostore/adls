@@ -21,7 +21,7 @@ use HeloStore\ADLSS\Subscription\SubscriptionRepository;
 
 /**
  * Class ReleaseManager
- * 
+ *
  * @package HeloStore\ADLS
  */
 class ReleaseManager extends Manager
@@ -151,25 +151,29 @@ class ReleaseManager extends Manager
     /**
      * @param $productId
      * @param $requestVersion
+     * @param array $params
      * @return bool
+     * @throws \Exception
      */
-    public function isValidVersion($productId, $requestVersion)
+    public function isValidVersion($productId, $requestVersion, $params = array())
     {
-        $release = $this->repository->findOneByProductVersion($productId, $requestVersion);
+        $release = $this->repository->findOneByProductVersion($productId, $requestVersion, $params);
 
         return !empty($release);
     }
 
-    /**
-     * Check if a subscription has access to a release's version (test release version within dates range)
-     *
-     * @param Subscription $subscription
-     * @param $version
-     * @return bool
-     */
-    public function isVersionAvailableToSubscription(Subscription $subscription, $version)
+	/**
+	 * Check if a subscription has access to a release's version (test release version within dates range)
+	 *
+	 * @param Subscription $subscription
+	 * @param $version
+	 * @param array $auth
+	 *
+	 * @return bool
+	 */
+    public function isVersionAvailableToSubscription(Subscription $subscription, $version, $auth = array())
     {
-        list($releases, ) = $this->repository->findBySubscriptionAndVersion($subscription, $version);
+        list($releases, ) = $this->repository->findBySubscriptionAndVersion($subscription, $version, $auth);
 
         return (!empty($releases));
     }
@@ -219,29 +223,25 @@ class ReleaseManager extends Manager
         return SourceFileRepository::getReleasePath($productSlug, $platform->getSlug(), $release->getVersion());
     }
 
-    /**
-     * @param $userId
-     * @param $product
-     *
-     * @param int $itemsPerPage
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-    public function getOrderItemReleases($userId, $product, $itemsPerPage = 1)
+	/**
+	 * @param $userId
+	 * @param $product
+	 * @param array $params
+	 *
+	 * @return mixed
+	 */
+    public function getOrderItemReleases($userId, $product, $params = array())
     {
         $productId = $product['product_id'];
+	    $params['items_per_page'] = 1;
+
         if (!empty($product['subscription'])) {
             /** @var Subscription $subscription */
             $subscription = $product['subscription'];
-            list($releases, ) = $this->repository->findBySubscription($subscription, array(
-	            'items_per_page' => $itemsPerPage
-            ));
+            list($releases, ) = $this->repository->findBySubscription($subscription, $params);
         } else {
-            list($releases, ) = $this->repository->findByProductId($productId, array(
-            	'userId' => $userId,
-	            'items_per_page' => $itemsPerPage
-            ));
+	        $params['userId'] = $userId;
+            list($releases, ) = $this->repository->findByProductId($productId, $params);
         }
         if (empty($releases)) {
             return array();
@@ -328,17 +328,25 @@ class ReleaseManager extends Manager
      */
     public function addUserLinks($userId, $productId, $licenseId = null, $subscriptionId = null, $startDate = null, $endDate = null) {
         $releases = array();
+	    $releaseStatus = array();
+	    $userGroupIds = db_get_fields( 'SELECT usergroup_id FROM ?:usergroup_links WHERE user_id = ?i', $userId );
+	    if ( ! empty( $userGroupIds ) ) {
+		    $releaseStatus = fn_adls_get_usergroups_release_status($userGroupIds);
+	    }
 	    if ( !empty( $startDate ) && !empty( $endDate ) ) {
 //		    list($releases, ) = $this->repository->findByProductInRange( $productId, $startDate, $endDate );
 		    list($releases, ) = $this->repository->findProductionByProductInRange( $productId, null, $endDate );
 		    if ( empty( $releases ) ) {
-			    $release = ReleaseRepository::instance()->findProductionOneLatestByProduct($productId, $endDate);
+			    $release = ReleaseRepository::instance()->findProductionOneLatestByProduct($productId, $endDate, array(
+				    'status' => $releaseStatus
+			    ));
 			    $releases = array( $release );
 		    }
 	    } else if ($subscriptionId === null) {
 		    // This is a free product.
 		    list($releases, ) = ReleaseRepository::instance()->findProduction(array(
-			    'productId' => $productId
+			    'productId' => $productId,
+			    'status' => $releaseStatus
 		    ));
 	    }
 
@@ -395,32 +403,36 @@ class ReleaseManager extends Manager
 	 */
 	public function publishPremium(Release $release) {
 
-	    // @TODO: decouple from publishing from subscriptions
-		list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
-			'extended' => true,
-			'status' => Subscription::STATUS_ACTIVE,
-			'productId' => $release->getProductId()
-		));
+        if (class_exists('\HeloStore\ADLSS\Subscription\SubscriptionRepository')) {
+            // @TODO: decouple from publishing from subscriptions
+            list ( $subscriptions, ) = SubscriptionRepository::instance()->find(array(
+                'extended' => true,
+                'status' => Subscription::STATUS_ACTIVE,
+                'productId' => $release->getProductId()
+            ));
 
-		$count = 0;
-		if ( ! empty( $subscriptions ) ) {
-			/** @var Subscription $subscription */
-			foreach ( $subscriptions as $subscription ) {
-				$license = $subscription->getLicense();
-				$licenseId = !empty($license) ? $license->getId() : null;
-				$result = ReleaseAccessRepository::instance()->addLink(
-					$subscription->getUserId(),
-					$release->getProductId(),
-					$release->getId(),
-					$licenseId,
-					$subscription->getId()
-				);
-				if ( $result ) {
-					$count++;
-				}
-			}
-		}
-		return $count;
+            $count = 0;
+            if ( ! empty( $subscriptions ) ) {
+                /** @var Subscription $subscription */
+                foreach ( $subscriptions as $subscription ) {
+                    $license = $subscription->getLicense();
+                    $licenseId = !empty($license) ? $license->getId() : null;
+                    $result = ReleaseAccessRepository::instance()->addLink(
+                        $subscription->getUserId(),
+                        $release->getProductId(),
+                        $release->getId(),
+                        $licenseId,
+                        $subscription->getId()
+                    );
+                    if ( $result ) {
+                        $count++;
+                    }
+                }
+            }
+            return $count;
+        }
+
+        return false;
 	}
 
 	/**

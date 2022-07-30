@@ -27,6 +27,11 @@ use Zend\Validator\ValidatorChain;
  */
 class Utils extends Singleton
 {
+    public static function isPHPFunctionEnabled($func)
+    {
+        return is_callable($func) && false === stripos(ini_get('disable_functions'), $func);
+    }
+
     public static function versionToInteger($string)
     {
         $version = Utils::explodeVersion($string);

@@ -368,5 +368,80 @@
     "version": "4.7.1",
     "date": "2017-12-20 12:00:00",
     "description": "This update has a lot of new features for order management and export/import. Also, Multi-Vendor features Stripe Connect and a Customer-to-vendor communication system. Plus, we improved store usability."
+  },
+  {
+    "version": "4.7.2",
+    "date": "2018-02-15 12:00:00",
+    "description": "We’re happy to announce the release of CS-Cart & Multi-Vendor 4.7.2. Even though patch releases mostly contain bug fixes, there are reasons to be excited about 4.7.2."
+  },
+  {
+    "version": "4.7.3",
+    "date": "2018-03-28 12:00:00",
+    "description": "We have released CS-Cart and Multi-Vendor 4.7.3. This version is a patch release, so it mostly contains bug fixes. However, there are also some interesting changes."
+  },
+  {
+    "version": "4.7.4",
+    "date": "2018-05-02 12:00:00",
+    "description": "We've released a new CS-Cart and Multi-Vendor version so that you could make your online business compliant with the GDPR."
+  },
+  {
+    "version": "4.8.1",
+    "date": "2018-07-19 12:00:00",
+    "description": "We’re proudly introducing a new big release—CS-Cart 4.8.1. It brings new features that simplify store management."
+  },
+  {
+    "version": "4.8.2",
+    "date": "2018-08-15 12:00:00",
+    "description": "We’re happy to present a new release—CS-Cart and Multi-Vendor 4.8.2. This is a patch release so it only contains bug fixes and minor improvements for admins."
+  },
+  {
+    "version": "4.9.1",
+    "date": "2018-10-10 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.9.2",
+    "date": "2018-11-21 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.9.3",
+    "date": "2019-02-06 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.10.1",
+    "date": "2019-05-30 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.10.2",
+    "date": "2019-06-11 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.10.3",
+    "date": "2019-07-17 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.10.4",
+    "date": "2019-09-11 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.11.1",
+    "date": "2019-11-01 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.11.2",
+    "date": "2019-12-04 12:00:00",
+    "description": ""
+  },
+  {
+    "version": "4.11.3",
+    "date": "2020-02-04 12:00:00",
+    "description": ""
   }
 ]

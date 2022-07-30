@@ -1,41 +1,43 @@
 [
     {
-        "version": "0.2.48",
-        "releaseDate": "2018-03-14 10:37:58",
-        "releaseTimestamp": "1521023878",
-        "hash": "356e6c8e7c6874a82e00f6abdbf3946b0ddf34c7",
+        "version": "0.2.107",
+        "releaseDate": "2020-06-17 04:09:52",
+        "releaseTimestamp": "1592381392",
+        "hash": "50a4e531540370eba41c1fa1c6cb96ca73cc384a",
         "commits": [
-            "[2018-03-14] Bumped version to 0.2.48"
+            "[2020-06-17] Bumped version to 0.2.107",
+            "[2020-06-17]\tAdd\/show Releases Usage to Product Update page, too cpu-intensive due to text-based patterns search in DB"
         ]
     },
     {
-        "version": "0.2.47",
-        "releaseDate": "2018-03-14 10:37:49",
-        "releaseTimestamp": "1521023869",
-        "hash": "1badac58fd153f07aaf991073bfd4eb1c0925c98",
+        "version": "0.2.106",
+        "releaseDate": "2020-06-17 02:08:22",
+        "releaseTimestamp": "1592374102",
+        "hash": "0522edfc5cbc310a23a3fe6082f7f1811140a982",
         "commits": [
-            "[2018-03-14] Bumped version to 0.2.47",
-            "[2018-03-14]\tMinor bugfix with PHP warnings{"
+            "[2020-06-17] Bumped version to 0.2.106",
+            "[2020-06-17]\tAdd\/show Releases Usage, too cpu-intensive due to text-based patterns search in DB"
         ]
     },
     {
-        "version": "0.2.46",
-        "releaseDate": "2018-03-07 04:56:59",
-        "releaseTimestamp": "1520441819",
-        "hash": "8b28e72e67b19ff4eb297b2e08360c7cab48061f",
+        "version": "0.2.105",
+        "releaseDate": "2020-06-16 10:34:54",
+        "releaseTimestamp": "1592318094",
+        "hash": "bebec44fd211b64ce1558743b290f63ce9167617",
         "commits": [
-            "[2018-03-07] Bumped version to 0.2.46",
-            "[2018-03-07]\tMerge branch 'hotfix\/license-not-created-due-paypal-issue'",
-            "[2018-03-07]\tPaypal defined ORDER_MANAGEMENT const, which had a special meaning for ADLS"
+            "[2020-06-16] Bumped version to 0.2.105",
+            "[2020-06-16]\tAdd API Endpoint: pong",
+            "[2020-05-19]\tAdd clean-up on uninstall"
         ]
     },
     {
-        "version": "0.2.45",
-        "releaseDate": "2018-02-24 10:59:51",
-        "releaseTimestamp": "1519469991",
-        "hash": "5f2bdd86629fe38a2f905770ff42a38018f4d01a",
+        "version": "0.2.104",
+        "releaseDate": "2020-05-19 02:12:07",
+        "releaseTimestamp": "1589868727",
+        "hash": "c2158f8e5c67a1a7454c4b7619ceb1078269c5dc",
         "commits": [
-            "[2018-02-24] Bumped version to 0.2.45"
+            "[2020-05-19] Bumped version to 0.2.104",
+            "[2020-05-19]\tBugfix"
         ]
     }
 ]

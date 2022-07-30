@@ -20,7 +20,7 @@ use Tygh\Registry;
 
 /**
  * Class Logger
- * 
+ *
  * @package HeloStore\ADLS
  */
 class Logger extends Singleton
@@ -36,7 +36,16 @@ class Logger extends Singleton
 	const OBJECT_TYPE_SUBSCRIPTION_ALERT = 'subscription_alert';
 	const OBJECT_TYPE_SUBSCRIPTION_MIGRATE_ALERT = 'subscription_migrate_alert';
 
-	public function success($request, $server, $objectType = '', $objectAction = '', $content = '')
+    public static function dump()
+    {
+        self::instance()->debug(func_get_args());
+
+        if (function_exists('ws_log_file')) {
+            ws_log_file(var_export(func_get_args(), true), 'var/log/adls.log');
+        }
+    }
+
+    public function success($request, $server, $objectType = '', $objectAction = '', $content = '')
 	{
 		return $this->add(Logger::TYPE_SUCCESS, $request, $server, $objectType, $objectAction, $content);
 	}

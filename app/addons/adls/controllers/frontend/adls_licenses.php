@@ -13,6 +13,7 @@
  */
 
 use HeloStore\ADLS\LicenseRepository;
+use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseManager;
 use HeloStore\ADLS\ReleaseRepository;
 use Tygh\Registry;
@@ -41,16 +42,21 @@ if ( $mode === 'manage' ) {
         $params['sort_by'] = $_REQUEST['sort_by'];
     }
 	list($licenses, $search) = $licenseRepository->find($params);
-	Tygh::$app['view']->assign('licenses', $licenses);
-	Tygh::$app['view']->assign('search', $search);
-	fn_add_breadcrumb(__('adls.licenses'));
 
 
-	$releaseRepository = ReleaseRepository::instance();
-	list ($releases, ) = $releaseRepository->find(array(
-		'extended' => true,
-		'userId' => $userId
-	));
+    $releaseParams = array(
+        'extended' => true,
+        'userId' => $userId
+    );
+    $releaseParams['status'] = array();
+    if ( ! empty( $auth ) && !empty($auth['release_status'])) {
+        $releaseParams['status'] = $auth['release_status'];
+    }
+    $releaseParams['status'][] = Release::STATUS_PRODUCTION;
+
+
+    $releaseRepository = ReleaseRepository::instance();
+	list ($releases, ) = $releaseRepository->find($releaseParams);
 	$tmp = array();
 	foreach ( $releases as $release ) {
 		$pid = $release->getProductId();
@@ -78,5 +84,7 @@ if ( $mode === 'manage' ) {
 			}
 		}
 	}
-
+    Tygh::$app['view']->assign('licenses', $licenses);
+    Tygh::$app['view']->assign('search', $search);
+    fn_add_breadcrumb(__('adls.licenses'));
 }

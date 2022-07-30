@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>adls</id>
-    <version>0.2.48</version>
+    <version>0.2.107</version>
     <priority>1010111</priority>
     <position>0</position>
     <status>active</status>
     <has_icon>Y</has_icon>
     <default_language>en</default_language>
+    <functions>
+        <item for="install">fn_adls_install</item>
+    </functions>
     <queries>
         <item for="install">
             CREATE TABLE IF NOT EXISTS `?:adls_licenses` (
@@ -48,6 +51,8 @@
             `country` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             `backtrace` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            `server` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+            `request` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
             PRIMARY KEY (`id`)
             ) ENGINE=MyISAM DEFAULT CHARSET UTF8;
         </item>
@@ -129,14 +134,31 @@
         <item for="install">ALTER TABLE `?:products` ADD `adls_addon_id` VARCHAR(64);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_date` INT(11);</item>
         <item for="install">ALTER TABLE `?:products` ADD `adls_release_version` VARCHAR(16);</item>
-        <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
         <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_slug` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL AFTER `adls_subscription_id`</item>
+        <item for="install">ALTER TABLE `?:products` ADD COLUMN `adls_licenseable` tinyint(1) UNSIGNED NOT NULL DEFAULT 0</item>
+        <item for="install">ALTER TABLE `?:product_options` ADD `adls_option_type` VARCHAR(64);</item>
+        <item for="install">ALTER TABLE `?:usergroups` ADD COLUMN `release_status`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '';</item>
 
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_date`;</item>
-        <item for="___uninstall">ALTER TABLE `?:products` DROP `adls_release_version`;</item>
-        <item for="___uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
+
+        <item for="uninstall">DROP TABLE `?:adls_licenses`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_license_domains`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_logs`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_release_access`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_releases`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_platforms`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_platform_editions`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_platform_versions`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_compatibility`;</item>
+        <item for="uninstall">DROP TABLE `?:adls_sources`;</item>
+
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_subscription_id`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_addon_id`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_release_date`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_release_version`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_slug`;</item>
+        <item for="uninstall">ALTER TABLE `?:products` DROP `adls_licenseable`;</item>
+        <item for="uninstall">ALTER TABLE `?:product_options` DROP `adls_option_type`;</item>
+        <item for="uninstall">ALTER TABLE `?:usergroups` DROP `release_status`;</item>
 
     </queries>
     <settings edition_type="ROOT">
@@ -148,6 +170,9 @@
                     </item>
                     <item id="password">
                         <type>password</type>
+                    </item>
+                    <item id="license">
+                        <type>input</type>
                     </item>
                     <item id="info">
                         <type>info</type>
@@ -163,6 +188,8 @@
             <min>4.2.1</min>
         </core_version>
     </compatibility>
+    <supplier>HELOstore</supplier>
+    <supplier_link>https://helostore.com/</supplier_link>
     <authors>
         <author>
             <name>HELOstore</name>

@@ -1,9 +1,9 @@
 <style>
     .compatibility {
         display: flex;
-        flex-direction: column;
-        max-width: 800px;
-        max-height: 400px;
+        flex-direction: row;
+        max-width: 900px;
+        /*max-height: 400px;*/
         flex-wrap: wrap;
     }
     .compatibility-version {
@@ -138,7 +138,25 @@
         <div class="control-group">
             <label class="control-label">{__("adls.release.version")}:</label>
             <div class="controls">
-                <input type="text" name="release[version]" readonly value="{if !empty($release)}{$release->getVersion()}{else}{$product.latestBuild.version}{/if}" />
+                {if $runtime.mode == "update"}
+                    <input type="text" name="release[version]" readonly value="{$release->getVersion()}" />
+                {else}
+                    {if !empty($product) && !empty($product.builds)}
+                        <select name="release[version]">
+                            {foreach from=$product.builds item="build"}
+                                {$attrs = ""}
+                                {if $build.version == $product.latestBuild.version}
+                                    {$attrs = "selected='selected'"}
+                                {/if}
+                                <option {$attrs} value="{$build.version}">{$build.version}
+                                    {if !empty($build.date)}({$build.date->format('Y-m-d H:i:s')}){/if}
+                                </option>
+                            {/foreach}
+                        </select>
+                    {else}
+                        <input type="text" name="release[version]" value="{$product.latestBuild.version|default:''}" />
+                    {/if}
+                {/if}
             </div>
         </div>
 
@@ -168,7 +186,7 @@
             <label class="control-label">{__("adls.compatibility")}:</label>
             <div class="controls compatibility">
 
-                {foreach from=$availableVersions item="version"}
+                {foreach from=$availablePlatformVersions item="version"}
                     {$checked = false}
                     {if in_array($version->getId(), $compatiblePlatformVersionIds)}
                         {$checked = true}

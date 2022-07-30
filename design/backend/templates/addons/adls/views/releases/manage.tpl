@@ -15,7 +15,6 @@
 {/if}
 
 {capture name="mainbox"}
-    {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases}
     {if $product.has_unreleased_version}
         <p style="color: red;">Note: there is at least one un-released version:
             {if !empty($product.latestBuild)}
@@ -25,18 +24,28 @@
             {/if}
         </p>
     {/if}
+    {include file="addons/adls/views/releases/components/table.tpl" releases=$product.releases}
+    {if !empty($smarty.request.showUsage)}
+        <h3>Usage</h3>
+        {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
+        {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
+        <p>
+            <a class="btn" href="{"releases.manage?productId=`$smarty.request.productId`&platformId=`$smarty.request.platformId`"|fn_url}">Hide Usage</a>
+        </p>
+    {else}
+        <p>
+            <a class="btn" href="{"releases.manage?productId=`$smarty.request.productId`&platformId=`$smarty.request.platformId`&showUsage=1"|fn_url}">Show Usage</a>
+        </p>
+    {/if}
 
-    {include file="addons/adls/views/adls/components/usage.tpl" usage=$usage}
-    {include file="addons/adls/views/adls/components/usage_product_versions.tpl" usage=$usageProductVersions}
-
-    <p><a href="{"products.update?product_id=`$product.product_id`"|fn_url}">Update product in store</a></p>
+    <p><a class="btn" href="{"products.update?product_id=`$product.product_id`"|fn_url}">Update product in store</a></p>
 
 {/capture}
 
 {capture name="adv_buttons"}
-    {if $product.has_unreleased_version}
-        {include file="common/tools.tpl" tool_href="releases.add?productId=`$product.product_id`&platformId=`$platform->getId()`" prefix="top" hide_tools="true" title=__("adls.release.new.title") icon="icon-plus"}
-    {/if}
+    {include file="common/tools.tpl" tool_href="releases.add?productId=`$product.product_id`&platformId=`$platform->getId()`" prefix="top" hide_tools="true" title=__("adls.release.new.title") icon="icon-plus"}
+    {*{if $product.has_unreleased_version}*}
+    {*{/if}*}
 {/capture}
 
 {include file="common/mainbox.tpl"

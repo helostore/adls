@@ -11,11 +11,15 @@ namespace HeloStore\ADLS\Source;
 
 use HeloStore\ADLS\Platform\Platform;
 use HeloStore\ADLS\Singleton;
+use HeloStore\ADLS\Utils;
 
 class SourceFileRepository extends Singleton
 {
     public static function getSourcePath($productSlug, $platformSlug)
     {
+        if (!defined('ADLS_SOURCE_PATH')) {
+            throw new \Exception('Required constant is not defined: ADLS_SOURCE_PATH');
+        }
         return ADLS_SOURCE_PATH
                . '/'
                . $platformSlug
@@ -51,12 +55,13 @@ class SourceFileRepository extends Singleton
         foreach ($dirs as $dir) {
 
         }
-        aa($dirs, 1);
-
     }
 
     public function findTags($product, Platform $platform)
     {
+        if (!Utils::isPHPFunctionEnabled('shell_exec')) {
+            throw new \Exception('Required PHP function is disabled: shell_exec');
+        }
         $path = SourceFileRepository::getSourcePath($product['adls_slug'], $platform->getSlug());
 
 //        $command = "git -C \"${path}\" tag ";

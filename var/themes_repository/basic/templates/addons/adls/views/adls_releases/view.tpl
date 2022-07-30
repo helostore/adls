@@ -34,7 +34,12 @@
     {foreach from=$releases item="release"}
         <tr>
             <td><strong>{$release->getExtra('product$name')}</strong></td>
-            <td>{$release->getVersion()}</td>
+            <td>
+                {$release->getVersion()}
+                {if ! $release->isProduction()}
+                    ({$release->getStatusLabel()})
+                {/if}
+            </td>
             <td>
                 {$compatiblity = $release->getCompatibility()}
                 {if !empty($compatiblity)}

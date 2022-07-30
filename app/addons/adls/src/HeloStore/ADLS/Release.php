@@ -16,7 +16,7 @@ namespace HeloStore\ADLS;
 
 /**
  * Class Release
- * 
+ *
  * @package HeloStore\ADLS
  */
 class Release extends Entity
@@ -115,7 +115,7 @@ class Release extends Entity
     /**
      * @var bool
      */
-    private $_fileFound = true;
+    private $_fileFound = false;
 
 
 
@@ -315,7 +315,7 @@ class Release extends Entity
 
 	/**
 	 * Increment downloads number
-     * 
+     *
      * @return $this
 	 */
 	public function download()
