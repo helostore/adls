@@ -26,6 +26,6 @@ if ($mode == 'platforms') {
     exit;
 }
 if ($mode == 'platforms_sync') {
-    \HeloStore\ADLS\Compatibility\CompatibilitySetup::instance()->sync();
+    \HeloStore\ADLS\Compatibility\CompatibilitySetup::instance()->sync($_REQUEST['platform']);
     exit;
 }
