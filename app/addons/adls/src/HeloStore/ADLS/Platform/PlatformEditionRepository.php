@@ -72,8 +72,14 @@ class PlatformEditionRepository extends EntityRepository
         if (isset($params['name'])) {
             $condition[] = db_quote('edition.name = ?s', $params['name']);
         }
+        if (isset($params['names'])) {
+            $condition[] = db_quote('edition.name IN (?a)', $params['names']);
+        }
         if (isset($params['id'])) {
             $condition[] = db_quote('edition.id = ?i', $params['id']);
+        }
+        if (isset($params['platformId'])) {
+            $condition[] = db_quote('edition.platformId = ?i', $params['platformId']);
         }
 
         $joins = empty($joins) ? '' : implode(' ', $joins);
