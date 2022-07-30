@@ -9,8 +9,10 @@
 // Initially import platforms, editions, versions
 php hsw.php --dispatch=adls_setup.platforms
 
-// Synchronize import platforms versions (only WP supported for now)
+// Update latest platforms versions in DB, from external source
 php hsw.php --dispatch=adls_setup.platforms_sync
+php hsw.php --dispatch=adls_setup.platforms_sync --platform=cscart
+php hsw.php --dispatch=adls_setup.platforms_sync --platform=wordpress
 ```
 
 # Configuration
