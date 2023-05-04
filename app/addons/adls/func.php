@@ -16,6 +16,7 @@ use HeloStore\ADLS\License;
 use HeloStore\ADLS\LicenseManager;
 use HeloStore\ADLS\LicenseRepository;
 use HeloStore\ADLS\Logger;
+use HeloStore\ADLS\ProductManager;
 use HeloStore\ADLS\ProductRepository;
 use HeloStore\ADLS\Release;
 use HeloStore\ADLS\ReleaseAccessRepository;
@@ -744,14 +745,17 @@ function fn_adls_get_product_data_post(&$product, $auth, $preview, $lang_code) {
         list($platforms,) = \HeloStore\ADLS\Platform\PlatformRepository::instance()->find();
     }
     $product['compatibility'] = array();
+    $compatiblePlatform = null;
     foreach ($platforms as $platform) {
         $pair = \HeloStore\ADLS\Compatibility\CompatibilityRepository::instance()->findMinMax($productId, $platform->getId(), array(
         	'auth' => $auth
         ));
         if (!empty($pair['min']) && !empty($pair['max'])) {
             $product['compatibility'][] = $pair;
+            $compatiblePlatform = $platform;
         }
     }
+    ProductManager::instance()->hydrateProductWithReleases($product, $compatiblePlatform);
 }
 
 function fn_adls_get_usergroups_release_status($userGroupIds) {

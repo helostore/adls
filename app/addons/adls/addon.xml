@@ -78,6 +78,7 @@
             `fileSize` int(11) unsigned NOT NULL,
             `hash` varchar(32) NOT NULL,
             `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            `changeLog`  mediumtext NULL,
             PRIMARY KEY (`id`)
             )
         </item>

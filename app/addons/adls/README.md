@@ -32,3 +32,13 @@ define('HCAPTCHA_SECRET_KEY', '');
 define('HCAPTCHA_REFERRAL_CODE', '');
 define('HCAPTCHA_SITE_KEY_SINK', '');
 ```
+
+
+#### Update 2023-05-04
+```shell
+
+
+ALTER TABLE `cscart_adls_releases`
+ADD COLUMN `changeLog`  mediumtext NULL AFTER `status`;
+
+```

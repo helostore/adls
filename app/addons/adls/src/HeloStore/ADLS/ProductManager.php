@@ -225,6 +225,7 @@ class ProductManager extends Manager
 
             if ($r === 1) {
                 $product['has_unreleased_version'] = true;
+                $product['latestBuild']['changelog'] = SourceFileRepository::instance()->getLatestChangeLogFromGit($product, $platform);
             }
         }
     }

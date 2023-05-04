@@ -101,6 +101,11 @@ class Release extends Entity
     protected $hash;
 
     /**
+     * @var string
+     */
+    protected $changeLog;
+
+    /**
      * @internal
      * @var array
      */
@@ -496,5 +501,32 @@ class Release extends Entity
         $this->_fileFound = $fileFound;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChangeLog()
+    {
+        return $this->changeLog;
+    }
+
+    /**
+     * @param string $changelog
+     * @return Release
+     */
+    public function setChangeLog($changeLog)
+    {
+        $this->changeLog = $changeLog;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function hasChangeLog()
+    {
+        return !empty($this->changeLog);
     }
 }
