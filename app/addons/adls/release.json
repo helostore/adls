@@ -1,5 +1,16 @@
 [
     {
+        "version": "0.2.109",
+        "releaseDate": "2023-05-04 03:04:21",
+        "releaseTimestamp": "1683212661",
+        "hash": "e2e330d868d3d6ea8448ce276210a082bd924a3c",
+        "commits": [
+            "[2023-05-04] Bumped version to 0.2.109",
+            "[2023-05-04]\tAdds change log to releases",
+            "[2023-04-26]\tAdd gitignore"
+        ]
+    },
+    {
         "version": "0.2.108",
         "releaseDate": "2022-07-30 03:51:49",
         "releaseTimestamp": "1659196309",
@@ -29,17 +40,6 @@
         "commits": [
             "[2020-06-17] Bumped version to 0.2.106",
             "[2020-06-17]\tAdd\/show Releases Usage, too cpu-intensive due to text-based patterns search in DB"
-        ]
-    },
-    {
-        "version": "0.2.105",
-        "releaseDate": "2020-06-16 10:34:54",
-        "releaseTimestamp": "1592318094",
-        "hash": "bebec44fd211b64ce1558743b290f63ce9167617",
-        "commits": [
-            "[2020-06-16] Bumped version to 0.2.105",
-            "[2020-06-16]\tAdd API Endpoint: pong",
-            "[2020-05-19]\tAdd clean-up on uninstall"
         ]
     }
 ]
