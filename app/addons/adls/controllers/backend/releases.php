@@ -146,6 +146,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Copy release assets to public directory
         $productManager->copyAssets($product['adls_slug'], $platform->getSlug());
 
+        if (isset($_POST['changelog'])) {
+            $release->setChangelog($_POST['changelog']);
+            \HeloStore\ADLS\ReleaseRepository::instance()->update($release);
+        }
+
+
         return [CONTROLLER_STATUS_REDIRECT, 'releases.update?release_id=' . $releaseId];
     }
 }

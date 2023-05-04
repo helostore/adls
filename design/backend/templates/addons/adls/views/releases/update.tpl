@@ -183,6 +183,21 @@
 
 
         <div class="control-group">
+            <label class="control-label">{__("adls.release.changelog")}:</label>
+            <div class="controls">
+                <textarea name="changelog" rows="8" style="width: 100%">{strip}
+                {if !empty($release)}
+                    {$release->getChangelog()}
+                {else}
+                    {if !empty($product.latestBuild.changelog)}
+                        {$product.latestBuild.changelog}
+                    {/if}
+                {/if}
+                {/strip}</textarea>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label">{__("adls.compatibility")}:</label>
             <div class="controls compatibility">
 

@@ -57,6 +57,21 @@ class SourceFileRepository extends Singleton
         }
     }
 
+    public function getLatestChangeLogFromGit($product, Platform $platform)
+    {
+        if (!Utils::isPHPFunctionEnabled('shell_exec')) {
+            throw new \Exception('Required PHP function is disabled: shell_exec');
+        }
+        $path = SourceFileRepository::getSourcePath($product['adls_slug'], $platform->getSlug());
+        $relVer = $product['latestRelease']->getVersion();
+        $buildVer =  $product['latestBuild']['version'];
+        $command = "git -C \"${path}\" log --oneline v${relVer}..v${buildVer} --format=\"%ad | %s\" --date=short";
+        $output  = shell_exec($command);
+        $output  = trim($output);
+
+        return $output;
+    }
+
     public function findTags($product, Platform $platform)
     {
         if (!Utils::isPHPFunctionEnabled('shell_exec')) {
