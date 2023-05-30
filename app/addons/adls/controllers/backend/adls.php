@@ -41,11 +41,11 @@ if ($mode == 'logs') {
 		);
 	}
 //    $params['limit'] = isset($_REQUEST['limit']) ? intval($_REQUESST['limit']) : 20;
-    $params['items_per_page'] = isset($_REQUEST['items_per_page']) ? intval($_REQUESST['items_per_page']) : 20;
+    $params['items_per_page'] = isset($_REQUEST['items_per_page']) ? intval($_REQUEST['items_per_page']) : 20;
 	list($logs, $result) = $logger->get($params);
 
 	if (!empty($params['id'])) {
-        $output = stripcslashes(var_export($logs, 1));
+        $output = stripcslashes(json_encode($logs, JSON_PRETTY_PRINT));
         $output = stripcslashes($output);
 		echo '<pre>' . $output . '</pre>';
 		exit;

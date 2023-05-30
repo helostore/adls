@@ -17,6 +17,7 @@ php hsw.php --dispatch=adls_setup.platforms_sync --platform=wordpress
 
 # Configuration
 ```
+define('ADLS_API_HOST', '');
 define('ADLS_SUBSCRIPTIONS_NO_EMAILS', true);
 define('ADLS_MAGIC_TOKEN', 'your-secret-token');
 define('ADLS_MAGIC_LICENSE_KEY', 'your-secret-magic-license');
