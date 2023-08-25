@@ -93,7 +93,9 @@ class Logger extends Singleton
 
 			}
 		}
-        if (!empty($server['REMOTE_ADDR'])) {
+        if (!empty($server['HTTP_CF_CONNECTING_IP'])) {
+            $entry['ip'] = $server['HTTP_CF_CONNECTING_IP'];
+        } else if (!empty($server['REMOTE_ADDR'])) {
             $entry['ip'] = $server['REMOTE_ADDR'];
         } else {
             $entry['ip'] = fn_get_ip();
