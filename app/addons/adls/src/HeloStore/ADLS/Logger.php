@@ -113,7 +113,7 @@ class Logger extends Singleton
 		}
 
 		if (!empty($server)) {
-			$entry['server'] = json_encode($server);
+			$entry['server'] = json_encode(Utils::sanitizeServerData($server));
 		}
 
 		return db_query('INSERT INTO ?:adls_logs ?e', $entry);
