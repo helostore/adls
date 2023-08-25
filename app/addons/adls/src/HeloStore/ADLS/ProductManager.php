@@ -587,7 +587,7 @@ class ProductManager extends Manager
 
 
             $_args = array(
-                'server' => $request['server'],
+                'server' => Utils::sanitizeServerData($request['server']),
                 'platform' => $request['platform'],
                 'language' => $request['language'],
                 'product' => array(

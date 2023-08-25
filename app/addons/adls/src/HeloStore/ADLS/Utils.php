@@ -227,4 +227,32 @@ class Utils extends Singleton
 
 		return round($size, $precision) . $sizes[$i];
 	}
+
+    public static function sanitizeServerData($server)
+    {
+        if (empty($server) || !is_array($server)) {
+            return [];
+        }
+        $fields = [
+            'HOSTNAME',
+            'PHP_ENV',
+            'PHP_VERSION',
+            'SERVER_NAME',
+            'HTTP_HOST',
+            'HTTP_X_REAL_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_CF_RAY',
+            'HTTP_CF_CONNECTING_IP',
+            'HTTP_CF_IPCOUNTRY',
+            'HTTP_CF_VISITOR',
+            'HTTP_USER_AGENT',
+        ];
+        $newArr = [];
+        foreach ($fields as $field) {
+            if (isset($server[$field])) {
+                $newArr[$field] = $server[$field];
+            }
+        }
+        return $newArr;
+    }
 } 
