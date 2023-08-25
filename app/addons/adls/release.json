@@ -1,5 +1,14 @@
 [
     {
+        "version": "0.2.112",
+        "releaseDate": "2023-08-25 01:13:13",
+        "releaseTimestamp": "1692961993",
+        "hash": "2a71204588c8583ab2ad25232f9393060e9595e5",
+        "commits": [
+            "[2023-08-25] Bumped version to 0.2.112"
+        ]
+    },
+    {
         "version": "0.2.111",
         "releaseDate": "2023-08-25 01:12:34",
         "releaseTimestamp": "1692961954",
@@ -45,18 +54,6 @@
             "[2023-05-04] Bumped version to 0.2.109",
             "[2023-05-04]\tAdds change log to releases",
             "[2023-04-26]\tAdd gitignore"
-        ]
-    },
-    {
-        "version": "0.2.108",
-        "releaseDate": "2022-07-30 03:51:49",
-        "releaseTimestamp": "1659196309",
-        "hash": "be441bf7bd96478518a4db234053198592912d66",
-        "commits": [
-            "[2022-07-30] Bumped version to 0.2.108",
-            "[2022-07-30]\tMerge pull request #1 from helostore\/feature\/cs-cart-version-history-update",
-            "[2022-07-30]\tUpdate README",
-            "[2022-07-30]\tAdd job that updates CS-Cart version history in DB"
         ]
     }
 ]
