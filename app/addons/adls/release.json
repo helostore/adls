@@ -1,5 +1,33 @@
 [
     {
+        "version": "0.2.110",
+        "releaseDate": "2023-08-25 01:11:30",
+        "releaseTimestamp": "1692961890",
+        "hash": "7e2f7c9f1af93eaba9f3f4ef9059c7fe2f77feda",
+        "commits": [
+            "[2023-08-25] Bumped version to 0.2.110",
+            "[2023-08-25]\tMerge pull request #4 from helostore\/hotfix\/issue-3",
+            "[2023-08-25]\tEliminates sensitive data from logs",
+            "[2023-05-30]\tBugfix in pagination",
+            "[2023-05-17]\tCreate LICENSE",
+            "[2023-05-04]\tBumped version to 0.2.109",
+            "[2023-05-04]\tAdds change log to releases",
+            "[2023-04-26]\tAdd gitignore",
+            "[2022-07-30]\tBumped version to 0.2.108",
+            "[2022-07-30]\tMerge pull request #1 from helostore\/feature\/cs-cart-version-history-update",
+            "[2022-07-30]\tUpdate README",
+            "[2022-07-30]\tAdd job that updates CS-Cart version history in DB",
+            "[2020-06-17]\tBumped version to 0.2.107",
+            "[2020-06-17]\tAdd\/show Releases Usage to Product Update page, too cpu-intensive due to text-based patterns search in DB",
+            "[2020-06-17]\tBumped version to 0.2.106",
+            "[2020-06-17]\tAdd\/show Releases Usage, too cpu-intensive due to text-based patterns search in DB",
+            "[2020-06-16]\tBumped version to 0.2.105",
+            "[2020-06-16]\tAdd API Endpoint: pong",
+            "[2020-05-19]\tAdd clean-up on uninstall",
+            "[2020-05-19]\tBumped version to 0.2.104"
+        ]
+    },
+    {
         "version": "0.2.109",
         "releaseDate": "2023-05-04 03:04:21",
         "releaseTimestamp": "1683212661",
@@ -30,16 +58,6 @@
         "commits": [
             "[2020-06-17] Bumped version to 0.2.107",
             "[2020-06-17]\tAdd\/show Releases Usage to Product Update page, too cpu-intensive due to text-based patterns search in DB"
-        ]
-    },
-    {
-        "version": "0.2.106",
-        "releaseDate": "2020-06-17 02:08:22",
-        "releaseTimestamp": "1592374102",
-        "hash": "0522edfc5cbc310a23a3fe6082f7f1811140a982",
-        "commits": [
-            "[2020-06-17] Bumped version to 0.2.106",
-            "[2020-06-17]\tAdd\/show Releases Usage, too cpu-intensive due to text-based patterns search in DB"
         ]
     }
 ]
